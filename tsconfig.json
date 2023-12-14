@@ -11,9 +11,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": ["ES2022"],
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "lib": ["ESNext"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "newLine": "LF",
     "noErrorTruncation": true,
     "noImplicitReturns": true,
@@ -25,12 +25,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2022",
-
-    "paths": {
-      "@tests/*": ["./tests/*"],
-      "@/*": ["./src/*"]
-    }
+    "target": "ESNext"
   },
 
   "include": ["./src/**/*.ts", "./tests/**/*.ts", "./vite.config.ts"]

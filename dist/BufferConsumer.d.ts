@@ -1,7 +1,10 @@
-/// <reference types="node" />
+/// <reference types="node" resolution-mode="require"/>
+import { ByteOrder } from "./types/ByteOrder.js";
 export declare class BufferConsumer {
-    #private;
-    constructor(buffer: Buffer, byteOffset?: number);
+    private readonly pBuffer;
+    private pByteOffset;
+    private readonly pByteOrder;
+    constructor(pBuffer: Buffer, pByteOffset?: number, pByteOrder?: ByteOrder);
     get byteOffset(): number;
     at(byteOffset?: number): number;
     atConsumable(value: number): boolean;

@@ -1,18 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BufferConsumer = void 0;
-class BufferConsumer {
-    #buffer;
-    #byteOffset = 0;
-    constructor(buffer, byteOffset = 0) {
-        this.#buffer = buffer;
-        this.#byteOffset = byteOffset;
+import { ByteOrder } from "./types/ByteOrder.js";
+export class BufferConsumer {
+    pBuffer;
+    pByteOffset;
+    pByteOrder;
+    constructor(pBuffer, pByteOffset = 0, pByteOrder = ByteOrder.LITTLE_ENDIAN) {
+        this.pBuffer = pBuffer;
+        this.pByteOffset = pByteOffset;
+        this.pByteOrder = pByteOrder;
     }
     get byteOffset() {
-        return this.#byteOffset;
+        return this.pByteOffset;
     }
     at(byteOffset = 0) {
-        return this.#buffer.readUInt8(this.#byteOffset + byteOffset);
+        return this.pBuffer.readUInt8(this.pByteOffset + byteOffset);
     }
     atConsumable(value) {
         if (this.at() !== value) {
@@ -22,51 +22,63 @@ class BufferConsumer {
         return true;
     }
     readByte() {
-        const value = this.#buffer.readUInt8(this.#byteOffset);
-        this.#byteOffset++;
+        const value = this.pBuffer.readUInt8(this.pByteOffset);
+        this.pByteOffset++;
         return value;
     }
     readInt16() {
-        const value = this.#buffer.readIntLE(this.#byteOffset, 2);
-        this.#byteOffset += 2;
+        const value = this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+            ? this.pBuffer.readInt16LE(this.pByteOffset)
+            : this.pBuffer.readInt16BE(this.pByteOffset);
+        this.pByteOffset += 2;
         return value;
     }
     readUnsignedInt16() {
-        const value = this.#buffer.readUIntLE(this.#byteOffset, 2);
-        this.#byteOffset += 2;
+        const value = this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+            ? this.pBuffer.readUIntLE(this.pByteOffset, 2)
+            : this.pBuffer.readUIntBE(this.pByteOffset, 2);
+        this.pByteOffset += 2;
         return value;
     }
     readInt32() {
-        const value = this.#buffer.readIntLE(this.#byteOffset, 4);
-        this.#byteOffset += 4;
+        const value = this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+            ? this.pBuffer.readIntLE(this.pByteOffset, 4)
+            : this.pBuffer.readIntBE(this.pByteOffset, 4);
+        this.pByteOffset += 4;
         return value;
     }
     readUnsignedInt32() {
-        const value = this.#buffer.readUIntLE(this.#byteOffset, 4);
-        this.#byteOffset += 4;
+        const value = this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+            ? this.pBuffer.readUIntLE(this.pByteOffset, 4)
+            : this.pBuffer.readUIntBE(this.pByteOffset, 4);
+        this.pByteOffset += 4;
         return value;
     }
     readFloat() {
-        const value = this.#buffer.readFloatLE(this.#byteOffset);
-        this.#byteOffset += 4;
+        const value = this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+            ? this.pBuffer.readFloatLE(this.pByteOffset)
+            : this.pBuffer.readFloatBE(this.pByteOffset);
+        this.pByteOffset += 4;
         return value;
     }
     readString(bytes) {
-        const value = this.#buffer.toString("utf8", this.#byteOffset, this.#byteOffset + bytes);
-        this.#byteOffset += bytes;
+        const value = this.pBuffer.toString("utf8", this.pByteOffset, this.pByteOffset + bytes);
+        this.pByteOffset += bytes;
         return value;
     }
     readLengthPrefixedString(bytes = 4) {
-        const offset = this.#byteOffset;
-        const length = this.#buffer.readUIntLE(this.#byteOffset, bytes);
-        this.#byteOffset += length + bytes;
-        return this.#buffer.toString("utf8", offset + bytes, this.#byteOffset);
+        const offset = this.pByteOffset;
+        const length = this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+            ? this.pBuffer.readUIntLE(this.pByteOffset, bytes)
+            : this.pBuffer.readUIntBE(this.pByteOffset, bytes);
+        this.pByteOffset += length + bytes;
+        return this.pBuffer.toString("utf8", offset + bytes, this.pByteOffset);
     }
     readMultibytePrefixedString() {
         let length = 0;
         let shift = 0;
         while (true) {
-            const byte = this.#buffer.readUInt8(this.#byteOffset++);
+            const byte = this.pBuffer.readUInt8(this.pByteOffset++);
             length |= (byte & 0x7f) << shift;
             shift += 7;
             if ((byte & 0x80) === 0) {
@@ -76,33 +88,32 @@ class BufferConsumer {
         if (length === 0) {
             return "";
         }
-        const bufferString = this.#buffer.toString("utf8", this.#byteOffset, this.#byteOffset + length);
-        this.#byteOffset += length;
+        const bufferString = this.pBuffer.toString("utf8", this.pByteOffset, this.pByteOffset + length);
+        this.pByteOffset += length;
         return bufferString;
     }
     readNullTerminatedString() {
-        const offset = this.#byteOffset;
-        const nullOffset = this.#buffer.indexOf("\n", this.#byteOffset);
+        const offset = this.pByteOffset;
+        const nullOffset = this.pBuffer.indexOf("\n", this.pByteOffset);
         if (nullOffset === -1) {
-            this.#byteOffset = this.#buffer.length;
-            return this.#buffer.subarray(offset).toString("utf8");
+            this.pByteOffset = this.pBuffer.length;
+            return this.pBuffer.subarray(offset).toString("utf8");
         }
-        this.#byteOffset = nullOffset + 1;
-        return this.#buffer.subarray(offset, nullOffset).toString("utf8");
+        this.pByteOffset = nullOffset + 1;
+        return this.pBuffer.subarray(offset, nullOffset).toString("utf8");
     }
     back(bytes = 1) {
-        this.#byteOffset -= bytes;
+        this.pByteOffset -= bytes;
         return this;
     }
     skip(bytes = 1) {
-        this.#byteOffset += bytes;
+        this.pByteOffset += bytes;
         return this;
     }
     rest() {
-        return this.#buffer.subarray(this.#byteOffset);
+        return this.pBuffer.subarray(this.pByteOffset);
     }
     isConsumed() {
-        return this.#byteOffset === this.#buffer.length;
+        return this.pByteOffset === this.pBuffer.length;
     }
 }
-exports.BufferConsumer = BufferConsumer;

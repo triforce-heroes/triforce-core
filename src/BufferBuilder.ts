@@ -1,8 +1,12 @@
+import { ByteOrder } from "./types/ByteOrder.js";
+
 export class BufferBuilder {
-  private readonly buffers: Buffer[] = [];
+  private readonly inBuffers: Buffer[] = [];
+
+  public constructor(private readonly pByteOrder = ByteOrder.LITTLE_ENDIAN) {}
 
   public build() {
-    return Buffer.concat(this.buffers);
+    return Buffer.concat(this.inBuffers);
   }
 
   public writeByte(value: number) {
@@ -10,60 +14,75 @@ export class BufferBuilder {
 
     buffer.writeUInt8(value);
 
-    this.buffers.push(buffer);
+    this.inBuffers.push(buffer);
   }
 
   public writeInt16(value: number) {
     const buffer = Buffer.allocUnsafe(2);
 
-    buffer.writeInt16LE(value);
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeInt16LE(value);
+    } else {
+      buffer.writeInt16BE(value);
+    }
 
-    this.buffers.push(buffer);
-  }
-
-  public writeInt32(value: number) {
-    const buffer = Buffer.allocUnsafe(4);
-
-    buffer.writeInt32LE(value);
-
-    this.buffers.push(buffer);
+    this.inBuffers.push(buffer);
   }
 
   public writeUnsignedInt16(value: number) {
     const buffer = Buffer.allocUnsafe(2);
 
-    buffer.writeUInt16LE(value);
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeUInt16LE(value);
+    } else {
+      buffer.writeUInt16BE(value);
+    }
 
-    this.buffers.push(buffer);
+    this.inBuffers.push(buffer);
+  }
+
+  public writeInt32(value: number) {
+    const buffer = Buffer.allocUnsafe(4);
+
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeInt32LE(value);
+    } else {
+      buffer.writeInt32BE(value);
+    }
+
+    this.inBuffers.push(buffer);
   }
 
   public writeUnsignedInt32(value: number) {
     const buffer = Buffer.allocUnsafe(4);
 
-    buffer.writeUInt32LE(value);
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeUInt32LE(value);
+    } else {
+      buffer.writeUInt32BE(value);
+    }
 
-    this.buffers.push(buffer);
+    this.inBuffers.push(buffer);
   }
 
   public writeString(value: string) {
     if (value.length > 0) {
-      this.buffers.push(Buffer.from(value));
+      this.inBuffers.push(Buffer.from(value));
     }
   }
 
   public writeLengthPrefixedString(value: string, bytes: 1 | 2 | 4 = 4) {
-    if (value.length === 0) {
-      this.writeByte(0);
-
-      return;
-    }
-
     const buffer = Buffer.allocUnsafe(value.length + bytes);
 
-    buffer.writeIntLE(value.length, 0, bytes);
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeIntLE(value.length, 0, bytes);
+    } else {
+      buffer.writeIntBE(value.length, 0, bytes);
+    }
+
     buffer.write(value, bytes);
 
-    this.buffers.push(buffer);
+    this.inBuffers.push(buffer);
   }
 
   public writeMultibytePrefixedString(value: string) {
@@ -94,12 +113,16 @@ export class BufferBuilder {
   public writeFloat(value: number) {
     const buffer = Buffer.allocUnsafe(4);
 
-    buffer.writeFloatLE(value);
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeFloatLE(value);
+    } else {
+      buffer.writeFloatBE(value);
+    }
 
-    this.buffers.push(buffer);
+    this.inBuffers.push(buffer);
   }
 
   public push(...buffers: Buffer[]) {
-    this.buffers.push(...buffers);
+    this.inBuffers.push(...buffers);
   }
 }

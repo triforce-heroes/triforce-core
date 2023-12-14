@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { BufferConsumer } from "@/BufferConsumer";
+import { BufferConsumer } from "../src/BufferConsumer.js";
+import { ByteOrder } from "../src/types/ByteOrder.js";
+
 import {
-  TEST_BUFFER_SAMPLE_A,
+  TEST_BUFFER_SAMPLE_BE,
+  TEST_BUFFER_SAMPLE_LE,
   TEST_FLOAT,
   TEST_STRING_100000_BYTES,
   TEST_STRING_100000_BYTES_MULTIBYTE,
@@ -16,10 +19,10 @@ import {
   TEST_STRING_4000_BYTES_MULTIBYTE,
   TEST_STRING_EMPTY,
   TEST_STRING_MULTIBYTE,
-} from "@tests/fixtures/data";
+} from "./fixtures/data.js";
 
 describe("class BufferConsumer", () => {
-  const readTests = [
+  const readLETests = [
     ["readByte", 0, 1, 1],
     ["readInt16", 0, 513, 2],
     ["readInt16", 4, -255, 6],
@@ -33,10 +36,37 @@ describe("class BufferConsumer", () => {
     ["readNullTerminatedString", 21, "TestEnd", 28],
   ] as const;
 
-  it.each(readTests)(
-    "method %s() at %s",
+  it.each(readLETests)(
+    "method %s() (LE) at %s",
     (method, skip, output, thenOffset) => {
-      const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_A);
+      const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
+
+      bufferConsumer.skip(skip);
+
+      expect(bufferConsumer[method]()).toStrictEqual(output);
+      expect(bufferConsumer.byteOffset).toStrictEqual(thenOffset);
+    },
+  );
+
+  const readBETests = [
+    ["readInt16", 0, 1027, 2],
+    ["readInt16", 4, -1, 6],
+    ["readUnsignedInt16", 0, 1027, 2],
+    ["readInt32", 0, 67_305_985, 4],
+    ["readInt32", 4, -255, 8],
+    ["readUnsignedInt32", 0, 67_305_985, 4],
+    ["readFloat", 8, TEST_FLOAT, 12],
+    ["readLengthPrefixedString", 12, "Test", 20],
+  ] as const;
+
+  it.each(readBETests)(
+    "method %s() (BE) at %s",
+    (method, skip, output, thenOffset) => {
+      const bufferConsumer = new BufferConsumer(
+        TEST_BUFFER_SAMPLE_BE,
+        undefined,
+        ByteOrder.BIG_ENDIAN,
+      );
 
       bufferConsumer.skip(skip);
 
@@ -46,7 +76,7 @@ describe("class BufferConsumer", () => {
   );
 
   it("method readString()", () => {
-    const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_A);
+    const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
     bufferConsumer.skip(16);
 
@@ -54,7 +84,7 @@ describe("class BufferConsumer", () => {
   });
 
   it("sequential reading", () => {
-    const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_A);
+    const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
     bufferConsumer.skip(16);
 
@@ -90,7 +120,7 @@ describe("class BufferConsumer", () => {
   );
 
   it("method atConsumable()", () => {
-    const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_A);
+    const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
     expect(bufferConsumer.atConsumable(0)).toBeFalsy();
     expect(bufferConsumer.byteOffset).toStrictEqual(0);
