@@ -13,7 +13,7 @@ export const TEST_INT32_BUFFER_LE = Buffer.from([123, 0, 0, 0]);
 export const TEST_INT32_NEGATIVE = -123;
 export const TEST_INT32_NEGATIVE_BUFFER_LE = Buffer.from([133, 255, 255, 255]);
 
-export const TEST_FLOAT = 123.456;
+export const TEST_FLOAT = 123.456_001_281_738_28;
 export const TEST_FLOAT_BUFFER_LE = Buffer.from([121, 233, 246, 66]);
 
 export const TEST_STRING_EMPTY = "";
@@ -69,4 +69,13 @@ export const TEST_STRING_100000_BYTES_LENGTH = Buffer.concat([
 export const TEST_STRING_100000_BYTES_MULTIBYTE = Buffer.concat([
   Buffer.from([160, 141, 6]),
   Buffer.from(TEST_STRING_100000_BYTES),
+]);
+
+export const TEST_BUFFER_SAMPLE_A = Buffer.concat([
+  Buffer.from([1, 2, 3, 4]),
+  Buffer.from([1, 255, 255, 255]),
+  TEST_FLOAT_BUFFER_LE,
+  Buffer.from([4, 0, 0, 0]),
+  Buffer.from("Test\n"),
+  Buffer.from("TestEnd"),
 ]);
