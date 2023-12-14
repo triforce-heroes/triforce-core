@@ -45,6 +45,12 @@ export class BufferBuilder {
     this.buffers.push(buffer);
   }
 
+  public writeString(value: string) {
+    if (value.length > 0) {
+      this.buffers.push(Buffer.from(value));
+    }
+  }
+
   public writeLengthPrefixedString(value: string, bytes: 1 | 2 | 4 = 4) {
     if (value.length === 0) {
       this.writeByte(0);

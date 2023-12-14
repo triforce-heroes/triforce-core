@@ -51,6 +51,11 @@ class BufferConsumer {
         this.#byteOffset += 4;
         return value;
     }
+    readString(bytes) {
+        const value = this.#buffer.toString("utf8", this.#byteOffset, this.#byteOffset + bytes);
+        this.#byteOffset += bytes;
+        return value;
+    }
     readLengthPrefixedString(bytes = 4) {
         const offset = this.#byteOffset;
         const length = this.#buffer.readUIntLE(this.#byteOffset, bytes);

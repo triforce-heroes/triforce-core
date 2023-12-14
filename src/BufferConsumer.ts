@@ -74,6 +74,18 @@ export class BufferConsumer {
     return value;
   }
 
+  public readString(bytes: number) {
+    const value = this.#buffer.toString(
+      "utf8",
+      this.#byteOffset,
+      this.#byteOffset + bytes,
+    );
+
+    this.#byteOffset += bytes;
+
+    return value;
+  }
+
   public readLengthPrefixedString(bytes: 1 | 2 | 4 = 4): string {
     const offset = this.#byteOffset;
     const length = this.#buffer.readUIntLE(this.#byteOffset, bytes);

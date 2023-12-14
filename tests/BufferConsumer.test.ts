@@ -45,6 +45,14 @@ describe("class BufferConsumer", () => {
     },
   );
 
+  it("method readString()", () => {
+    const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_A);
+
+    bufferConsumer.skip(16);
+
+    expect(bufferConsumer.readString(4)).toStrictEqual("Test");
+  });
+
   it("sequential reading", () => {
     const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_A);
 

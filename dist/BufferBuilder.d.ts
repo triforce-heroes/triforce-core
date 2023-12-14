@@ -7,6 +7,7 @@ export declare class BufferBuilder {
     writeInt32(value: number): void;
     writeUnsignedInt16(value: number): void;
     writeUnsignedInt32(value: number): void;
+    writeString(value: string): void;
     writeLengthPrefixedString(value: string, bytes?: 1 | 2 | 4): void;
     writeMultibytePrefixedString(value: string): void;
     writeFloat(value: number): void;

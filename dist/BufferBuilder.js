@@ -31,6 +31,11 @@ class BufferBuilder {
         buffer.writeUInt32LE(value);
         this.buffers.push(buffer);
     }
+    writeString(value) {
+        if (value.length > 0) {
+            this.buffers.push(Buffer.from(value));
+        }
+    }
     writeLengthPrefixedString(value, bytes = 4) {
         if (value.length === 0) {
             this.writeByte(0);

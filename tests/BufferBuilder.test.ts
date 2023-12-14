@@ -54,6 +54,14 @@ describe("class BufferBuilder", () => {
     expect(bufferBuilder.build()).toStrictEqual(expected);
   });
 
+  it("method writeString()", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeString("Hello");
+
+    expect(bufferBuilder.build()).toStrictEqual(Buffer.from("Hello"));
+  });
+
   const writeMultibytePrefixedTests = [
     ["empty", TEST_STRING_EMPTY, TEST_STRING_MULTIBYTE],
     ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_MULTIBYTE],
