@@ -152,7 +152,7 @@ export class BufferConsumer {
 
   public readNullTerminatedString(): string {
     const offset = this.pByteOffset;
-    const nullOffset = this.pBuffer.indexOf("\n", this.pByteOffset);
+    const nullOffset = this.pBuffer.indexOf("\0", this.pByteOffset);
 
     if (nullOffset === -1) {
       this.pByteOffset = this.pBuffer.length;

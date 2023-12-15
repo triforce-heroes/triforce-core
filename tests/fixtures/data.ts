@@ -101,7 +101,8 @@ export const TEST_BUFFER_SAMPLE_LE = Buffer.concat([
   Buffer.from([1, 255, 255, 255]),
   TEST_FLOAT_BUFFER_LE,
   Buffer.from([4, 0, 0, 0]),
-  Buffer.from("Test\n"),
+  Buffer.from("Test"),
+  Buffer.from([0]),
   Buffer.from("TestEnd"),
 ]);
 

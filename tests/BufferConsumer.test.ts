@@ -100,6 +100,14 @@ describe("class BufferConsumer", () => {
     expect(bufferConsumer.isConsumed()).toBeTruthy();
   });
 
+  it("method readNullTerminatedString()", () => {
+    const bufferConsumer = new BufferConsumer(Buffer.from(".\0..\0example"));
+
+    expect(bufferConsumer.readNullTerminatedString()).toStrictEqual(".");
+    expect(bufferConsumer.readNullTerminatedString()).toStrictEqual("..");
+    expect(bufferConsumer.readNullTerminatedString()).toStrictEqual("example");
+  });
+
   const readMultibyteTests = [
     ["empty", TEST_STRING_EMPTY, TEST_STRING_MULTIBYTE],
     ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_MULTIBYTE],
