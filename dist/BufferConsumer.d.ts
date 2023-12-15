@@ -6,6 +6,7 @@ export declare class BufferConsumer {
     private readonly pByteOrder;
     constructor(pBuffer: Buffer, pByteOffset?: number, pByteOrder?: ByteOrder);
     get byteOffset(): number;
+    seek(byteOffset?: number): void;
     at(byteOffset?: number): number;
     atConsumable(value: number): boolean;
     readByte(): number;

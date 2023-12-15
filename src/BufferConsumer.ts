@@ -11,6 +11,10 @@ export class BufferConsumer {
     return this.pByteOffset;
   }
 
+  public seek(byteOffset = 0) {
+    this.pByteOffset = byteOffset;
+  }
+
   public at(byteOffset = 0): number {
     return this.pBuffer.readUInt8(this.pByteOffset + byteOffset);
   }

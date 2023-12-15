@@ -11,6 +11,9 @@ export class BufferConsumer {
     get byteOffset() {
         return this.pByteOffset;
     }
+    seek(byteOffset = 0) {
+        this.pByteOffset = byteOffset;
+    }
     at(byteOffset = 0) {
         return this.pBuffer.readUInt8(this.pByteOffset + byteOffset);
     }
