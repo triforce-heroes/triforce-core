@@ -85,6 +85,7 @@ describe("class BufferConsumer", () => {
     bufferConsumer.seek(16);
 
     expect(bufferConsumer.readString(4)).toStrictEqual("Test");
+    expect(bufferConsumer.buffer).toStrictEqual(TEST_BUFFER_SAMPLE_LE);
   });
 
   it("sequential reading", () => {

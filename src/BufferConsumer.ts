@@ -7,6 +7,10 @@ export class BufferConsumer {
     private readonly pByteOrder = ByteOrder.LITTLE_ENDIAN,
   ) {}
 
+  public get buffer() {
+    return this.pBuffer;
+  }
+
   public get byteOffset() {
     return this.pByteOffset;
   }
