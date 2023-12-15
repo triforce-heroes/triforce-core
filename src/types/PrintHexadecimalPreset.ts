@@ -1,0 +1,15 @@
+export const enum PrintHexadecimalPreset {
+  SIMPLIFIED,
+  UINT8,
+  UINT16_LE,
+  UINT16_BE,
+  UINT32_LE,
+  UINT32_BE,
+  INT8,
+  INT16_LE,
+  INT16_BE,
+  INT32_LE,
+  INT32_BE,
+  FLOAT_LE,
+  FLOAT_BE,
+}

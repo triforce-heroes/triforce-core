@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import strip from "strip-ansi";
 import { describe, expect, it, vitest } from "vitest";
 
 import { fatal } from "../src/Console.js";
@@ -44,7 +44,8 @@ describe("console", () => {
       fatal(...args) as unknown;
 
       expect(exitCode).toBe(-1);
-      expect(stderrMessage).toMatchSnapshot();
+      expect(strip(stderrMessage as string)).toMatchSnapshot("ansi");
+      expect(stderrMessage).toMatchSnapshot("colors");
     },
   );
 });
