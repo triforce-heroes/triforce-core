@@ -167,6 +167,14 @@ describe("class BufferBuilder", () => {
     },
   );
 
+  it("method writeNullTerminatedString()", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeNullTerminatedString("Hello");
+
+    expect(bufferBuilder.build()).toStrictEqual(Buffer.from("Hello\0"));
+  });
+
   it("method push()", () => {
     const bufferBuilder = new BufferBuilder();
 

@@ -110,6 +110,10 @@ export class BufferBuilder {
     this.push(buffer);
   }
 
+  public writeNullTerminatedString(value: string) {
+    this.inBuffers.push(Buffer.from(`${value}\0`));
+  }
+
   public writeFloat(value: number) {
     const buffer = Buffer.allocUnsafe(4);
 

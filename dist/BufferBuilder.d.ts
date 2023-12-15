@@ -13,6 +13,7 @@ export declare class BufferBuilder {
     writeString(value: string): void;
     writeLengthPrefixedString(value: string, bytes?: 1 | 2 | 4): void;
     writeMultibytePrefixedString(value: string): void;
+    writeNullTerminatedString(value: string): void;
     writeFloat(value: number): void;
     push(...buffers: Buffer[]): void;
 }
