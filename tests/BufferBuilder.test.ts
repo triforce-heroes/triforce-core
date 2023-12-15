@@ -64,6 +64,7 @@ describe("class BufferBuilder", () => {
     bufferBuilder[method](value);
 
     expect(bufferBuilder.build()).toStrictEqual(expected);
+    expect(bufferBuilder).toHaveLength(expected.length);
   });
 
   const writeIntBETests = [
@@ -82,6 +83,7 @@ describe("class BufferBuilder", () => {
     bufferBuilder[method](value);
 
     expect(bufferBuilder.build()).toStrictEqual(expected);
+    expect(bufferBuilder).toHaveLength(expected.length);
   });
 
   it("method writeString()", () => {
@@ -90,6 +92,7 @@ describe("class BufferBuilder", () => {
     bufferBuilder.writeString("Hello");
 
     expect(bufferBuilder.build()).toStrictEqual(Buffer.from("Hello"));
+    expect(bufferBuilder).toHaveLength(5);
   });
 
   const writeMultibytePrefixedTests = [
@@ -113,6 +116,7 @@ describe("class BufferBuilder", () => {
       bufferBuilder.writeMultibytePrefixedString(input);
 
       expect(bufferBuilder.build()).toStrictEqual(output);
+      expect(bufferBuilder).toHaveLength(output.length);
     },
   );
 
@@ -137,6 +141,7 @@ describe("class BufferBuilder", () => {
       bufferBuilder.writeLengthPrefixedString(input);
 
       expect(bufferBuilder.build()).toStrictEqual(output);
+      expect(bufferBuilder).toHaveLength(output.length);
     },
   );
 
@@ -160,10 +165,8 @@ describe("class BufferBuilder", () => {
 
       bufferBuilder.writeLengthPrefixedString(input);
 
-      expect(bufferBuilder.build().subarray(0, 10)).toStrictEqual(
-        output.subarray(0, 10),
-      ); // @todo Remove
       expect(bufferBuilder.build()).toStrictEqual(output);
+      expect(bufferBuilder).toHaveLength(output.length);
     },
   );
 
@@ -173,13 +176,18 @@ describe("class BufferBuilder", () => {
     bufferBuilder.writeNullTerminatedString("Hello");
 
     expect(bufferBuilder.build()).toStrictEqual(Buffer.from("Hello\0"));
+    expect(bufferBuilder).toHaveLength(6);
   });
 
   it("method push()", () => {
     const bufferBuilder = new BufferBuilder();
 
+    bufferBuilder.writeString("Hello");
     bufferBuilder.push(TEST_STRING_MULTIBYTE);
 
-    expect(bufferBuilder.build()).toStrictEqual(TEST_STRING_MULTIBYTE);
+    const bufferHello = Buffer.from("Hello\0");
+
+    expect(bufferBuilder.build()).toStrictEqual(bufferHello);
+    expect(bufferBuilder).toHaveLength(bufferHello.length);
   });
 });

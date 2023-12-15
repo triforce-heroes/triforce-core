@@ -3,7 +3,9 @@ import { ByteOrder } from "./types/ByteOrder.js";
 export declare class BufferBuilder {
     private readonly pByteOrder;
     private readonly inBuffers;
+    private inLength;
     constructor(pByteOrder?: ByteOrder);
+    get length(): number;
     build(): Buffer;
     writeByte(value: number): void;
     writeInt16(value: number): void;

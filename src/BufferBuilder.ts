@@ -3,7 +3,13 @@ import { ByteOrder } from "./types/ByteOrder.js";
 export class BufferBuilder {
   private readonly inBuffers: Buffer[] = [];
 
+  private inLength = 0;
+
   public constructor(private readonly pByteOrder = ByteOrder.LITTLE_ENDIAN) {}
+
+  public get length() {
+    return this.inLength;
+  }
 
   public build() {
     return Buffer.concat(this.inBuffers);
@@ -15,6 +21,7 @@ export class BufferBuilder {
     buffer.writeUInt8(value);
 
     this.inBuffers.push(buffer);
+    this.inLength++;
   }
 
   public writeInt16(value: number) {
@@ -27,6 +34,7 @@ export class BufferBuilder {
     }
 
     this.inBuffers.push(buffer);
+    this.inLength += 2;
   }
 
   public writeUnsignedInt16(value: number) {
@@ -39,6 +47,7 @@ export class BufferBuilder {
     }
 
     this.inBuffers.push(buffer);
+    this.inLength += 2;
   }
 
   public writeInt32(value: number) {
@@ -51,6 +60,7 @@ export class BufferBuilder {
     }
 
     this.inBuffers.push(buffer);
+    this.inLength += 4;
   }
 
   public writeUnsignedInt32(value: number) {
@@ -63,11 +73,13 @@ export class BufferBuilder {
     }
 
     this.inBuffers.push(buffer);
+    this.inLength += 4;
   }
 
   public writeString(value: string) {
     if (value.length > 0) {
       this.inBuffers.push(Buffer.from(value));
+      this.inLength += value.length;
     }
   }
 
@@ -83,6 +95,7 @@ export class BufferBuilder {
     buffer.write(value, bytes);
 
     this.inBuffers.push(buffer);
+    this.inLength += buffer.length;
   }
 
   public writeMultibytePrefixedString(value: string) {
@@ -94,6 +107,8 @@ export class BufferBuilder {
 
     const buffer = Buffer.from(value);
     let { length } = buffer;
+
+    this.inLength += length;
 
     while (length > 0) {
       let chunkLength = length & 0x7f;
@@ -107,11 +122,12 @@ export class BufferBuilder {
       length >>= 7;
     }
 
-    this.push(buffer);
+    this.inBuffers.push(buffer);
   }
 
   public writeNullTerminatedString(value: string) {
     this.inBuffers.push(Buffer.from(`${value}\0`));
+    this.inLength += value.length + 1;
   }
 
   public writeFloat(value: number) {
@@ -124,9 +140,11 @@ export class BufferBuilder {
     }
 
     this.inBuffers.push(buffer);
+    this.inLength += 4;
   }
 
   public push(...buffers: Buffer[]) {
     this.inBuffers.push(...buffers);
+    this.inLength += buffers.reduce((a, b) => a + b.length, 0);
   }
 }
