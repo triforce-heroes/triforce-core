@@ -13,10 +13,10 @@ export declare class BufferBuilder {
     writeUnsignedInt16(value: number): void;
     writeInt32(value: number): void;
     writeUnsignedInt32(value: number): void;
-    writeString(value: string): void;
-    writeLengthPrefixedString(value: string, bytes?: 1 | 2 | 4): void;
-    writeMultibytePrefixedString(value: string): void;
-    writeNullTerminatedString(value: string): void;
+    writeString(value: string | null | undefined): void;
+    writeLengthPrefixedString(value: string | null | undefined, bytes?: 1 | 2 | 4): void;
+    writeMultibytePrefixedString(value: string | null | undefined): void;
+    writeNullTerminatedString(value: string | null | undefined): void;
     writeFloat(value: number): void;
     push(...buffers: Buffer[]): void;
 }

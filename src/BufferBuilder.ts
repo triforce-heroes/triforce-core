@@ -85,14 +85,23 @@ export class BufferBuilder {
     this.inLength += 4;
   }
 
-  public writeString(value: string) {
-    if (value.length > 0) {
+  public writeString(value: string | null | undefined) {
+    if (value !== null && value !== undefined && value.length > 0) {
       this.inBuffers.push(Buffer.from(value));
       this.inLength += value.length;
     }
   }
 
-  public writeLengthPrefixedString(value: string, bytes: 1 | 2 | 4 = 4) {
+  public writeLengthPrefixedString(
+    value: string | null | undefined,
+    bytes: 1 | 2 | 4 = 4,
+  ) {
+    if (value === null || value === undefined || value.length === 0) {
+      this.write(bytes);
+
+      return;
+    }
+
     const buffer = Buffer.allocUnsafe(value.length + bytes);
 
     if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
@@ -107,8 +116,8 @@ export class BufferBuilder {
     this.inLength += buffer.length;
   }
 
-  public writeMultibytePrefixedString(value: string) {
-    if (value.length === 0) {
+  public writeMultibytePrefixedString(value: string | null | undefined) {
+    if (value === null || value === undefined || value.length === 0) {
       this.writeByte(0);
 
       return;
@@ -134,7 +143,13 @@ export class BufferBuilder {
     this.inBuffers.push(buffer);
   }
 
-  public writeNullTerminatedString(value: string) {
+  public writeNullTerminatedString(value: string | null | undefined) {
+    if (value === null || value === undefined) {
+      this.writeByte(0);
+
+      return;
+    }
+
     this.inBuffers.push(Buffer.from(`${value}\0`));
     this.inLength += value.length + 1;
   }

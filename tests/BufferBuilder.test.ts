@@ -89,6 +89,8 @@ describe("class BufferBuilder", () => {
   it("method writeString()", () => {
     const bufferBuilder = new BufferBuilder();
 
+    bufferBuilder.writeString(null);
+    bufferBuilder.writeString(undefined);
     bufferBuilder.writeString("Hello");
 
     expect(bufferBuilder.build()).toStrictEqual(Buffer.from("Hello"));
@@ -96,6 +98,8 @@ describe("class BufferBuilder", () => {
   });
 
   const writeMultibytePrefixedTests = [
+    ["null", null, TEST_STRING_MULTIBYTE],
+    ["undefined", undefined, TEST_STRING_MULTIBYTE],
     ["empty", TEST_STRING_EMPTY, TEST_STRING_MULTIBYTE],
     ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_MULTIBYTE],
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_MULTIBYTE],
@@ -121,6 +125,8 @@ describe("class BufferBuilder", () => {
   );
 
   const writeLengthPrefixedLETests = [
+    ["null", null, TEST_STRING_LENGTH],
+    ["undefined", undefined, TEST_STRING_LENGTH],
     ["empty", TEST_STRING_EMPTY, TEST_STRING_LENGTH],
     ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_LENGTH],
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_LENGTH],
@@ -173,10 +179,12 @@ describe("class BufferBuilder", () => {
   it("method writeNullTerminatedString()", () => {
     const bufferBuilder = new BufferBuilder();
 
+    bufferBuilder.writeNullTerminatedString(null);
+    bufferBuilder.writeNullTerminatedString(undefined);
     bufferBuilder.writeNullTerminatedString("Hello");
 
-    expect(bufferBuilder.build()).toStrictEqual(Buffer.from("Hello\0"));
-    expect(bufferBuilder).toHaveLength(6);
+    expect(bufferBuilder.build()).toStrictEqual(Buffer.from("\0\0Hello\0"));
+    expect(bufferBuilder).toHaveLength(8);
   });
 
   it("method push()", () => {
