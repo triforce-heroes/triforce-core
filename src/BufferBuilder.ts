@@ -15,6 +15,15 @@ export class BufferBuilder {
     return Buffer.concat(this.inBuffers);
   }
 
+  public write(count: number, word = "\0") {
+    if (count !== 0) {
+      const buffer = Buffer.from(word.repeat(count));
+
+      this.inBuffers.push(buffer);
+      this.inLength += buffer.length;
+    }
+  }
+
   public writeByte(value: number) {
     const buffer = Buffer.allocUnsafe(1);
 

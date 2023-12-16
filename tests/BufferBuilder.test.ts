@@ -190,4 +190,20 @@ describe("class BufferBuilder", () => {
     expect(bufferBuilder.build()).toStrictEqual(bufferHello);
     expect(bufferBuilder).toHaveLength(bufferHello.length);
   });
+
+  it("method write()", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeString("Hello");
+    bufferBuilder.write(0);
+    bufferBuilder.write(3, "\u00FF");
+    bufferBuilder.write(2, "\u00FF\u00FF");
+
+    const bufferHello = Buffer.from(
+      "Hello\u00FF\u00FF\u00FF\u00FF\u00FF\u00FF\u00FF",
+    );
+
+    expect(bufferBuilder.build()).toStrictEqual(bufferHello);
+    expect(bufferBuilder).toHaveLength(bufferHello.length);
+  });
 });
