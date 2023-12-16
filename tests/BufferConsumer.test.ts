@@ -161,4 +161,35 @@ describe("class BufferConsumer", () => {
 
     expect(bufferConsumer.at(2)).toStrictEqual(3);
   });
+
+  it("method consumer()", () => {
+    const bufferConsumer = new BufferConsumer(
+      Buffer.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]),
+      undefined,
+      ByteOrder.BIG_ENDIAN,
+    );
+
+    expect(bufferConsumer.byteOffset).toStrictEqual(0);
+    expect(bufferConsumer.readUnsignedInt16()).toStrictEqual(0x01_02);
+    expect(bufferConsumer.isConsumed()).toBeFalsy();
+
+    const subConsumerA = bufferConsumer.consumer(2);
+
+    expect(subConsumerA.byteOffset).toStrictEqual(0);
+    expect(subConsumerA.readUnsignedInt16()).toStrictEqual(0x03_04);
+    expect(subConsumerA.isConsumed()).toBeTruthy();
+
+    expect(bufferConsumer.byteOffset).toStrictEqual(4);
+    expect(bufferConsumer.readUnsignedInt16()).toStrictEqual(0x05_06);
+    expect(bufferConsumer.isConsumed()).toBeFalsy();
+
+    const subConsumerB = bufferConsumer.consumer();
+
+    expect(subConsumerB.byteOffset).toStrictEqual(0);
+    expect(subConsumerB.readUnsignedInt16()).toStrictEqual(0x07_08);
+    expect(subConsumerB.isConsumed()).toBeTruthy();
+
+    expect(bufferConsumer.byteOffset).toStrictEqual(8);
+    expect(bufferConsumer.isConsumed()).toBeTruthy();
+  });
 });

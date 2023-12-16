@@ -24,5 +24,7 @@ export declare class BufferConsumer {
     back(bytes?: number): this;
     skip(bytes?: number): this;
     rest(): Buffer;
+    consumer(bytes?: number): BufferConsumer;
     isConsumed(): boolean;
+    private safeIncrease;
 }

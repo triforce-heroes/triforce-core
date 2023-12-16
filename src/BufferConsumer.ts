@@ -39,10 +39,7 @@ export class BufferConsumer {
         ? this.pBuffer.subarray(this.pByteOffset)
         : this.pBuffer.subarray(this.pByteOffset, this.pByteOffset + bytes);
 
-    this.pByteOffset =
-      bytes === undefined
-        ? this.pBuffer.length
-        : Math.min(this.pByteOffset + bytes, this.pBuffer.length);
+    this.safeIncrease(bytes);
 
     return value;
   }
@@ -195,7 +192,28 @@ export class BufferConsumer {
     return this.pBuffer.subarray(this.pByteOffset);
   }
 
+  public consumer(bytes?: number): BufferConsumer {
+    const instance = new BufferConsumer(
+      bytes === undefined
+        ? this.pBuffer.subarray(this.pByteOffset)
+        : this.pBuffer.subarray(this.pByteOffset, this.pByteOffset + bytes),
+      undefined,
+      this.pByteOrder,
+    );
+
+    this.safeIncrease(bytes);
+
+    return instance;
+  }
+
   public isConsumed() {
     return this.pByteOffset === this.pBuffer.length;
+  }
+
+  private safeIncrease(bytes?: number) {
+    this.pByteOffset =
+      bytes === undefined
+        ? this.pBuffer.length
+        : Math.min(this.pByteOffset + bytes, this.pBuffer.length);
   }
 }
