@@ -12,6 +12,8 @@ export declare class BufferConsumer {
     atConsumable(value: number): boolean;
     read(bytes?: number): Buffer;
     readByte(): number;
+    readInt8(): number;
+    readUnsignedInt8(): number;
     readInt16(): number;
     readUnsignedInt16(): number;
     readInt32(): number;

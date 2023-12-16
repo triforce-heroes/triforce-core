@@ -4,6 +4,10 @@ import { BufferBuilder } from "../src/BufferBuilder.js";
 import { ByteOrder } from "../src/types/ByteOrder.js";
 
 import {
+  TEST_BINARY_BUFFER,
+  TEST_BINARY_BUFFER_LENGTH_BE,
+  TEST_BINARY_BUFFER_LENGTH_LE,
+  TEST_BINARY_BUFFER_MULTIBYTE,
   TEST_FLOAT,
   TEST_FLOAT_BUFFER_BE,
   TEST_FLOAT_BUFFER_LE,
@@ -139,16 +143,20 @@ describe("class BufferBuilder", () => {
 
     bufferBuilder.writeString(null);
     bufferBuilder.writeString(undefined);
+    bufferBuilder.writeString(Buffer.from("ÿ", "binary"));
     bufferBuilder.writeString("Hello");
 
-    expect(bufferBuilder.build()).toStrictEqual(Buffer.from("Hello"));
-    expect(bufferBuilder).toHaveLength(5);
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.from("ÿHello", "binary"),
+    );
+    expect(bufferBuilder).toHaveLength(6);
   });
 
   const writeLengthPrefixedLETests = [
     ["null", null, TEST_STRING_LENGTH],
     ["undefined", undefined, TEST_STRING_LENGTH],
     ["empty", TEST_STRING_EMPTY, TEST_STRING_LENGTH],
+    ["binary buffer", TEST_BINARY_BUFFER, TEST_BINARY_BUFFER_LENGTH_LE],
     ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_LENGTH],
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_LENGTH],
     ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_LENGTH],
@@ -173,7 +181,10 @@ describe("class BufferBuilder", () => {
   );
 
   const writeLengthPrefixedBETests = [
+    ["null", null, TEST_STRING_LENGTH],
+    ["undefined", undefined, TEST_STRING_LENGTH],
     ["empty", TEST_STRING_EMPTY, TEST_STRING_LENGTH],
+    ["binary buffer", TEST_BINARY_BUFFER, TEST_BINARY_BUFFER_LENGTH_BE],
     ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_LENGTH_BE],
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_LENGTH_BE],
     ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_LENGTH_BE],
@@ -201,6 +212,7 @@ describe("class BufferBuilder", () => {
     ["null", null, TEST_STRING_MULTIBYTE],
     ["undefined", undefined, TEST_STRING_MULTIBYTE],
     ["empty", TEST_STRING_EMPTY, TEST_STRING_MULTIBYTE],
+    ["binary buffer", TEST_BINARY_BUFFER, TEST_BINARY_BUFFER_MULTIBYTE],
     ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_MULTIBYTE],
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_MULTIBYTE],
     ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_MULTIBYTE],
@@ -229,10 +241,13 @@ describe("class BufferBuilder", () => {
 
     bufferBuilder.writeNullTerminatedString(null);
     bufferBuilder.writeNullTerminatedString(undefined);
+    bufferBuilder.writeNullTerminatedString(Buffer.from("ÿ", "binary"));
     bufferBuilder.writeNullTerminatedString("Hello");
 
-    expect(bufferBuilder.build()).toStrictEqual(Buffer.from("\0\0Hello\0"));
-    expect(bufferBuilder).toHaveLength(8);
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.from("\0\0ÿ\0Hello\0", "binary"),
+    );
+    expect(bufferBuilder).toHaveLength(10);
   });
 
   it("method push()", () => {

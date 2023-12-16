@@ -24,6 +24,17 @@ export const TEST_FLOAT = 123.456_001_281_738_28;
 export const TEST_FLOAT_BUFFER_LE = Buffer.from([121, 233, 246, 66]);
 export const TEST_FLOAT_BUFFER_BE = Buffer.from([66, 246, 233, 121]);
 
+export const TEST_BINARY_BUFFER = Buffer.from("ÿ", "binary");
+export const TEST_BINARY_BUFFER_LENGTH_LE = Buffer.from(
+  "\u0001\0\0\0ÿ",
+  "binary",
+);
+export const TEST_BINARY_BUFFER_LENGTH_BE = Buffer.from(
+  "\0\0\0\u0001ÿ",
+  "binary",
+);
+export const TEST_BINARY_BUFFER_MULTIBYTE = Buffer.from("\u0001ÿ", "binary");
+
 export const TEST_STRING_EMPTY = "";
 export const TEST_STRING_LENGTH = Buffer.from([0, 0, 0, 0]);
 export const TEST_STRING_MULTIBYTE = Buffer.from([0]);

@@ -124,7 +124,7 @@ export class BufferBuilder {
     this.inLength += 4;
   }
 
-  public writeString(value: string | null | undefined) {
+  public writeString(value: Buffer | string | null | undefined) {
     if (value !== null && value !== undefined && value.length > 0) {
       this.inBuffers.push(Buffer.from(value));
       this.inLength += value.length;
@@ -132,7 +132,7 @@ export class BufferBuilder {
   }
 
   public writeLengthPrefixedString(
-    value: string | null | undefined,
+    value: Buffer | string | null | undefined,
     bytes: 1 | 2 | 4 = 4,
   ) {
     if (value === null || value === undefined || value.length === 0) {
@@ -149,7 +149,9 @@ export class BufferBuilder {
     this.inLength += buffer.length;
   }
 
-  public writeMultibytePrefixedString(value: string | null | undefined) {
+  public writeMultibytePrefixedString(
+    value: Buffer | string | null | undefined,
+  ) {
     if (value === null || value === undefined || value.length === 0) {
       this.writeByte(0);
 
@@ -176,14 +178,14 @@ export class BufferBuilder {
     this.inBuffers.push(buffer);
   }
 
-  public writeNullTerminatedString(value: string | null | undefined) {
+  public writeNullTerminatedString(value: Buffer | string | null | undefined) {
     if (value === null || value === undefined) {
       this.writeByte(0);
 
       return;
     }
 
-    this.inBuffers.push(Buffer.from(value));
+    this.inBuffers.push(value instanceof Buffer ? value : Buffer.from(value));
     this.writeByte(0);
 
     this.inLength += value.length;
