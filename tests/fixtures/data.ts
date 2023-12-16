@@ -1,5 +1,8 @@
 export const TEST_INT8 = 123;
-export const TEST_INT8_BUFFER_LE = Buffer.from([123]);
+export const TEST_INT8_BUFFER = Buffer.from([123]);
+
+export const TEST_INT8_NEGATIVE = -123;
+export const TEST_INT8_NEGATIVE_BUFFER = Buffer.from([133]);
 
 export const TEST_INT16 = 123;
 export const TEST_INT16_BUFFER_LE = Buffer.from([123, 0]);

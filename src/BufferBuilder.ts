@@ -25,12 +25,7 @@ export class BufferBuilder {
   }
 
   public writeByte(value: number) {
-    const buffer = Buffer.allocUnsafe(1);
-
-    buffer.writeUInt8(value);
-
-    this.inBuffers.push(buffer);
-    this.inLength++;
+    this.writeUnsignedInt8(value);
   }
 
   public writeInt(value: number, bytes: 1 | 2 | 4 = 4) {
@@ -57,6 +52,24 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += bytes;
+  }
+
+  public writeInt8(value: number) {
+    const buffer = Buffer.allocUnsafe(1);
+
+    buffer.writeInt8(value);
+
+    this.inBuffers.push(buffer);
+    this.inLength++;
+  }
+
+  public writeUnsignedInt8(value: number) {
+    const buffer = Buffer.allocUnsafe(1);
+
+    buffer.writeUInt8(value);
+
+    this.inBuffers.push(buffer);
+    this.inLength++;
   }
 
   public writeInt16(value: number) {
