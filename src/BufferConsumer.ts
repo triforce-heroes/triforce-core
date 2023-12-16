@@ -45,6 +45,18 @@ export class BufferConsumer {
   }
 
   public readByte(): number {
+    return this.readUnsignedInt8();
+  }
+
+  public readInt8(): number {
+    const value = this.pBuffer.readInt8(this.pByteOffset);
+
+    this.pByteOffset++;
+
+    return value;
+  }
+
+  public readUnsignedInt8(): number {
     const value = this.pBuffer.readUInt8(this.pByteOffset);
 
     this.pByteOffset++;
@@ -66,8 +78,8 @@ export class BufferConsumer {
   public readUnsignedInt16(): number {
     const value =
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readUIntLE(this.pByteOffset, 2)
-        : this.pBuffer.readUIntBE(this.pByteOffset, 2);
+        ? this.pBuffer.readUInt16LE(this.pByteOffset)
+        : this.pBuffer.readUInt16BE(this.pByteOffset);
 
     this.pByteOffset += 2;
 
@@ -77,8 +89,8 @@ export class BufferConsumer {
   public readInt32(): number {
     const value =
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readIntLE(this.pByteOffset, 4)
-        : this.pBuffer.readIntBE(this.pByteOffset, 4);
+        ? this.pBuffer.readInt32LE(this.pByteOffset)
+        : this.pBuffer.readInt32BE(this.pByteOffset);
 
     this.pByteOffset += 4;
 
@@ -88,8 +100,8 @@ export class BufferConsumer {
   public readUnsignedInt32(): number {
     const value =
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readUIntLE(this.pByteOffset, 4)
-        : this.pBuffer.readUIntBE(this.pByteOffset, 4);
+        ? this.pBuffer.readUInt32LE(this.pByteOffset)
+        : this.pBuffer.readUInt32BE(this.pByteOffset);
 
     this.pByteOffset += 4;
 

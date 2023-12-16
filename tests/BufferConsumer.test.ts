@@ -34,6 +34,13 @@ describe("class BufferConsumer", () => {
     expect(bufferConsumer.isConsumed()).toBeTruthy();
   });
 
+  it("method readInt8()", () => {
+    const bufferConsumer = new BufferConsumer(Buffer.from([100, 200]));
+
+    expect(bufferConsumer.readUnsignedInt8()).toStrictEqual(100);
+    expect(bufferConsumer.readInt8()).toStrictEqual(-56);
+  });
+
   const readLETests = [
     ["readByte", 0, 1, 1],
     ["readInt16", 0, 513, 2],
