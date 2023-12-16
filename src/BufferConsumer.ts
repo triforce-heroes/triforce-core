@@ -33,6 +33,18 @@ export class BufferConsumer {
     return true;
   }
 
+  public read(bytes?: number): Buffer {
+    const value =
+      bytes === undefined
+        ? this.pBuffer.subarray(this.pByteOffset)
+        : this.pBuffer.subarray(this.pByteOffset, this.pByteOffset + bytes);
+
+    this.pByteOffset =
+      bytes === undefined ? this.pBuffer.length : this.pByteOffset + bytes;
+
+    return value;
+  }
+
   public readByte(): number {
     const value = this.pBuffer.readUInt8(this.pByteOffset);
 

@@ -10,6 +10,7 @@ export declare class BufferConsumer {
     seek(byteOffset?: number): void;
     at(byteOffset?: number): number;
     atConsumable(value: number): boolean;
+    read(bytes?: number): Buffer;
     readByte(): number;
     readInt16(): number;
     readUnsignedInt16(): number;

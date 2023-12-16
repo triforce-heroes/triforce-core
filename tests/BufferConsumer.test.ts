@@ -22,6 +22,14 @@ import {
 } from "./fixtures/data.js";
 
 describe("class BufferConsumer", () => {
+  it("method read()", () => {
+    const bufferConsumer = new BufferConsumer(Buffer.from("Hello"));
+
+    expect(bufferConsumer.readString(2)).toStrictEqual("He");
+    expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from("ll"));
+    expect(bufferConsumer.read()).toStrictEqual(Buffer.from("o"));
+  });
+
   const readLETests = [
     ["readByte", 0, 1, 1],
     ["readInt16", 0, 513, 2],
