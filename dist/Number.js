@@ -1,0 +1,1 @@
+export function nextMultiple(t,e){return t%e==0?t:t+(e-t%e)}
