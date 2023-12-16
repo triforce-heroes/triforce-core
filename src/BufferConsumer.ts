@@ -40,7 +40,9 @@ export class BufferConsumer {
         : this.pBuffer.subarray(this.pByteOffset, this.pByteOffset + bytes);
 
     this.pByteOffset =
-      bytes === undefined ? this.pBuffer.length : this.pByteOffset + bytes;
+      bytes === undefined
+        ? this.pBuffer.length
+        : Math.min(this.pByteOffset + bytes, this.pBuffer.length);
 
     return value;
   }

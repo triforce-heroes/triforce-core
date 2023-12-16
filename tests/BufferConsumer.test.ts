@@ -27,7 +27,11 @@ describe("class BufferConsumer", () => {
 
     expect(bufferConsumer.readString(2)).toStrictEqual("He");
     expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from("ll"));
-    expect(bufferConsumer.read()).toStrictEqual(Buffer.from("o"));
+    expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from("o"));
+    expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from([]));
+    expect(bufferConsumer.isConsumed()).toBeTruthy();
+    expect(bufferConsumer.read()).toStrictEqual(Buffer.from([]));
+    expect(bufferConsumer.isConsumed()).toBeTruthy();
   });
 
   const readLETests = [
