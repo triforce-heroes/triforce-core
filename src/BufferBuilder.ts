@@ -33,6 +33,32 @@ export class BufferBuilder {
     this.inLength++;
   }
 
+  public writeInt(value: number, bytes: 1 | 2 | 4 = 4) {
+    const buffer = Buffer.allocUnsafe(bytes);
+
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeIntLE(value, 0, bytes);
+    } else {
+      buffer.writeIntBE(value, 0, bytes);
+    }
+
+    this.inBuffers.push(buffer);
+    this.inLength += bytes;
+  }
+
+  public writeUnsignedInt(value: number, bytes: 1 | 2 | 4 = 4) {
+    const buffer = Buffer.allocUnsafe(bytes);
+
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeUIntLE(value, 0, bytes);
+    } else {
+      buffer.writeUIntBE(value, 0, bytes);
+    }
+
+    this.inBuffers.push(buffer);
+    this.inLength += bytes;
+  }
+
   public writeInt16(value: number) {
     const buffer = Buffer.allocUnsafe(2);
 
@@ -97,20 +123,14 @@ export class BufferBuilder {
     bytes: 1 | 2 | 4 = 4,
   ) {
     if (value === null || value === undefined || value.length === 0) {
-      this.write(bytes);
+      this.writeUnsignedInt(0, bytes);
 
       return;
     }
 
-    const buffer = Buffer.allocUnsafe(value.length + bytes);
+    this.writeUnsignedInt(value.length, bytes);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeIntLE(value.length, 0, bytes);
-    } else {
-      buffer.writeIntBE(value.length, 0, bytes);
-    }
-
-    buffer.write(value, bytes);
+    const buffer = Buffer.from(value);
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;
@@ -150,8 +170,10 @@ export class BufferBuilder {
       return;
     }
 
-    this.inBuffers.push(Buffer.from(`${value}\0`));
-    this.inLength += value.length + 1;
+    this.inBuffers.push(Buffer.from(value));
+    this.writeByte(0);
+
+    this.inLength += value.length;
   }
 
   public writeFloat(value: number) {

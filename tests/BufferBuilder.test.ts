@@ -47,6 +47,49 @@ import {
 } from "./fixtures/data.js";
 
 describe("class BufferBuilder", () => {
+  const writeIntTests = [
+    [0, 1, Buffer.from([0])],
+    [0, 2, Buffer.from([0, 0])],
+    [0, 4, Buffer.from([0, 0, 0, 0])],
+    [127, 1, Buffer.from([127])],
+    [-128, 1, Buffer.from([-128])],
+    [255, 2, Buffer.from([255, 0])],
+    [255, 4, Buffer.from([255, 0, 0, 0])],
+  ] as const;
+
+  it.each(writeIntTests)(
+    "method writeInt(%j, %j)",
+    (value, bytes, expected) => {
+      const bufferBuilder = new BufferBuilder();
+
+      bufferBuilder.writeInt(value, bytes);
+
+      expect(bufferBuilder.build()).toStrictEqual(expected);
+      expect(bufferBuilder).toHaveLength(expected.length);
+    },
+  );
+
+  const writeUnsignedIntTests = [
+    [0, 1, Buffer.from([0])],
+    [0, 2, Buffer.from([0, 0])],
+    [0, 4, Buffer.from([0, 0, 0, 0])],
+    [255, 1, Buffer.from([255])],
+    [255, 2, Buffer.from([255, 0])],
+    [255, 4, Buffer.from([255, 0, 0, 0])],
+  ] as const;
+
+  it.each(writeUnsignedIntTests)(
+    "method writeUnsignedInt(%j, %j)",
+    (value, bytes, expected) => {
+      const bufferBuilder = new BufferBuilder();
+
+      bufferBuilder.writeUnsignedInt(value, bytes);
+
+      expect(bufferBuilder.build()).toStrictEqual(expected);
+      expect(bufferBuilder).toHaveLength(expected.length);
+    },
+  );
+
   const writeIntLETests = [
     ["writeByte", TEST_INT8, TEST_INT8_BUFFER_LE],
     ["writeInt16", TEST_INT16, TEST_INT16_BUFFER_LE],
@@ -97,33 +140,6 @@ describe("class BufferBuilder", () => {
     expect(bufferBuilder).toHaveLength(5);
   });
 
-  const writeMultibytePrefixedTests = [
-    ["null", null, TEST_STRING_MULTIBYTE],
-    ["undefined", undefined, TEST_STRING_MULTIBYTE],
-    ["empty", TEST_STRING_EMPTY, TEST_STRING_MULTIBYTE],
-    ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_MULTIBYTE],
-    ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_MULTIBYTE],
-    ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_MULTIBYTE],
-    ["4000 bytes", TEST_STRING_4000_BYTES, TEST_STRING_4000_BYTES_MULTIBYTE],
-    [
-      "100_000 bytes",
-      TEST_STRING_100000_BYTES,
-      TEST_STRING_100000_BYTES_MULTIBYTE,
-    ],
-  ] as const;
-
-  it.each(writeMultibytePrefixedTests)(
-    "method writeMultibytePrefixedString(%s string)",
-    (_, input, output) => {
-      const bufferBuilder = new BufferBuilder();
-
-      bufferBuilder.writeMultibytePrefixedString(input);
-
-      expect(bufferBuilder.build()).toStrictEqual(output);
-      expect(bufferBuilder).toHaveLength(output.length);
-    },
-  );
-
   const writeLengthPrefixedLETests = [
     ["null", null, TEST_STRING_LENGTH],
     ["undefined", undefined, TEST_STRING_LENGTH],
@@ -170,6 +186,33 @@ describe("class BufferBuilder", () => {
       const bufferBuilder = new BufferBuilder(ByteOrder.BIG_ENDIAN);
 
       bufferBuilder.writeLengthPrefixedString(input);
+
+      expect(bufferBuilder.build()).toStrictEqual(output);
+      expect(bufferBuilder).toHaveLength(output.length);
+    },
+  );
+
+  const writeMultibytePrefixedTests = [
+    ["null", null, TEST_STRING_MULTIBYTE],
+    ["undefined", undefined, TEST_STRING_MULTIBYTE],
+    ["empty", TEST_STRING_EMPTY, TEST_STRING_MULTIBYTE],
+    ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_MULTIBYTE],
+    ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_MULTIBYTE],
+    ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_MULTIBYTE],
+    ["4000 bytes", TEST_STRING_4000_BYTES, TEST_STRING_4000_BYTES_MULTIBYTE],
+    [
+      "100_000 bytes",
+      TEST_STRING_100000_BYTES,
+      TEST_STRING_100000_BYTES_MULTIBYTE,
+    ],
+  ] as const;
+
+  it.each(writeMultibytePrefixedTests)(
+    "method writeMultibytePrefixedString(%s string)",
+    (_, input, output) => {
+      const bufferBuilder = new BufferBuilder();
+
+      bufferBuilder.writeMultibytePrefixedString(input);
 
       expect(bufferBuilder.build()).toStrictEqual(output);
       expect(bufferBuilder).toHaveLength(output.length);
