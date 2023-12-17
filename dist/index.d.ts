@@ -3,6 +3,7 @@ export * from "./BufferBuilder.js";
 export * from "./BufferConsumer.js";
 export * from "./Console.js";
 export * from "./ConsoleHexadecimal.js";
+export * from "./Debugger.js";
 export * from "./Number.js";
 export * from "./Path.js";
 export * from "./types/ByteOrder.js";
