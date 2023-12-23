@@ -1,6 +1,7 @@
 export * from "./Array.js";
 export * from "./BufferBuilder.js";
 export * from "./BufferConsumer.js";
+export * from "./Cache.js";
 export * from "./Console.js";
 export * from "./ConsoleHexadecimal.js";
 export * from "./Debugger.js";

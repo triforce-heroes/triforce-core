@@ -54,24 +54,31 @@ import {
 
 describe("class BufferBuilder", () => {
   const writeIntTests = [
-    [0, 1, Buffer.from([0])],
-    [0, 2, Buffer.from([0, 0])],
-    [0, 4, Buffer.from([0, 0, 0, 0])],
-    [127, 1, Buffer.from([127])],
-    [-128, 1, Buffer.from([-128])],
-    [255, 2, Buffer.from([255, 0])],
-    [255, 4, Buffer.from([255, 0, 0, 0])],
+    [0, 1, Buffer.from([0]), Buffer.from([0])],
+    [0, 2, Buffer.from([0, 0]), Buffer.from([0, 0])],
+    [0, 4, Buffer.from([0, 0, 0, 0]), Buffer.from([0, 0, 0, 0])],
+    [127, 1, Buffer.from([127]), Buffer.from([127])],
+    [-128, 1, Buffer.from([-128]), Buffer.from([-128])],
+    [255, 2, Buffer.from([255, 0]), Buffer.from([0, 255])],
+    [255, 4, Buffer.from([255, 0, 0, 0]), Buffer.from([0, 0, 0, 255])],
   ] as const;
 
   it.each(writeIntTests)(
     "method writeInt(%j, %j)",
-    (value, bytes, expected) => {
+    (value, bytes, expected, expectedBE) => {
       const bufferBuilder = new BufferBuilder();
 
       bufferBuilder.writeInt(value, bytes);
 
       expect(bufferBuilder.build()).toStrictEqual(expected);
       expect(bufferBuilder).toHaveLength(expected.length);
+
+      const bufferBuilderBE = new BufferBuilder(ByteOrder.BIG_ENDIAN);
+
+      bufferBuilderBE.writeInt(value, bytes);
+
+      expect(bufferBuilderBE.build()).toStrictEqual(expectedBE);
+      expect(bufferBuilderBE).toHaveLength(expectedBE.length);
     },
   );
 

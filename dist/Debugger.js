@@ -1,1 +1,1 @@
-export function debugCommander(e,r){e.exitOverride(),e.configureOutput({writeOut:()=>{},writeErr:()=>{}}),e.parse(["node","dummy.js",...r])}
+export function debugCommander(e,r){e.exitOverride(),e.configureOutput({writeOut:Function,writeErr:Function}),e.parse(["node","dummy.js",...r])}
