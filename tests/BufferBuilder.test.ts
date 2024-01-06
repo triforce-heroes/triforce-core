@@ -284,4 +284,33 @@ describe("class BufferBuilder", () => {
     expect(bufferBuilder.build()).toStrictEqual(bufferHello);
     expect(bufferBuilder).toHaveLength(bufferHello.length);
   });
+
+  const padSamples = [
+    ["Hello", "Hello\0\0\0", 8],
+    ["Hello", "Hello\x01\x01\x01", 8, "\x01"],
+    ["Hello", "HelloPAD", 8, "PADDING"],
+    ["Hello", "Hello", 5, "WORLD"],
+    ["Hello", "HelloWORLD", 5, "WORLD", true],
+    ["HelloWorld", "HelloWorld\0\0\0\0\0\0", 8],
+  ] as const;
+
+  it.each(padSamples)(
+    "method pad()",
+    (
+      input: string,
+      output: string,
+      length: number,
+      kind?: string,
+      forced?: boolean,
+    ) => {
+      const bufferBuilder = new BufferBuilder();
+
+      bufferBuilder.writeString(input);
+      bufferBuilder.pad(length, kind, forced);
+
+      expect(bufferBuilder.build()).toStrictEqual(
+        Buffer.from(output, "binary"),
+      );
+    },
+  );
 });

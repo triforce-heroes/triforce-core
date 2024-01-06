@@ -15,6 +15,17 @@ export class BufferBuilder {
     return Buffer.concat(this.inBuffers);
   }
 
+  public pad(length: number, kind = "\0", forced = false) {
+    if (!forced && this.inLength % length === 0) {
+      return;
+    }
+
+    const buffer = Buffer.alloc(length - (this.inLength % length), kind);
+
+    this.inBuffers.push(buffer);
+    this.inLength += buffer.length;
+  }
+
   public write(count: number, word = "\0") {
     if (count !== 0) {
       const buffer = Buffer.from(word.repeat(count));

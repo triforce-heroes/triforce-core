@@ -7,6 +7,7 @@ export declare class BufferBuilder {
     constructor(pByteOrder?: ByteOrder);
     get length(): number;
     build(): Buffer;
+    pad(length: number, kind?: string, forced?: boolean): void;
     write(count: number, word?: string): void;
     writeByte(value: number): void;
     writeInt(value: number, bytes?: 1 | 2 | 4): void;
