@@ -22,7 +22,7 @@ export declare class BufferConsumer {
     readString(bytes: number): string;
     readLengthPrefixedString(bytes?: 1 | 2 | 4): string;
     readMultibytePrefixedString(): string;
-    readNullTerminatedString(): string;
+    readNullTerminatedString(bufferEncoding?: "utf8" | "utf16le"): string;
     back(bytes?: number): this;
     skip(bytes?: number): this;
     rest(): Buffer;

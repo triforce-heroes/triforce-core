@@ -119,13 +119,40 @@ describe("class BufferConsumer", () => {
     expect(bufferConsumer.isConsumed()).toBeTruthy();
   });
 
-  it("method readNullTerminatedString()", () => {
-    const bufferConsumer = new BufferConsumer(Buffer.from(".\0..\0example"));
+  const readNullTerminatedStringTests = [
+    ["", []],
+    ["\0", [""]],
+    [".\0..\0example", [".", "..", "example"]],
+    ["", [], "utf16le"],
+    ["\0", [""], "utf16le"],
+    ["\0\0", [""], "utf16le"],
+    ["\0\0H\0e\0l\0l\0o\0", ["", "Hello"], "utf16le"],
+    ["\0\0H\0e\0l\0l\0o\0\0", ["", "Hello"], "utf16le"],
+    ["\0\0H\0e\0l\0l\0o\0\0\0", ["", "Hello"], "utf16le"],
+    ["H\0e\0l\0l\0o\0", ["Hello"], "utf16le"],
+    ["H\0e\0l\0l\0o\0\0\0", ["Hello"], "utf16le"],
+    ["H\0e\0l\0l\0o\0\0\0W\0o\0r\0l\0d\0\0\0", ["Hello", "World"], "utf16le"],
+  ] as const;
 
-    expect(bufferConsumer.readNullTerminatedString()).toStrictEqual(".");
-    expect(bufferConsumer.readNullTerminatedString()).toStrictEqual("..");
-    expect(bufferConsumer.readNullTerminatedString()).toStrictEqual("example");
-  });
+  it.each(readNullTerminatedStringTests)(
+    "method readNullTerminatedString(%j)",
+    (
+      input: string,
+      outputs: Readonly<string[]>,
+      encoding?: "utf8" | "utf16le",
+    ) => {
+      expect.assertions(outputs.length);
+
+      const bufferConsumer = new BufferConsumer(Buffer.from(input));
+      let outputIndex = 0;
+
+      while (!bufferConsumer.isConsumed()) {
+        expect(bufferConsumer.readNullTerminatedString(encoding)).toStrictEqual(
+          outputs[outputIndex++],
+        );
+      }
+    },
+  );
 
   const readMultibyteTests = [
     ["empty", TEST_STRING_EMPTY, TEST_STRING_MULTIBYTE],

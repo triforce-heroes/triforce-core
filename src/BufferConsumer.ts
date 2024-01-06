@@ -173,19 +173,25 @@ export class BufferConsumer {
     return bufferString;
   }
 
-  public readNullTerminatedString(): string {
+  public readNullTerminatedString(
+    bufferEncoding: "utf8" | "utf16le" = "utf8",
+  ): string {
     const offset = this.pByteOffset;
-    const nullOffset = this.pBuffer.indexOf("\0", this.pByteOffset);
+    const nullOffset = this.pBuffer.indexOf(
+      "\0",
+      this.pByteOffset,
+      bufferEncoding,
+    );
 
     if (nullOffset === -1) {
       this.pByteOffset = this.pBuffer.length;
 
-      return this.pBuffer.subarray(offset).toString("utf8");
+      return this.pBuffer.subarray(offset).toString(bufferEncoding);
     }
 
-    this.pByteOffset = nullOffset + 1;
+    this.pByteOffset = nullOffset + (bufferEncoding === "utf16le" ? 2 : 1);
 
-    return this.pBuffer.subarray(offset, nullOffset).toString("utf8");
+    return this.pBuffer.subarray(offset, nullOffset).toString(bufferEncoding);
   }
 
   public back(bytes = 1) {
