@@ -288,6 +288,7 @@ describe("class BufferBuilder", () => {
   const padSamples = [
     ["Hello", "Hello\0\0\0", 8],
     ["Hello", "Hello\x01\x01\x01", 8, "\x01"],
+    ["Hello", "Hello\xAB\xAB\xAB", 8, "\xAB"],
     ["Hello", "HelloPAD", 8, "PADDING"],
     ["Hello", "Hello", 5, "WORLD"],
     ["Hello", "HelloWORLD", 5, "WORLD", true],

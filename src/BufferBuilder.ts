@@ -20,7 +20,11 @@ export class BufferBuilder {
       return;
     }
 
-    const buffer = Buffer.alloc(length - (this.inLength % length), kind);
+    const buffer = Buffer.alloc(
+      length - (this.inLength % length),
+      kind,
+      "binary",
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;
