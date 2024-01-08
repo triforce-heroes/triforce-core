@@ -92,11 +92,11 @@ export function printHexadecimal(
     const bufferDigits = buffer.subarray(i, i + 16);
 
     for (const bufferDigit of bufferDigits) {
-      hexadecimals += `${bufferDigit
+      hexadecimals += bufferDigit
         .toString(16)
         .toUpperCase()
         .padStart(2, "0")
-        .padStart(padding, " ")}`;
+        .padStart(padding, " ");
 
       characters +=
         (bufferDigit > 31 && bufferDigit < 127) ||

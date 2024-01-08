@@ -25,7 +25,7 @@ describe("class BufferConsumer", () => {
   it("method read()", () => {
     const bufferConsumer = new BufferConsumer(Buffer.from("Hello"));
 
-    expect(bufferConsumer.readString(2)).toStrictEqual("He");
+    expect(bufferConsumer.readString(2)).toBe("He");
     expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from("ll"));
     expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from("o"));
     expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from([]));
@@ -37,8 +37,8 @@ describe("class BufferConsumer", () => {
   it("method readInt8()", () => {
     const bufferConsumer = new BufferConsumer(Buffer.from([100, 200]));
 
-    expect(bufferConsumer.readUnsignedInt8()).toStrictEqual(100);
-    expect(bufferConsumer.readInt8()).toStrictEqual(-56);
+    expect(bufferConsumer.readUnsignedInt8()).toBe(100);
+    expect(bufferConsumer.readInt8()).toBe(-56);
   });
 
   const readLETests = [
@@ -99,11 +99,11 @@ describe("class BufferConsumer", () => {
 
     bufferConsumer.skip(16);
 
-    expect(bufferConsumer.readString(4)).toStrictEqual("Test");
+    expect(bufferConsumer.readString(4)).toBe("Test");
 
     bufferConsumer.seek(16);
 
-    expect(bufferConsumer.readString(4)).toStrictEqual("Test");
+    expect(bufferConsumer.readString(4)).toBe("Test");
     expect(bufferConsumer.buffer).toStrictEqual(TEST_BUFFER_SAMPLE_LE);
   });
 
@@ -112,11 +112,38 @@ describe("class BufferConsumer", () => {
 
     bufferConsumer.skip(16);
 
-    expect(bufferConsumer.readNullTerminatedString()).toStrictEqual("Test");
+    expect(bufferConsumer.readNullTerminatedString()).toBe("Test");
     expect(bufferConsumer.isConsumed()).toBeFalsy();
     expect(bufferConsumer.rest()).toStrictEqual(Buffer.from("TestEnd"));
-    expect(bufferConsumer.readNullTerminatedString()).toStrictEqual("TestEnd");
+    expect(bufferConsumer.readNullTerminatedString()).toBe("TestEnd");
     expect(bufferConsumer.isConsumed()).toBeTruthy();
+  });
+
+  it("method skipPadding()", () => {
+    const bufferConsumer = new BufferConsumer(
+      Buffer.from("Hello\0\0\0\0\0\0\0\0\0\0\0World"),
+    );
+
+    expect(bufferConsumer.readString(5)).toBe("Hello");
+    expect(bufferConsumer.byteOffset).toBe(5);
+
+    bufferConsumer.skipPadding(8);
+
+    expect(bufferConsumer.byteOffset).toBe(8);
+
+    bufferConsumer.skipPadding(8);
+
+    expect(bufferConsumer.byteOffset).toBe(8);
+
+    bufferConsumer.skipPadding(8, true);
+
+    expect(bufferConsumer.byteOffset).toBe(16);
+    expect(bufferConsumer.readString(5)).toBe("World");
+    expect(bufferConsumer.byteOffset).toBe(21);
+
+    bufferConsumer.skipPadding(8);
+
+    expect(bufferConsumer.byteOffset).toBe(21);
   });
 
   const readNullTerminatedStringTests = [
@@ -141,6 +168,7 @@ describe("class BufferConsumer", () => {
       outputs: Readonly<string[]>,
       encoding?: "utf8" | "utf16le",
     ) => {
+      // eslint-disable-next-line vitest/prefer-expect-assertions
       expect.assertions(outputs.length);
 
       const bufferConsumer = new BufferConsumer(Buffer.from(input));
@@ -182,18 +210,18 @@ describe("class BufferConsumer", () => {
     const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
     expect(bufferConsumer.atConsumable(0)).toBeFalsy();
-    expect(bufferConsumer.byteOffset).toStrictEqual(0);
+    expect(bufferConsumer.byteOffset).toBe(0);
 
     expect(bufferConsumer.atConsumable(1)).toBeTruthy();
-    expect(bufferConsumer.byteOffset).toStrictEqual(1);
+    expect(bufferConsumer.byteOffset).toBe(1);
 
-    expect(bufferConsumer.at(0)).toStrictEqual(2);
-    expect(bufferConsumer.at(1)).toStrictEqual(3);
-    expect(bufferConsumer.at(2)).toStrictEqual(4);
+    expect(bufferConsumer.at(0)).toBe(2);
+    expect(bufferConsumer.at(1)).toBe(3);
+    expect(bufferConsumer.at(2)).toBe(4);
 
     bufferConsumer.back();
 
-    expect(bufferConsumer.at(2)).toStrictEqual(3);
+    expect(bufferConsumer.at(2)).toBe(3);
   });
 
   it("method consumer()", () => {
@@ -203,27 +231,27 @@ describe("class BufferConsumer", () => {
       ByteOrder.BIG_ENDIAN,
     );
 
-    expect(bufferConsumer.byteOffset).toStrictEqual(0);
-    expect(bufferConsumer.readUnsignedInt16()).toStrictEqual(0x01_02);
+    expect(bufferConsumer.byteOffset).toBe(0);
+    expect(bufferConsumer.readUnsignedInt16()).toBe(0x01_02);
     expect(bufferConsumer.isConsumed()).toBeFalsy();
 
     const subConsumerA = bufferConsumer.consumer(2);
 
-    expect(subConsumerA.byteOffset).toStrictEqual(0);
-    expect(subConsumerA.readUnsignedInt16()).toStrictEqual(0x03_04);
+    expect(subConsumerA.byteOffset).toBe(0);
+    expect(subConsumerA.readUnsignedInt16()).toBe(0x03_04);
     expect(subConsumerA.isConsumed()).toBeTruthy();
 
-    expect(bufferConsumer.byteOffset).toStrictEqual(4);
-    expect(bufferConsumer.readUnsignedInt16()).toStrictEqual(0x05_06);
+    expect(bufferConsumer.byteOffset).toBe(4);
+    expect(bufferConsumer.readUnsignedInt16()).toBe(0x05_06);
     expect(bufferConsumer.isConsumed()).toBeFalsy();
 
     const subConsumerB = bufferConsumer.consumer();
 
-    expect(subConsumerB.byteOffset).toStrictEqual(0);
-    expect(subConsumerB.readUnsignedInt16()).toStrictEqual(0x07_08);
+    expect(subConsumerB.byteOffset).toBe(0);
+    expect(subConsumerB.readUnsignedInt16()).toBe(0x07_08);
     expect(subConsumerB.isConsumed()).toBeTruthy();
 
-    expect(bufferConsumer.byteOffset).toStrictEqual(8);
+    expect(bufferConsumer.byteOffset).toBe(8);
     expect(bufferConsumer.isConsumed()).toBeTruthy();
   });
 });

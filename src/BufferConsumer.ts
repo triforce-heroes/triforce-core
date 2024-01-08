@@ -206,6 +206,24 @@ export class BufferConsumer {
     return this;
   }
 
+  public skipPadding(padding: number, forced = false) {
+    const paddingDifference = this.pByteOffset % padding;
+
+    if (paddingDifference !== 0) {
+      this.pByteOffset = Math.min(
+        this.buffer.length,
+        this.pByteOffset + (padding - paddingDifference),
+      );
+    } else if (forced) {
+      this.pByteOffset = Math.min(
+        this.buffer.length,
+        this.pByteOffset + padding,
+      );
+    }
+
+    return this;
+  }
+
   public rest(): Buffer {
     return this.pBuffer.subarray(this.pByteOffset);
   }
