@@ -7,5 +7,6 @@ export * from "./ConsoleHexadecimal.js";
 export * from "./Debugger.js";
 export * from "./Number.js";
 export * from "./Path.js";
+export * from "./Translator.js";
 export * from "./types/ByteOrder.js";
 export * from "./types/PrintHexadecimalPreset.js";
