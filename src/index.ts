@@ -1,3 +1,6 @@
+export * from "./AWS/S3.js";
+export * from "./AWS/DDB.js";
+export * from "./AWS/DDBQueryBuilder.js";
 export * from "./Array.js";
 export * from "./BufferBuilder.js";
 export * from "./BufferConsumer.js";

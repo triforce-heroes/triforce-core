@@ -1,1 +1,1 @@
-export function unique(...e){return[...new Set(e)]}
+export function unique(...e){return[...new Set(e)]}export function chunk(e,n){let t=[],u=0;for(;u<e.length;)t.push(e.slice(u,u+n)),u+=n;return t}
