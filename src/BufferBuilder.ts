@@ -141,8 +141,10 @@ export class BufferBuilder {
 
   public writeString(value: Buffer | string | null | undefined) {
     if (value !== null && value !== undefined && value.length > 0) {
-      this.inBuffers.push(Buffer.from(value));
-      this.inLength += value.length;
+      const buffer = Buffer.from(value);
+
+      this.inBuffers.push(buffer);
+      this.inLength += buffer.length;
     }
   }
 
@@ -200,10 +202,12 @@ export class BufferBuilder {
       return;
     }
 
-    this.inBuffers.push(value instanceof Buffer ? value : Buffer.from(value));
-    this.writeByte(0);
+    const buffer = value instanceof Buffer ? value : Buffer.from(value);
 
-    this.inLength += value.length;
+    this.inBuffers.push(buffer);
+    this.inLength += buffer.length;
+
+    this.writeByte(0);
   }
 
   public writeFloat(value: number) {

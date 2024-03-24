@@ -285,6 +285,42 @@ describe("class BufferBuilder", () => {
     expect(bufferBuilder).toHaveLength(bufferHello.length);
   });
 
+  it("method writeString() with utf-8 data", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeString("Olá!");
+
+    expect(bufferBuilder.build()).toHaveLength(5);
+    expect(bufferBuilder).toHaveLength(5);
+  });
+
+  it("method writeLengthPrefixedString() with utf-8 data", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeLengthPrefixedString("Olá!", 1);
+
+    expect(bufferBuilder.build()).toHaveLength(6);
+    expect(bufferBuilder).toHaveLength(6);
+  });
+
+  it("method writeMultibytePrefixedString() with utf-8 data", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeMultibytePrefixedString("Olá!");
+
+    expect(bufferBuilder.build()).toHaveLength(6);
+    expect(bufferBuilder).toHaveLength(6);
+  });
+
+  it("method writeNullTerminatedString() with utf-8 data", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeNullTerminatedString("Olá!");
+
+    expect(bufferBuilder.build()).toHaveLength(6);
+    expect(bufferBuilder).toHaveLength(6);
+  });
+
   const padSamples = [
     ["Hello", "Hello\0\0\0", 8],
     ["Hello", "Hello\u0001\u0001\u0001", 8, "\u0001"],
