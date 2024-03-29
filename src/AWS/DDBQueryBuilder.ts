@@ -59,7 +59,9 @@ export class DDBQueryBuilder<T> {
       ...this.options,
       TableName: this.tableName,
       KeyConditionExpression: this.keyConditionExpressions.join(" AND "),
-      ProjectionExpression: this.projections.join(","),
+      ...(this.projections.length === 0
+        ? undefined
+        : { ProjectionExpression: this.projections.join(",") }),
       ExpressionAttributeNames: this.attributeNames,
       ExpressionAttributeValues: marshall(this.attributeValues),
     };
@@ -81,7 +83,7 @@ export class DDBQueryBuilder<T> {
   }
 
   private newAttributeName(value: string) {
-    const name = `#${this.namesIndex++}`;
+    const name = `#${String(this.namesIndex++)}`;
 
     this.attributeNames[name] = value;
 
@@ -89,7 +91,7 @@ export class DDBQueryBuilder<T> {
   }
 
   private newAttributeValue(value: number | string) {
-    const name = `:${this.namesIndex++}`;
+    const name = `:${String(this.namesIndex++)}`;
 
     this.attributeValues[name] = value;
 
@@ -113,7 +115,7 @@ export class DDBQueryBuilder<T> {
     } else {
       const value = this.newAttributeValue(args[1]!);
 
-      this.keyConditionExpressions.push(`${keyName}${args[0]}${value}`);
+      this.keyConditionExpressions.push(`${keyName}${String(args[0])}${value}`);
     }
   }
 }
