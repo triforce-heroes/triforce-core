@@ -127,3 +127,19 @@ export async function DDBBatchWrite(
     });
   }
 }
+
+export async function DDBBatchDelete(
+  table: string,
+  entries: object[],
+  chunkSize = 25,
+) {
+  for (const chunkEntries of chunk(entries, chunkSize)) {
+    await DDB().batchWriteItem({
+      RequestItems: {
+        [table]: chunkEntries.map((entry) => ({
+          DeleteRequest: { Key: marshall(entry) },
+        })),
+      },
+    });
+  }
+}
