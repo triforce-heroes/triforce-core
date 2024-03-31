@@ -1,0 +1,1 @@
+export async function secureHash(e){let t=Buffer.from(await crypto.subtle.digest("SHA-256",e));return 65536*t.readUInt32LE()+t.readUInt16LE(4)}
