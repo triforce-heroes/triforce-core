@@ -1,27 +1,20 @@
 export const supportedLanguages = [
-  "ch_tw",
-  "ch",
+  "zh",
   "de",
-  "en_us",
   "en",
-  "es_us",
   "es",
-  "fr_us",
   "fr",
   "it",
-  "jp",
+  "ja",
   "kr",
   "nl",
-  "pt_br",
   "pt",
 ];
 
 type SupportedLanguages = (typeof supportedLanguages)[number];
 
 export interface TranslateResponse {
-  success: boolean;
-  time: number;
-  data: { message: string | null };
+  translatedText: string;
 }
 
 export async function translate(
@@ -29,8 +22,6 @@ export async function translate(
   sourceLanguage: SupportedLanguages,
   targetLanguage: SupportedLanguages,
   message: string,
-  respectCache = true,
-  forceRetry = false,
 ): Promise<string | null> {
   return fetch(`${hostname}/translate`, {
     method: "POST",
@@ -38,15 +29,9 @@ export async function translate(
     body: JSON.stringify({
       source: sourceLanguage,
       target: targetLanguage,
-      message,
-      ...(respectCache ? {} : { cache: false }),
-      ...(forceRetry ? { retry: true } : {}),
+      q: message,
     }),
   })
     .then(async (response) => response.json() as Promise<TranslateResponse>)
-    .then((response) =>
-      response.success && response.data.message !== null
-        ? response.data.message
-        : null,
-    );
+    .then((response) => response.translatedText);
 }

@@ -4,6 +4,6 @@ import { normalize } from "../src/Path.js";
 
 describe("path", () => {
   it("function normalize()", () => {
-    expect(normalize(".\\..\\src\\.\\Array.ts")).toBe("../src/Array.ts");
+    expect(normalize("./../src/./Array.ts")).toBe("../src/Array.ts");
   });
 });
