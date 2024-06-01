@@ -1,1 +1,0 @@
-export const supportedLanguages=["zh","de","en","es","fr","it","ja","kr","nl","pt"];export async function translate(t,e,n,a){return fetch(`${t}/translate`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({source:e,target:n,q:a})}).then(async t=>t.json()).then(t=>t.translatedText)}
