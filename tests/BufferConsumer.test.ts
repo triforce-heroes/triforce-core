@@ -165,7 +165,7 @@ describe("class BufferConsumer", () => {
     "method readNullTerminatedString(%j)",
     (
       input: string,
-      outputs: Readonly<string[]>,
+      outputs: readonly string[],
       encoding?: "utf8" | "utf16le",
     ) => {
       // eslint-disable-next-line vitest/prefer-expect-assertions
