@@ -174,7 +174,7 @@ export class BufferConsumer {
   }
 
   public readNullTerminatedString(
-    bufferEncoding: "utf8" | "utf16le" = "utf8",
+    bufferEncoding: "latin1" | "utf8" | "utf16le" = "utf8",
   ): string {
     const offset = this.pByteOffset;
     const nullOffset = this.pBuffer.indexOf(

@@ -150,6 +150,7 @@ describe("class BufferConsumer", () => {
     ["", []],
     ["\0", [""]],
     [".\0..\0example", [".", "..", "example"]],
+    [".\0..\0example", [".", "..", "example"], "latin1"],
     ["", [], "utf16le"],
     ["\0", [""], "utf16le"],
     ["\0\0", [""], "utf16le"],
@@ -166,7 +167,7 @@ describe("class BufferConsumer", () => {
     (
       input: string,
       outputs: readonly string[],
-      encoding?: "utf8" | "utf16le",
+      encoding?: "latin1" | "utf8" | "utf16le",
     ) => {
       // eslint-disable-next-line vitest/prefer-expect-assertions
       expect.assertions(outputs.length);

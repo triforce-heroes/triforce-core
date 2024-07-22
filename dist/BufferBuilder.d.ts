@@ -1,4 +1,3 @@
-/// <reference types="node" resolution-mode="require"/>
 import { ByteOrder } from "./types/ByteOrder.js";
 export declare class BufferBuilder {
     private readonly pByteOrder;

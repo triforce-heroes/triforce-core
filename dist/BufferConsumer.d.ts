@@ -1,4 +1,3 @@
-/// <reference types="node" resolution-mode="require"/>
 import { ByteOrder } from "./types/ByteOrder.js";
 export declare class BufferConsumer {
     private readonly pBuffer;
@@ -22,7 +21,7 @@ export declare class BufferConsumer {
     readString(bytes: number): string;
     readLengthPrefixedString(bytes?: 1 | 2 | 4): string;
     readMultibytePrefixedString(): string;
-    readNullTerminatedString(bufferEncoding?: "utf8" | "utf16le"): string;
+    readNullTerminatedString(bufferEncoding?: "latin1" | "utf8" | "utf16le"): string;
     back(bytes?: number): this;
     skip(bytes?: number): this;
     skipPadding(padding: number, forced?: boolean): this;
