@@ -2,7 +2,7 @@ import strip from "strip-ansi";
 import { describe, expect, it, vitest } from "vitest";
 
 import { printHexadecimal } from "../src/ConsoleHexadecimal.js";
-import { PrintHexadecimalPreset } from "../src/index.js";
+import { PrintHexadecimalPreset } from "../src/types/PrintHexadecimalPreset.js";
 
 describe("console", () => {
   const samples = [
