@@ -1,9 +1,12 @@
+import chalk from "chalk";
 import strip from "strip-ansi";
 import { describe, expect, it, vitest } from "vitest";
 
 import { fatal } from "../src/Console.js";
 
 describe("console", () => {
+  chalk.level = 2;
+
   const samples = [
     ["just message", undefined],
     ["message with details", 123],
@@ -27,8 +30,8 @@ describe("console", () => {
       let stderrMessage: Uint8Array | string | undefined;
       let exitCode: number | undefined;
 
-      vitest.spyOn(process, "exit").mockImplementationOnce((code?: number) => {
-        exitCode = code;
+      vitest.spyOn(process, "exit").mockImplementationOnce((code) => {
+        exitCode = Number(code);
 
         return undefined as never;
       });
