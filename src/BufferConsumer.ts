@@ -108,6 +108,28 @@ export class BufferConsumer {
     return value;
   }
 
+  public readInt64(): bigint {
+    const value =
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? this.pBuffer.readBigInt64LE(this.pByteOffset)
+        : this.pBuffer.readBigInt64BE(this.pByteOffset);
+
+    this.pByteOffset += 8;
+
+    return value;
+  }
+
+  public readUnsignedInt64(): bigint {
+    const value =
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? this.pBuffer.readBigUInt64LE(this.pByteOffset)
+        : this.pBuffer.readBigUInt64BE(this.pByteOffset);
+
+    this.pByteOffset += 8;
+
+    return value;
+  }
+
   public readFloat(): number {
     const value =
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN

@@ -7,6 +7,7 @@ import {
   TEST_BUFFER_SAMPLE_BE,
   TEST_BUFFER_SAMPLE_LE,
   TEST_FLOAT,
+  TEST_INT64,
   TEST_STRING_100000_BYTES,
   TEST_STRING_100000_BYTES_MULTIBYTE,
   TEST_STRING_127_BYTES,
@@ -93,6 +94,38 @@ describe("class BufferConsumer", () => {
       expect(bufferConsumer.byteOffset).toStrictEqual(thenOffset);
     },
   );
+
+  it("method readInt64() (LE)", () => {
+    const bufferConsumer = new BufferConsumer(TEST_INT64);
+
+    expect(bufferConsumer.readInt64()).toBe(506_097_522_914_230_528n);
+  });
+
+  it("method readUnsignedInt64() (LE)", () => {
+    const bufferConsumer = new BufferConsumer(TEST_INT64);
+
+    expect(bufferConsumer.readUnsignedInt64()).toBe(506_097_522_914_230_528n);
+  });
+
+  it("method readInt64() (BE)", () => {
+    const bufferConsumer = new BufferConsumer(
+      TEST_INT64,
+      undefined,
+      ByteOrder.BIG_ENDIAN,
+    );
+
+    expect(bufferConsumer.readInt64()).toBe(283_686_952_306_183n);
+  });
+
+  it("method readUnsignedInt64() (BE)", () => {
+    const bufferConsumer = new BufferConsumer(
+      TEST_INT64,
+      undefined,
+      ByteOrder.BIG_ENDIAN,
+    );
+
+    expect(bufferConsumer.readUnsignedInt64()).toBe(283_686_952_306_183n);
+  });
 
   it("method readString()", () => {
     const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);

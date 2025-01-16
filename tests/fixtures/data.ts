@@ -20,6 +20,8 @@ export const TEST_INT32_NEGATIVE = -123;
 export const TEST_INT32_NEGATIVE_BUFFER_LE = Buffer.from([133, 255, 255, 255]);
 export const TEST_INT32_NEGATIVE_BUFFER_BE = Buffer.from([255, 255, 255, 133]);
 
+export const TEST_INT64 = Buffer.from([0, 1, 2, 3, 4, 5, 6, 7]);
+
 export const TEST_FLOAT = 123.456_001_281_738_28;
 export const TEST_FLOAT_BUFFER_LE = Buffer.from([121, 233, 246, 66]);
 export const TEST_FLOAT_BUFFER_BE = Buffer.from([66, 246, 233, 121]);
