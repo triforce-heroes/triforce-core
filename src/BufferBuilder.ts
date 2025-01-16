@@ -139,6 +139,32 @@ export class BufferBuilder {
     this.inLength += 4;
   }
 
+  public writeInt64(value: bigint) {
+    const buffer = Buffer.allocUnsafe(8);
+
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeBigInt64LE(value);
+    } else {
+      buffer.writeBigInt64BE(value);
+    }
+
+    this.inBuffers.push(buffer);
+    this.inLength += 8;
+  }
+
+  public writeUnsignedInt64(value: bigint) {
+    const buffer = Buffer.allocUnsafe(8);
+
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+      buffer.writeBigUInt64LE(value);
+    } else {
+      buffer.writeBigUInt64BE(value);
+    }
+
+    this.inBuffers.push(buffer);
+    this.inLength += 8;
+  }
+
   public writeString(value: Buffer | string | null | undefined) {
     if (value !== null && value !== undefined && value.length > 0) {
       const buffer = Buffer.from(value);

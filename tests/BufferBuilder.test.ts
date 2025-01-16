@@ -23,6 +23,7 @@ import {
   TEST_INT32_NEGATIVE,
   TEST_INT32_NEGATIVE_BUFFER_BE,
   TEST_INT32_NEGATIVE_BUFFER_LE,
+  TEST_INT64,
   TEST_INT8,
   TEST_INT8_BUFFER,
   TEST_INT8_NEGATIVE,
@@ -143,6 +144,42 @@ describe("class BufferBuilder", () => {
 
     expect(bufferBuilder.build()).toStrictEqual(expected);
     expect(bufferBuilder).toHaveLength(expected.length);
+  });
+
+  it("method writeInt64() LE", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeInt64(506_097_522_914_230_528n);
+
+    expect(bufferBuilder.build()).toStrictEqual(TEST_INT64);
+    expect(bufferBuilder).toHaveLength(8);
+  });
+
+  it("method writeUnsignedInt64() LE", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeUnsignedInt64(506_097_522_914_230_528n);
+
+    expect(bufferBuilder.build()).toStrictEqual(TEST_INT64);
+    expect(bufferBuilder).toHaveLength(8);
+  });
+
+  it("method writeInt64() BE", () => {
+    const bufferBuilder = new BufferBuilder(ByteOrder.BIG_ENDIAN);
+
+    bufferBuilder.writeInt64(283_686_952_306_183n);
+
+    expect(bufferBuilder.build()).toStrictEqual(TEST_INT64);
+    expect(bufferBuilder).toHaveLength(8);
+  });
+
+  it("method writeUnsignedInt64() BE", () => {
+    const bufferBuilder = new BufferBuilder(ByteOrder.BIG_ENDIAN);
+
+    bufferBuilder.writeUnsignedInt64(283_686_952_306_183n);
+
+    expect(bufferBuilder.build()).toStrictEqual(TEST_INT64);
+    expect(bufferBuilder).toHaveLength(8);
   });
 
   it("method writeString()", () => {
