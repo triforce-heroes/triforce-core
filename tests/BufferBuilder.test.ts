@@ -51,6 +51,8 @@ import {
   TEST_STRING_EMPTY,
   TEST_STRING_LENGTH,
   TEST_STRING_MULTIBYTE,
+  TEST_UTF8_BUFFER,
+  TEST_UTF8_BUFFER_LENGTH_LE,
 } from "./fixtures/data.js";
 
 describe("class BufferBuilder", () => {
@@ -201,6 +203,7 @@ describe("class BufferBuilder", () => {
     ["undefined", undefined, TEST_STRING_LENGTH],
     ["empty", TEST_STRING_EMPTY, TEST_STRING_LENGTH],
     ["binary buffer", TEST_BINARY_BUFFER, TEST_BINARY_BUFFER_LENGTH_LE],
+    ["UTF-8 buffer", TEST_UTF8_BUFFER, TEST_UTF8_BUFFER_LENGTH_LE],
     ["127 bytes", TEST_STRING_127_BYTES, TEST_STRING_127_BYTES_LENGTH],
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_LENGTH],
     ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_LENGTH],

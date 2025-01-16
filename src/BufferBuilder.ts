@@ -184,9 +184,9 @@ export class BufferBuilder {
       return;
     }
 
-    this.writeUnsignedInt(value.length, bytes);
-
     const buffer = Buffer.from(value);
+
+    this.writeUnsignedInt(buffer.length, bytes);
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;

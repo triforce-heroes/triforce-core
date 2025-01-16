@@ -26,6 +26,12 @@ export const TEST_FLOAT = 123.456_001_281_738_28;
 export const TEST_FLOAT_BUFFER_LE = Buffer.from([121, 233, 246, 66]);
 export const TEST_FLOAT_BUFFER_BE = Buffer.from([66, 246, 233, 121]);
 
+export const TEST_UTF8_BUFFER = "Ação";
+export const TEST_UTF8_BUFFER_LENGTH_LE = Buffer.from(
+  "\u0006\0\0\0A\u00C3\u00A7\u00C3\u00A3o",
+  "binary",
+);
+
 export const TEST_BINARY_BUFFER = Buffer.from("ÿ", "binary");
 export const TEST_BINARY_BUFFER_LENGTH_LE = Buffer.from(
   "\u0001\0\0\0ÿ",
