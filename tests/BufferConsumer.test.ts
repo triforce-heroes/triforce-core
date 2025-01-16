@@ -169,7 +169,7 @@ describe("class BufferConsumer", () => {
       outputs: readonly string[],
       encoding?: "latin1" | "utf8" | "utf16le",
     ) => {
-      // eslint-disable-next-line vitest/prefer-expect-assertions
+      // eslint-disable-next-line @vitest/prefer-expect-assertions
       expect.assertions(outputs.length);
 
       const bufferConsumer = new BufferConsumer(Buffer.from(input));

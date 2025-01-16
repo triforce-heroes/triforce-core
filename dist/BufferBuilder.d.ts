@@ -5,7 +5,7 @@ export declare class BufferBuilder {
     private inLength;
     constructor(pByteOrder?: ByteOrder);
     get length(): number;
-    build(): Buffer;
+    build(): Buffer<ArrayBuffer>;
     pad(length: number, kind?: string, forced?: boolean): void;
     write(count: number, word?: string): void;
     writeByte(value: number): void;

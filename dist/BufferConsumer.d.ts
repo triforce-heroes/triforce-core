@@ -4,7 +4,7 @@ export declare class BufferConsumer {
     private pByteOffset;
     private readonly pByteOrder;
     constructor(pBuffer: Buffer, pByteOffset?: number, pByteOrder?: ByteOrder);
-    get buffer(): Buffer;
+    get buffer(): Buffer<ArrayBufferLike>;
     get byteOffset(): number;
     seek(byteOffset?: number): void;
     at(byteOffset?: number): number;
