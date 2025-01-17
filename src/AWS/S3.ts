@@ -7,6 +7,8 @@ export function S3() {
   return (S3Instance ||= new S3Client({
     region: process.env.AWS_REGION ?? "us-east-1",
     credentials: fromEnv(),
+    responseChecksumValidation: "WHEN_REQUIRED",
+    requestChecksumCalculation: "WHEN_REQUIRED",
   }));
 }
 
