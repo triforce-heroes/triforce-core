@@ -25,4 +25,5 @@ export declare class BufferBuilder {
     writeNullTerminatedString(value: Buffer | string | null | undefined): void;
     writeFloat(value: number): void;
     push(...buffers: Buffer[]): void;
+    private writeBigInt;
 }
