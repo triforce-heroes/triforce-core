@@ -109,6 +109,10 @@ export class BufferConsumer {
   }
 
   public readInt64(): bigint {
+    if (!("readBigUInt64LE" in this.pBuffer)) {
+      return this.readBigInt("getBigInt64");
+    }
+
     const value =
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN
         ? this.pBuffer.readBigInt64LE(this.pByteOffset)
@@ -120,6 +124,10 @@ export class BufferConsumer {
   }
 
   public readUnsignedInt64(): bigint {
+    if (!("readBigUInt64LE" in this.pBuffer)) {
+      return this.readBigInt("getBigInt64");
+    }
+
     const value =
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN
         ? this.pBuffer.readBigUInt64LE(this.pByteOffset)
@@ -273,5 +281,17 @@ export class BufferConsumer {
       bytes === undefined
         ? this.pBuffer.length
         : Math.min(this.pByteOffset + bytes, this.pBuffer.length);
+  }
+
+  private readBigInt(method: "getBigInt64" | "getBigUint64") {
+    const view = new DataView(
+      this.pBuffer.buffer,
+      this.pBuffer.byteOffset + this.pByteOffset,
+      8,
+    );
+
+    this.pByteOffset += 8;
+
+    return view[method](0, this.pByteOrder === ByteOrder.LITTLE_ENDIAN);
   }
 }

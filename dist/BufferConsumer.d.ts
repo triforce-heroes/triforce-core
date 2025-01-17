@@ -31,4 +31,5 @@ export declare class BufferConsumer {
     consumer(bytes?: number): BufferConsumer;
     isConsumed(): boolean;
     private safeIncrease;
+    private readBigInt;
 }

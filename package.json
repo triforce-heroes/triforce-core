@@ -40,22 +40,22 @@
     "strip-ansi": "^7.1.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.730.0",
-    "@aws-sdk/client-s3": "^3.730.0",
-    "@aws-sdk/crc64-nvme-crt": "^3.730.0",
-    "@aws-sdk/credential-providers": "^3.730.0",
-    "@aws-sdk/util-dynamodb": "^3.730.0",
+    "@aws-sdk/client-dynamodb": "^3.788.0",
+    "@aws-sdk/client-s3": "^3.787.0",
+    "@aws-sdk/crc64-nvme-crt": "^3.787.0",
+    "@aws-sdk/credential-providers": "^3.787.0",
+    "@aws-sdk/util-dynamodb": "^3.788.0",
     "@rheactor/eslint-config-rheactor": "github:rheactor/eslint-config-rheactor",
     "@swc/cli": "^0.6.0",
-    "@swc/core": "^1.10.7",
+    "@swc/core": "^1.11.20",
     "@types/json-diff": "^1.0.3",
-    "@types/node": "^22.10.7",
-    "@vitest/coverage-v8": "^3.0.2",
-    "commander": "^13.0.0",
+    "@types/node": "^22.14.1",
+    "@vitest/coverage-v8": "^3.1.1",
+    "commander": "^13.1.0",
     "eslint-plugin-vitest": "^0.5.4",
     "rimraf": "^6.0.1",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3",
-    "vitest": "^3.0.2"
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
   }
 }

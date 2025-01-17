@@ -142,7 +142,9 @@ export class BufferBuilder {
   public writeInt64(value: bigint) {
     const buffer = Buffer.allocUnsafe(8);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+    if (!("writeBigInt64LE" in buffer)) {
+      this.writeBigInt(buffer, "setBigInt64", value);
+    } else if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
       buffer.writeBigInt64LE(value);
     } else {
       buffer.writeBigInt64BE(value);
@@ -155,7 +157,9 @@ export class BufferBuilder {
   public writeUnsignedInt64(value: bigint) {
     const buffer = Buffer.allocUnsafe(8);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+    if (!("writeBigInt64LE" in buffer)) {
+      this.writeBigInt(buffer, "setBigUint64", value);
+    } else if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
       buffer.writeBigUInt64LE(value);
     } else {
       buffer.writeBigUInt64BE(value);
@@ -252,5 +256,17 @@ export class BufferBuilder {
   public push(...buffers: Buffer[]) {
     this.inBuffers.push(...buffers);
     this.inLength += buffers.reduce((a, b) => a + b.length, 0);
+  }
+
+  private writeBigInt(
+    buffer: Buffer,
+    method: "setBigInt64" | "setBigUint64",
+    value: bigint,
+  ) {
+    new DataView(buffer.buffer, buffer.byteOffset)[method](
+      0,
+      value,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN,
+    );
   }
 }
