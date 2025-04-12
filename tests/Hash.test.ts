@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { secureHash } from "../src/Hash.js";
+import { secureHash } from "@/Hash.js";
 
 describe("hash", () => {
   it("function secureHash()", async () => {

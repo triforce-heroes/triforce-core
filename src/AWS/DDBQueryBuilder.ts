@@ -1,7 +1,8 @@
-import { QueryCommandInput } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 
-import { DDB } from "./DDB.js";
+import { DDB } from "@/AWS/DDB.js";
+
+import type { QueryCommandInput } from "@aws-sdk/client-dynamodb";
 
 type QueryOperation =
   | ["<" | "<=" | ">" | ">=", number]
@@ -67,6 +68,7 @@ export class DDBQueryBuilder<T> {
     };
 
     while (true) {
+      // eslint-disable-next-line no-await-in-loop
       const result = await DDB().query(query);
 
       results.push(...result.Items!.map((item) => unmarshall(item) as T));

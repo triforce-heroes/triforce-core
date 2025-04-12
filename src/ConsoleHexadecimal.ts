@@ -2,7 +2,7 @@
 
 import chalk from "chalk";
 
-import { PrintHexadecimalPreset } from "./types/PrintHexadecimalPreset.js";
+import { PrintHexadecimalPreset } from "@/types/PrintHexadecimalPreset.js";
 
 const hexadecimalDot = chalk.ansi256(240)(".");
 const hexadecimalNumberPadding = " ".repeat(9);
@@ -50,17 +50,18 @@ function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
   const [padding, bytes, unsigned, littleEndian, isFloat] =
     printHexadecimalPreset[preset];
 
-  const bufferFunction = isFloat
-    ? littleEndian
-      ? "readFloatLE"
-      : "readFloatBE"
-    : littleEndian
-      ? unsigned
+  const bufferFunction =
+    isFloat === true
+      ? littleEndian === true
+        ? "readFloatLE"
+        : "readFloatBE"
+      : littleEndian === true
+      ? unsigned === true
         ? "readUIntLE"
         : "readIntLE"
-      : unsigned
-        ? "readUIntBE"
-        : "readIntBE";
+      : unsigned === true
+      ? "readUIntBE"
+      : "readIntBE";
 
   for (let j = 0; j <= buffer.length - bytes; j += bytes) {
     numbers += numberNormalize(buffer[bufferFunction](j, bytes)).padStart(
@@ -69,7 +70,7 @@ function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
     );
   }
 
-  numbers += `\n`;
+  numbers += "\n";
 
   return chalk.gray(numbers);
 }

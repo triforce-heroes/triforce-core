@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { describe, expect, it } from "vitest";
 
-import { debugCommander } from "../src/Debugger.js";
+import { debugCommander } from "@/Debugger.js";
 
 describe("debugger", () => {
   it("function debugCommander()", () => {

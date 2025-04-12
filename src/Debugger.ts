@@ -17,7 +17,6 @@ interface DebugBenchmarkData<T> {
 }
 
 export function debugBenchmark<T>(
-  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   callback: () => T,
   printerIn?: ({ average, minimum, result }: DebugBenchmarkData<T>) => void,
   samplesIn = 1000,
@@ -39,7 +38,7 @@ export function debugBenchmark<T>(
     });
 
   let loops = 0;
-  let average: number | undefined;
+  let average: number | undefined = undefined;
   let minimum = Number.POSITIVE_INFINITY;
 
   while (loops++ < loopsIn) {

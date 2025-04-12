@@ -2,8 +2,8 @@ import chalk from "chalk";
 import strip from "strip-ansi";
 import { describe, expect, it, vitest } from "vitest";
 
-import { printHexadecimal } from "../src/ConsoleHexadecimal.js";
-import { PrintHexadecimalPreset } from "../src/types/PrintHexadecimalPreset.js";
+import { printHexadecimal } from "@/ConsoleHexadecimal.js";
+import { PrintHexadecimalPreset } from "@/types/PrintHexadecimalPreset.js";
 
 describe("console", () => {
   chalk.level = 2;
@@ -89,7 +89,7 @@ describe("console", () => {
   ] as const;
 
   it.each(samples)("function printHexadecimal(): %s", (_, buffer, preset) => {
-    let stdoutMessage: Uint8Array | string | undefined;
+    let stdoutMessage: Uint8Array | string | undefined = undefined;
 
     vitest
       .spyOn(process.stdout, "write")
@@ -101,7 +101,8 @@ describe("console", () => {
 
     printHexadecimal(buffer, preset);
 
-    expect(strip(stdoutMessage as string)).toMatchSnapshot("ansi");
+    expect(stdoutMessage).toBeTypeOf("string");
+    expect(strip(stdoutMessage as unknown as string)).toMatchSnapshot("ansi");
     expect(stdoutMessage).toMatchSnapshot("colors");
   });
 });

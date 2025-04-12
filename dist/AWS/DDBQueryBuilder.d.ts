@@ -1,4 +1,4 @@
-import { QueryCommandInput } from "@aws-sdk/client-dynamodb";
+import type { QueryCommandInput } from "@aws-sdk/client-dynamodb";
 type QueryOperation = ["<" | "<=" | ">" | ">=", number] | ["=", number | string] | ["BEGINS_WITH", string] | ["BETWEEN", number, number] | [];
 export declare class DDBQueryBuilder<T> {
     private readonly tableName;

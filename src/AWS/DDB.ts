@@ -1,17 +1,16 @@
-import { DynamoDB, UpdateItemCommandInput } from "@aws-sdk/client-dynamodb";
+import { DynamoDB } from "@aws-sdk/client-dynamodb";
 import { fromEnv } from "@aws-sdk/credential-providers";
-import {
-  NativeAttributeValue,
-  marshall,
-  unmarshall,
-} from "@aws-sdk/util-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 
-import { chunk } from "../Array.js";
+import { chunk } from "@/Array.js";
 
-let DDBInstance: DynamoDB | undefined;
+import type { UpdateItemCommandInput } from "@aws-sdk/client-dynamodb";
+import type { NativeAttributeValue } from "@aws-sdk/util-dynamodb";
+
+let instance: DynamoDB | undefined = undefined;
 
 export function DDB() {
-  return (DDBInstance ||= new DynamoDB({
+  return (instance ??= new DynamoDB({
     region: process.env.AWS_REGION ?? "us-east-1",
     credentials: fromEnv(),
   }));
@@ -118,6 +117,7 @@ export async function DDBBatchWrite(
   chunkSize = 25,
 ) {
   for (const chunkEntries of chunk(entries, chunkSize)) {
+    // eslint-disable-next-line no-await-in-loop
     await DDB().batchWriteItem({
       RequestItems: {
         [table]: chunkEntries.map((entry) => ({
@@ -134,6 +134,7 @@ export async function DDBBatchDelete(
   chunkSize = 25,
 ) {
   for (const chunkEntries of chunk(entries, chunkSize)) {
+    // eslint-disable-next-line no-await-in-loop
     await DDB().batchWriteItem({
       RequestItems: {
         [table]: chunkEntries.map((entry) => ({

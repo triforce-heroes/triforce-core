@@ -1,4 +1,4 @@
-import { ByteOrder } from "./types/ByteOrder.js";
+import { ByteOrder } from "@/types/ByteOrder.js";
 
 export class BufferBuilder {
   private readonly inBuffers: Buffer[] = [];
@@ -171,7 +171,7 @@ export class BufferBuilder {
 
   public writeString(value: Buffer | string | null | undefined) {
     if (value !== null && value !== undefined && value.length > 0) {
-      const buffer = Buffer.from(value);
+      const buffer = Buffer.from(value as Buffer);
 
       this.inBuffers.push(buffer);
       this.inLength += buffer.length;
@@ -188,7 +188,7 @@ export class BufferBuilder {
       return;
     }
 
-    const buffer = Buffer.from(value);
+    const buffer = Buffer.from(value as Buffer);
 
     this.writeUnsignedInt(buffer.length, bytes);
 
@@ -205,20 +205,23 @@ export class BufferBuilder {
       return;
     }
 
-    const buffer = Buffer.from(value);
+    const buffer = Buffer.from(value as Buffer);
     let { length } = buffer;
 
     this.inLength += length;
 
     while (length > 0) {
+      // eslint-disable-next-line no-bitwise
       let chunkLength = length & 0x7f;
 
       if (length > 0x7f) {
+        // eslint-disable-next-line no-bitwise
         chunkLength |= 0x80;
       }
 
       this.writeByte(chunkLength);
 
+      // eslint-disable-next-line no-bitwise
       length >>= 7;
     }
 
@@ -232,7 +235,7 @@ export class BufferBuilder {
       return;
     }
 
-    const buffer = value instanceof Buffer ? value : Buffer.from(value);
+    const buffer = Buffer.from(value as Buffer);
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;
@@ -255,7 +258,10 @@ export class BufferBuilder {
 
   public push(...buffers: Buffer[]) {
     this.inBuffers.push(...buffers);
-    this.inLength += buffers.reduce((a, b) => a + b.length, 0);
+    this.inLength += buffers.reduce(
+      (bufferA, bufferB) => bufferA + bufferB.length,
+      0,
+    );
   }
 
   private writeBigInt(

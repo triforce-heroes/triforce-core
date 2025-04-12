@@ -1,6 +1,7 @@
+/* eslint-disable vitest/max-expects */
 import { describe, expect, it } from "vitest";
 
-import { Cache } from "../src/Cache.js";
+import { Cache } from "@/Cache.js";
 
 describe("class Cache", () => {
   it("general", () => {

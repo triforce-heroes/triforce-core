@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { normalize } from "../src/Path.js";
+import { normalize } from "@/Path.js";
 
 describe("path", () => {
   it("function normalize()", () => {

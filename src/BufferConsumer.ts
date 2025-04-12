@@ -1,4 +1,4 @@
-import { ByteOrder } from "./types/ByteOrder.js";
+import { ByteOrder } from "@/types/ByteOrder.js";
 
 export class BufferConsumer {
   public constructor(
@@ -180,9 +180,11 @@ export class BufferConsumer {
     while (true) {
       const byte = this.pBuffer.readUInt8(this.pByteOffset++);
 
+      // eslint-disable-next-line no-bitwise
       length |= (byte & 0x7f) << shift;
       shift += 7;
 
+      // eslint-disable-next-line no-bitwise
       if ((byte & 0x80) === 0) {
         break;
       }

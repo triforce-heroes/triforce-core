@@ -1,8 +1,8 @@
+/* eslint-disable vitest/max-expects */
 import { describe, expect, it } from "vitest";
 
-import { BufferConsumer } from "../src/BufferConsumer.js";
-import { ByteOrder } from "../src/types/ByteOrder.js";
-
+import { BufferConsumer } from "@/BufferConsumer.js";
+import { ByteOrder } from "@/types/ByteOrder.js";
 import {
   TEST_BUFFER_SAMPLE_BE,
   TEST_BUFFER_SAMPLE_LE,
@@ -20,7 +20,7 @@ import {
   TEST_STRING_4000_BYTES_MULTIBYTE,
   TEST_STRING_EMPTY,
   TEST_STRING_MULTIBYTE,
-} from "./fixtures/data.js";
+} from "@Tests/fixtures/data.js";
 
 describe("class BufferConsumer", () => {
   it("method read()", () => {
@@ -202,7 +202,7 @@ describe("class BufferConsumer", () => {
       outputs: readonly string[],
       encoding?: "latin1" | "utf8" | "utf16le",
     ) => {
-      // eslint-disable-next-line @vitest/prefer-expect-assertions
+      // eslint-disable-next-line vitest/prefer-expect-assertions
       expect.assertions(outputs.length);
 
       const bufferConsumer = new BufferConsumer(Buffer.from(input));

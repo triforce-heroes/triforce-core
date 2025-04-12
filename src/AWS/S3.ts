@@ -1,10 +1,10 @@
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { fromEnv } from "@aws-sdk/credential-providers";
 
-let S3Instance: S3Client | undefined;
+let instance: S3Client | undefined = undefined;
 
 export function S3() {
-  return (S3Instance ||= new S3Client({
+  return (instance ??= new S3Client({
     region: process.env.AWS_REGION ?? "us-east-1",
     credentials: fromEnv(),
     responseChecksumValidation: "WHEN_REQUIRED",

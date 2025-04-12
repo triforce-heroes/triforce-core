@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { nextMultiple } from "../src/Number.js";
+import { nextMultiple } from "@/Number.js";
 
 describe("number", () => {
   const samples = [

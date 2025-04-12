@@ -22,16 +22,16 @@ export function fatal(
   if (args[1] !== undefined) {
     if (args[2] === undefined) {
       messages.push(
-        chalk.bold(`Details:\n\n`),
+        chalk.bold("Details:\n\n"),
         `${JSON.stringify(args[1], null, 2)}\n`,
       );
     } else {
       if (!Buffer.isBuffer(args[1]) && !Buffer.isBuffer(args[2])) {
         messages.push(
-          chalk.bold(`Expected:\n\n`),
+          chalk.bold("Expected:\n\n"),
           `${JSON.stringify(args[1], null, 2)}\n`,
 
-          chalk.bold(`Received:\n\n`),
+          chalk.bold("Received:\n\n"),
           `${JSON.stringify(args[2], null, 2)}\n`,
         );
       }
@@ -46,7 +46,7 @@ export function fatal(
       }
 
       messages.push(
-        chalk.bold(`Difference:\n\n`),
+        chalk.bold("Difference:\n\n"),
         diffString(args[1], args[2]),
       );
     }
