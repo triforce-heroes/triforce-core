@@ -1,1 +1,1 @@
-export function nextMultiple(t,e){return t%e==0?t:t+(e-t%e)}
+export function nextMultiple(t,e,n=!1){let l=t%e;return 0===l?n?t+e:t:t+(e-l)}

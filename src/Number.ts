@@ -1,7 +1,13 @@
-export function nextMultiple(value: number, width: number): number {
-  if (value % width === 0) {
-    return value;
+export function nextMultiple(
+  value: number,
+  width: number,
+  nextIfMatches = false,
+): number {
+  const remainder = value % width;
+
+  if (remainder === 0) {
+    return nextIfMatches ? value + width : value;
   }
 
-  return value + (width - (value % width));
+  return value + (width - remainder);
 }

@@ -1,1 +1,1 @@
-export declare function nextMultiple(value: number, width: number): number;
+export declare function nextMultiple(value: number, width: number, nextIfMatches?: boolean): number;
