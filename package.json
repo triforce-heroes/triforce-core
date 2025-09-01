@@ -14,6 +14,7 @@
     "./Console": "./dist/Console.js",
     "./ConsoleHexadecimal": "./dist/ConsoleHexadecimal.js",
     "./Debugger": "./dist/Debugger.js",
+    "./Encoding": "./dist/Encoding.js",
     "./Hash": "./dist/Hash.js",
     "./Number": "./dist/Number.js",
     "./Path": "./dist/Path.js",
@@ -33,30 +34,30 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
-    "chalk": "^5.4.1",
+    "chalk": "^5.6.0",
     "json-diff": "^1.0.6",
     "strip-ansi": "^7.1.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.797.0",
-    "@aws-sdk/client-s3": "^3.797.0",
-    "@aws-sdk/crc64-nvme-crt": "^3.796.0",
-    "@aws-sdk/credential-providers": "^3.797.0",
-    "@aws-sdk/util-dynamodb": "^3.797.0",
+    "@aws-sdk/client-dynamodb": "^3.879.0",
+    "@aws-sdk/client-s3": "^3.879.0",
+    "@aws-sdk/crc64-nvme-crt": "^3.879.0",
+    "@aws-sdk/credential-providers": "^3.879.0",
+    "@aws-sdk/util-dynamodb": "^3.879.0",
     "@rheactor/eslint-config-rheactor": "github:rheactor/eslint-config-rheactor",
-    "@swc/cli": "^0.7.3",
-    "@swc/core": "^1.11.22",
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.13.5",
     "@types/json-diff": "^1.0.3",
-    "@types/node": "^22.15.2",
-    "@vitest/coverage-v8": "^3.1.2",
-    "commander": "^13.1.0",
-    "eslint": "^9.25.1",
+    "@types/node": "^24.3.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "commander": "^14.0.0",
+    "eslint": "^9.34.0",
     "eslint-plugin-vitest": "^0.5.4",
     "rimraf": "^6.0.1",
     "ts-patch": "^3.3.0",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "typescript-transform-paths": "^3.5.5",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.2"
+    "vitest": "^3.2.4"
   }
 }
