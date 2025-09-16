@@ -17,6 +17,8 @@ export class BufferConsumer {
 
   public seek(byteOffset = 0) {
     this.pByteOffset = byteOffset;
+
+    return this;
   }
 
   public at(byteOffset = 0): number {
@@ -283,6 +285,8 @@ export class BufferConsumer {
       bytes === undefined
         ? this.pBuffer.length
         : Math.min(this.pByteOffset + bytes, this.pBuffer.length);
+
+    return this;
   }
 
   private readBigInt(method: "getBigInt64" | "getBigUint64") {

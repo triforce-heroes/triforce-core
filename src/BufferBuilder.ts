@@ -17,7 +17,7 @@ export class BufferBuilder {
 
   public pad(length: number, kind = "\0", forced = false) {
     if (!forced && this.inLength % length === 0) {
-      return;
+      return this;
     }
 
     const buffer = Buffer.alloc(
@@ -28,6 +28,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;
+
+    return this;
   }
 
   public write(count: number, word = "\0") {
@@ -37,10 +39,14 @@ export class BufferBuilder {
       this.inBuffers.push(buffer);
       this.inLength += buffer.length;
     }
+
+    return this;
   }
 
   public writeByte(value: number) {
     this.writeUnsignedInt8(value);
+
+    return this;
   }
 
   public writeInt(value: number, bytes: 1 | 2 | 4 = 4) {
@@ -54,6 +60,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += bytes;
+
+    return this;
   }
 
   public writeUnsignedInt(value: number, bytes: 1 | 2 | 4 = 4) {
@@ -67,6 +75,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += bytes;
+
+    return this;
   }
 
   public writeInt8(value: number) {
@@ -76,6 +86,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength++;
+
+    return this;
   }
 
   public writeUnsignedInt8(value: number) {
@@ -85,6 +97,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength++;
+
+    return this;
   }
 
   public writeInt16(value: number) {
@@ -98,6 +112,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += 2;
+
+    return this;
   }
 
   public writeUnsignedInt16(value: number) {
@@ -111,6 +127,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += 2;
+
+    return this;
   }
 
   public writeInt32(value: number) {
@@ -124,6 +142,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += 4;
+
+    return this;
   }
 
   public writeUnsignedInt32(value: number) {
@@ -137,6 +157,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += 4;
+
+    return this;
   }
 
   public writeInt64(value: bigint) {
@@ -152,6 +174,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += 8;
+
+    return this;
   }
 
   public writeUnsignedInt64(value: bigint) {
@@ -167,6 +191,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += 8;
+
+    return this;
   }
 
   public writeString(value: Buffer | string | null | undefined) {
@@ -176,6 +202,8 @@ export class BufferBuilder {
       this.inBuffers.push(buffer);
       this.inLength += buffer.length;
     }
+
+    return this;
   }
 
   public writeLengthPrefixedString(
@@ -185,7 +213,7 @@ export class BufferBuilder {
     if (value === null || value === undefined || value.length === 0) {
       this.writeUnsignedInt(0, bytes);
 
-      return;
+      return this;
     }
 
     const buffer = Buffer.from(value as Buffer);
@@ -194,6 +222,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;
+
+    return this;
   }
 
   public writeMultibytePrefixedString(
@@ -202,7 +232,7 @@ export class BufferBuilder {
     if (value === null || value === undefined || value.length === 0) {
       this.writeByte(0);
 
-      return;
+      return this;
     }
 
     const buffer = Buffer.from(value as Buffer);
@@ -226,13 +256,15 @@ export class BufferBuilder {
     }
 
     this.inBuffers.push(buffer);
+
+    return this;
   }
 
   public writeNullTerminatedString(value: Buffer | string | null | undefined) {
     if (value === null || value === undefined) {
       this.writeByte(0);
 
-      return;
+      return this;
     }
 
     const buffer = Buffer.from(value as Buffer);
@@ -241,6 +273,8 @@ export class BufferBuilder {
     this.inLength += buffer.length;
 
     this.writeByte(0);
+
+    return this;
   }
 
   public writeFloat(value: number) {
@@ -254,6 +288,8 @@ export class BufferBuilder {
 
     this.inBuffers.push(buffer);
     this.inLength += 4;
+
+    return this;
   }
 
   public push(...buffers: Buffer[]) {
@@ -262,6 +298,8 @@ export class BufferBuilder {
       (bufferA, bufferB) => bufferA + bufferB.length,
       0,
     );
+
+    return this;
   }
 
   private writeBigInt(
@@ -274,5 +312,7 @@ export class BufferBuilder {
       value,
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN,
     );
+
+    return this;
   }
 }
