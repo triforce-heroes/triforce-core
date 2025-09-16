@@ -389,4 +389,25 @@ describe("class BufferBuilder", () => {
       );
     },
   );
+
+  const deferredSamples = [
+    ["writeByte", 123, Buffer.from([123])],
+    ["writeInt8", -123, Buffer.from([133])],
+    ["writeUnsignedInt8", 123, Buffer.from([123])],
+    ["writeInt16", -123, Buffer.from([133, 255])],
+    ["writeUnsignedInt16", 123, Buffer.from([123, 0])],
+    ["writeInt32", -123, Buffer.from([133, 255, 255, 255])],
+    ["writeUnsignedInt32", 123, Buffer.from([123, 0, 0, 0])],
+    ["writeFloat", 123.456, Buffer.from([121, 233, 246, 66])],
+  ] as const satisfies Array<
+    [method: keyof BufferBuilder, value: number, buffer: Buffer]
+  >;
+
+  it.each(deferredSamples)("deferred method .%s()", (method, value, buffer) => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder[method](() => value);
+
+    expect(bufferBuilder.build()).toStrictEqual(buffer);
+  });
 });

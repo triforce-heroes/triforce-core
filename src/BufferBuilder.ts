@@ -1,7 +1,27 @@
 import { ByteOrder } from "@/types/ByteOrder.js";
 
+export type Deferrable<T> = T | (() => T);
+
+type DeferrableMethod =
+  | "writeFloatBE"
+  | "writeFloatLE"
+  | "writeInt8"
+  | "writeInt16BE"
+  | "writeInt16LE"
+  | "writeInt32BE"
+  | "writeInt32LE"
+  | "writeUInt8"
+  | "writeUInt16BE"
+  | "writeUInt16LE"
+  | "writeUInt32BE"
+  | "writeUInt32LE";
+
+type DeferredCallback = () => void;
+
 export class BufferBuilder {
   private readonly inBuffers: Buffer[] = [];
+
+  private readonly deferredCalls: DeferredCallback[] = [];
 
   private inLength = 0;
 
@@ -12,6 +32,10 @@ export class BufferBuilder {
   }
 
   public build() {
+    for (const deferredCall of this.deferredCalls) {
+      deferredCall();
+    }
+
     return Buffer.concat(this.inBuffers);
   }
 
@@ -43,7 +67,7 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeByte(value: number) {
+  public writeByte(value: Deferrable<number>) {
     this.writeUnsignedInt8(value);
 
     return this;
@@ -79,10 +103,10 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeInt8(value: number) {
+  public writeInt8(value: Deferrable<number>) {
     const buffer = Buffer.allocUnsafe(1);
 
-    buffer.writeInt8(value);
+    this.deferrableCall(buffer, "writeInt8", value);
 
     this.inBuffers.push(buffer);
     this.inLength++;
@@ -90,10 +114,10 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeUnsignedInt8(value: number) {
+  public writeUnsignedInt8(value: Deferrable<number>) {
     const buffer = Buffer.allocUnsafe(1);
 
-    buffer.writeUInt8(value);
+    this.deferrableCall(buffer, "writeUInt8", value);
 
     this.inBuffers.push(buffer);
     this.inLength++;
@@ -101,14 +125,16 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeInt16(value: number) {
+  public writeInt16(value: Deferrable<number>) {
     const buffer = Buffer.allocUnsafe(2);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeInt16LE(value);
-    } else {
-      buffer.writeInt16BE(value);
-    }
+    this.deferrableCall(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? "writeInt16LE"
+        : "writeInt16BE",
+      value,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += 2;
@@ -116,14 +142,16 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeUnsignedInt16(value: number) {
+  public writeUnsignedInt16(value: Deferrable<number>) {
     const buffer = Buffer.allocUnsafe(2);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeUInt16LE(value);
-    } else {
-      buffer.writeUInt16BE(value);
-    }
+    this.deferrableCall(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? "writeUInt16LE"
+        : "writeUInt16BE",
+      value,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += 2;
@@ -131,14 +159,16 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeInt32(value: number) {
+  public writeInt32(value: Deferrable<number>) {
     const buffer = Buffer.allocUnsafe(4);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeInt32LE(value);
-    } else {
-      buffer.writeInt32BE(value);
-    }
+    this.deferrableCall(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? "writeInt32LE"
+        : "writeInt32BE",
+      value,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += 4;
@@ -146,14 +176,16 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeUnsignedInt32(value: number) {
+  public writeUnsignedInt32(value: Deferrable<number>) {
     const buffer = Buffer.allocUnsafe(4);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeUInt32LE(value);
-    } else {
-      buffer.writeUInt32BE(value);
-    }
+    this.deferrableCall(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? "writeUInt32LE"
+        : "writeUInt32BE",
+      value,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += 4;
@@ -277,14 +309,16 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeFloat(value: number) {
+  public writeFloat(value: Deferrable<number>) {
     const buffer = Buffer.allocUnsafe(4);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeFloatLE(value);
-    } else {
-      buffer.writeFloatBE(value);
-    }
+    this.deferrableCall(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? "writeFloatLE"
+        : "writeFloatBE",
+      value,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += 4;
@@ -314,5 +348,23 @@ export class BufferBuilder {
     );
 
     return this;
+  }
+
+  private deferrableCall<T extends number>(
+    buffer: Buffer,
+    method: DeferrableMethod,
+    value: Deferrable<T>,
+  ) {
+    if (typeof value === "number") {
+      buffer[method](value);
+    } else {
+      const currentOffset = this.inLength;
+
+      this.deferredCalls.push(() => {
+        buffer[method](value(), currentOffset);
+      });
+
+      buffer[method](0);
+    }
   }
 }
