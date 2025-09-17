@@ -2,33 +2,36 @@ import { ByteOrder } from "@/types/ByteOrder.js";
 
 import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
 
-export type Deferrable<T> = T | (() => T);
+type Deferrable<T> = T | (() => T);
 
-type DeferredBytesMethod =
-  | "writeIntBE"
+type DeferredSimpleMethod = "writeInt8" | "writeUInt8";
+
+type DeferrableMethodLE =
+  | "writeBigInt64LE"
+  | "writeBigUInt64LE"
+  | "writeFloatLE"
+  | "writeInt16LE"
+  | "writeInt32LE"
   | "writeIntLE"
-  | "writeUIntBE"
+  | "writeUInt16LE"
+  | "writeUInt32LE"
   | "writeUIntLE";
 
-type DeferredBigIntMethod =
+type DeferrableMethodBE =
   | "writeBigInt64BE"
-  | "writeBigInt64LE"
   | "writeBigUInt64BE"
-  | "writeBigUInt64LE";
+  | "writeFloatBE"
+  | "writeInt16BE"
+  | "writeInt32BE"
+  | "writeIntBE"
+  | "writeUInt16BE"
+  | "writeUInt32BE"
+  | "writeUIntBE";
 
 type DeferrableMethod =
-  | "writeFloatBE"
-  | "writeFloatLE"
-  | "writeInt8"
-  | "writeInt16BE"
-  | "writeInt16LE"
-  | "writeInt32BE"
-  | "writeInt32LE"
-  | "writeUInt8"
-  | "writeUInt16BE"
-  | "writeUInt16LE"
-  | "writeUInt32BE"
-  | "writeUInt32LE";
+  | DeferrableMethodBE
+  | DeferrableMethodLE
+  | DeferredSimpleMethod;
 
 type DeferredCallback = (buffer: Buffer) => void;
 
@@ -92,171 +95,107 @@ export class BufferBuilder {
   }
 
   public writeByte(value: Deferrable<number>) {
-    this.writeUnsignedInt8(value);
-
-    return this;
+    return this.writeUnsignedInt8(value);
   }
 
   public writeInt(value: Deferrable<number>, bytes: 1 | 2 | 4 = 4) {
-    const buffer = Buffer.allocUnsafe(bytes);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN ? "writeIntLE" : "writeIntBE",
-      value,
+    return this.writeDeferrableInt(
+      Buffer,
       bytes,
+      "writeIntLE",
+      "writeIntBE",
+      value,
     );
-
-    this.inBuffers.push(buffer);
-    this.inLength += bytes;
-
-    return this;
   }
 
   public writeUnsignedInt(value: Deferrable<number>, bytes: 1 | 2 | 4 = 4) {
-    const buffer = Buffer.allocUnsafe(bytes);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? "writeUIntLE"
-        : "writeUIntBE",
-      value,
+    return this.writeDeferrableInt(
+      Buffer,
       bytes,
+      "writeUIntLE",
+      "writeUIntBE",
+      value,
     );
-
-    this.inBuffers.push(buffer);
-    this.inLength += bytes;
-
-    return this;
   }
 
   public writeInt8(value: Deferrable<number>) {
-    const buffer = Buffer.allocUnsafe(1);
-
-    this.deferrableCall(buffer, "writeInt8", value);
-
-    this.inBuffers.push(buffer);
-    this.inLength++;
-
-    return this;
+    return this.writeDeferrableInt(Buffer, 1, "writeInt8", undefined, value);
   }
 
   public writeUnsignedInt8(value: Deferrable<number>) {
-    const buffer = Buffer.allocUnsafe(1);
-
-    this.deferrableCall(buffer, "writeUInt8", value);
-
-    this.inBuffers.push(buffer);
-    this.inLength++;
-
-    return this;
+    return this.writeDeferrableInt(Buffer, 1, "writeUInt8", undefined, value);
   }
 
   public writeInt16(value: Deferrable<number>) {
-    const buffer = Buffer.allocUnsafe(2);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? "writeInt16LE"
-        : "writeInt16BE",
+    return this.writeDeferrableInt(
+      Buffer,
+      2,
+      "writeInt16LE",
+      "writeInt16BE",
       value,
     );
-
-    this.inBuffers.push(buffer);
-    this.inLength += 2;
-
-    return this;
   }
 
   public writeUnsignedInt16(value: Deferrable<number>) {
-    const buffer = Buffer.allocUnsafe(2);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? "writeUInt16LE"
-        : "writeUInt16BE",
+    return this.writeDeferrableInt(
+      Buffer,
+      2,
+      "writeUInt16LE",
+      "writeUInt16BE",
       value,
     );
-
-    this.inBuffers.push(buffer);
-    this.inLength += 2;
-
-    return this;
   }
 
   public writeInt32(value: Deferrable<number>) {
-    const buffer = Buffer.allocUnsafe(4);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? "writeInt32LE"
-        : "writeInt32BE",
+    return this.writeDeferrableInt(
+      Buffer,
+      4,
+      "writeInt32LE",
+      "writeInt32BE",
       value,
     );
-
-    this.inBuffers.push(buffer);
-    this.inLength += 4;
-
-    return this;
   }
 
   public writeUnsignedInt32(value: Deferrable<number>) {
-    const buffer = Buffer.allocUnsafe(4);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? "writeUInt32LE"
-        : "writeUInt32BE",
+    return this.writeDeferrableInt(
+      Buffer,
+      4,
+      "writeUInt32LE",
+      "writeUInt32BE",
       value,
     );
-
-    this.inBuffers.push(buffer);
-    this.inLength += 4;
-
-    return this;
   }
 
   public writeInt64(value: Deferrable<bigint>) {
-    const buffer = BufferPolyfill.allocUnsafe(8);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? "writeBigInt64LE"
-        : "writeBigInt64BE",
+    return this.writeDeferrableInt(
+      BufferPolyfill,
+      8,
+      "writeBigInt64LE",
+      "writeBigInt64BE",
       value,
-      undefined,
       0n,
     );
-
-    this.inBuffers.push(buffer);
-    this.inLength += 8;
-
-    return this;
   }
 
   public writeUnsignedInt64(value: Deferrable<bigint>) {
-    const buffer = BufferPolyfill.allocUnsafe(8);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? "writeBigUInt64LE"
-        : "writeBigUInt64BE",
+    return this.writeDeferrableInt(
+      BufferPolyfill,
+      8,
+      "writeBigUInt64LE",
+      "writeBigUInt64BE",
       value,
-      undefined,
       0n,
     );
+  }
 
-    this.inBuffers.push(buffer);
-    this.inLength += 8;
-
-    return this;
+  public writeFloat(value: Deferrable<number>) {
+    return this.writeDeferrableInt(
+      Buffer,
+      4,
+      "writeFloatLE",
+      "writeFloatBE",
+      value,
+    );
   }
 
   public writeString(value: Buffer | string | null | undefined) {
@@ -341,23 +280,6 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeFloat(value: Deferrable<number>) {
-    const buffer = Buffer.allocUnsafe(4);
-
-    this.deferrableCall(
-      buffer,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? "writeFloatLE"
-        : "writeFloatBE",
-      value,
-    );
-
-    this.inBuffers.push(buffer);
-    this.inLength += 4;
-
-    return this;
-  }
-
   public push(...buffers: Buffer[]) {
     this.inBuffers.push(...buffers);
     this.inLength += buffers.reduce(
@@ -368,25 +290,40 @@ export class BufferBuilder {
     return this;
   }
 
-  private deferrableCall<T extends bigint | number>(
-    buffer: Buffer,
-    method: DeferrableMethod | DeferredBigIntMethod | DeferredBytesMethod,
-    value: Deferrable<T>,
-    bytes: 1 | 2 | 4 = 1,
-    placeholderValue: T = 0 as T,
+  private writeDeferrableInt<T extends bigint | number>(
+    BufferConstructor: BufferConstructor,
+    bytes: number,
+    methodLE: DeferrableMethodLE | DeferredSimpleMethod,
+    methodBE: DeferrableMethodBE | undefined,
+    value: Deferrable<bigint | number>,
+    valuePlaceholder: T = 0 as T,
   ) {
-    type BufferMethod = (value: T, offset: number, bytes: number) => number;
+    type Method = (value: T, offset: number, bytes: number) => number;
+
+    type ConstructorType = Buffer | BufferPolyfill;
+    type Constructor = ConstructorType & Record<DeferrableMethod, Method>;
+
+    const buffer = BufferConstructor.allocUnsafe(bytes) as Constructor;
+    const method =
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? methodLE
+        : methodBE ?? methodLE;
 
     if (typeof value === "function") {
       const currentOffset = this.inLength;
 
       this.deferredCalls.push((inBuffer) => {
-        (inBuffer[method] as BufferMethod)(value(), currentOffset, bytes);
+        (inBuffer as Constructor)[method](value() as T, currentOffset, bytes);
       });
 
-      (buffer[method] as BufferMethod)(placeholderValue, 0, bytes);
+      buffer[method](valuePlaceholder, 0, bytes);
     } else {
-      (buffer[method] as BufferMethod)(value, 0, bytes);
+      buffer[method](value as T, 0, bytes);
     }
+
+    this.inBuffers.push(buffer);
+    this.inLength += bytes;
+
+    return this;
   }
 }

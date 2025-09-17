@@ -1,5 +1,5 @@
 import { ByteOrder } from "./types/ByteOrder.js";
-export type Deferrable<T> = T | (() => T);
+type Deferrable<T> = T | (() => T);
 export declare class BufferBuilder {
     private readonly pByteOrder;
     private readonly inBuffers;
@@ -21,11 +21,12 @@ export declare class BufferBuilder {
     writeUnsignedInt32(value: Deferrable<number>): this;
     writeInt64(value: Deferrable<bigint>): this;
     writeUnsignedInt64(value: Deferrable<bigint>): this;
+    writeFloat(value: Deferrable<number>): this;
     writeString(value: Buffer | string | null | undefined): this;
     writeLengthPrefixedString(value: Buffer | string | null | undefined, bytes?: 1 | 2 | 4): this;
     writeMultibytePrefixedString(value: Buffer | string | null | undefined): this;
     writeNullTerminatedString(value: Buffer | string | null | undefined): this;
-    writeFloat(value: Deferrable<number>): this;
     push(...buffers: Buffer[]): this;
-    private deferrableCall;
+    private writeDeferrableInt;
 }
+export {};
