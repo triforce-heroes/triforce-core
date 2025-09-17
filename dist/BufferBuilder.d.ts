@@ -10,6 +10,7 @@ export declare class BufferBuilder {
     build(): Buffer<ArrayBuffer>;
     pad(length: number, kind?: string, forced?: boolean): this;
     write(count: number, word?: string): this;
+    writeOffset(pBuffer: Buffer | BufferBuilder, pad?: number, offsetBytes?: 1 | 2 | 4, offsetWhenEmpty?: number): this;
     writeByte(value: Deferrable<number>): this;
     writeInt(value: Deferrable<number>, bytes?: 1 | 2 | 4): this;
     writeUnsignedInt(value: Deferrable<number>, bytes?: 1 | 2 | 4): this;

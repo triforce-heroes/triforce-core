@@ -470,7 +470,7 @@ describe("class BufferBuilder", () => {
   );
 
   type OffsetTest = [
-    buffer: Buffer,
+    buffer: Buffer | BufferBuilder,
     pad: number | undefined,
     offsetBytes: 1 | 2 | 4 | undefined,
     offsetWhenEmpty: number | undefined,
@@ -507,6 +507,70 @@ describe("class BufferBuilder", () => {
       Buffer.from([6, 0, 0, 0, 0xff, 0xff]),
     ],
     [Buffer.from([]), 4, 2, 0xffff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
+    [
+      new BufferBuilder().writeUnsignedInt32(123),
+      undefined,
+      undefined,
+      undefined,
+      Buffer.from([12, 0, 0, 0, 8, 0, 0, 0, 123, 0, 0, 0]),
+    ],
+    [
+      new BufferBuilder().writeUnsignedInt32(123),
+      8,
+      undefined,
+      undefined,
+      Buffer.from([16, 0, 0, 0, 8, 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 0]),
+    ],
+    [
+      new BufferBuilder().writeUnsignedInt32(123),
+      undefined,
+      2,
+      0xffff,
+      Buffer.from([10, 0, 0, 0, 6, 0, 123, 0, 0, 0]),
+    ],
+    [
+      new BufferBuilder(),
+      undefined,
+      2,
+      0xffff,
+      Buffer.from([6, 0, 0, 0, 0xff, 0xff]),
+    ],
+    [new BufferBuilder(), 4, 2, 0xffff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
+    [
+      (() => {
+        const bufferBuilder = new BufferBuilder();
+
+        bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length); // (B1)
+        bufferBuilder.writeOffset(
+          new BufferBuilder().writeUnsignedInt32(123), // (C1)
+          16, // (C2)
+        ); // (B2)
+        bufferBuilder.pad(16, "\xff"); // (B3)
+
+        return bufferBuilder;
+      })(),
+      48,
+      undefined,
+      undefined,
+      Buffer.from([
+        // (A1) Buffer total length (48 pad-sized)
+        ...[48, 0, 0, 0],
+        // (A2) Offset to secondary buffer.
+        ...[8, 0, 0, 0],
+        // (B1) Secondary buffer length (32 pad-sized)
+        ...[32, 0, 0, 0],
+        // (B2) Offset to tertiary buffer (after padding).
+        ...[16, 0, 0, 0],
+        // (B3) Secondary buffer padding to 16 bytes.
+        ...[255, 255, 255, 255, 255, 255, 255, 255],
+        // (C1) Secondary buffer tertiary buffer.
+        ...[123, 0, 0, 0],
+        // (C2) Tertiary padding.
+        ...[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        // (A1) Primary buffer padding.
+        ...[0, 0, 0, 0, 0, 0, 0, 0],
+      ]),
+    ],
   ];
 
   it.each(offsetTests)(
@@ -514,8 +578,8 @@ describe("class BufferBuilder", () => {
     (buffer, pad, offsetBytes, offsetWhenEmpty, expected) => {
       const bufferBuilder = new BufferBuilder();
 
-      bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
-      bufferBuilder.writeOffset(buffer, pad, offsetBytes, offsetWhenEmpty);
+      bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length); // (A1)
+      bufferBuilder.writeOffset(buffer, pad, offsetBytes, offsetWhenEmpty); // (A2)
 
       expect(bufferBuilder.build()).toStrictEqual(expected);
     },

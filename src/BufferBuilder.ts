@@ -99,17 +99,19 @@ export class BufferBuilder {
   }
 
   public writeOffset(
-    buffer: Buffer,
+    pBuffer: Buffer | BufferBuilder,
     pad = 1,
     offsetBytes: 1 | 2 | 4 = 4,
     offsetWhenEmpty = 0,
   ) {
     return this.writeUnsignedInt(() => {
-      if (buffer.length === 0) {
+      if (pBuffer.length === 0) {
         return offsetWhenEmpty;
       }
 
       const offset = this.inLength;
+      const buffer =
+        pBuffer instanceof BufferBuilder ? pBuffer.build() : pBuffer;
 
       this.push(buffer).pad(pad);
 
