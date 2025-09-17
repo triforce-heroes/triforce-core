@@ -415,12 +415,29 @@ describe("class BufferBuilder", () => {
   });
 
   it("deferred method .writeUnsignedInt64()", () => {
+    const extraBuilder = new BufferBuilder();
+
+    extraBuilder.writeUnsignedInt32(() => extraBuilder.length);
+
     const bufferBuilder = new BufferBuilder();
 
+    bufferBuilder.writeInt32(() => bufferBuilder.length);
+    bufferBuilder.writeUnsignedInt32(() => {
+      const offset = bufferBuilder.length;
+
+      bufferBuilder.push(extraBuilder.build());
+
+      return offset;
+    });
     bufferBuilder.writeUnsignedInt64(() => 123n);
 
     expect(bufferBuilder.build()).toStrictEqual(
-      Buffer.from([123, 0, 0, 0, 0, 0, 0, 0]),
+      Buffer.concat([
+        Buffer.from([4 + 4 + 8 + 4, 0, 0, 0]),
+        Buffer.from([16, 0, 0, 0]),
+        Buffer.from([123, 0, 0, 0, 0, 0, 0, 0]),
+        Buffer.from([4, 0, 0, 0]),
+      ]),
     );
   });
 });

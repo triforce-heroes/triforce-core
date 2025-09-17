@@ -42,8 +42,16 @@ export class BufferBuilder {
   public build() {
     const buffer = Buffer.concat(this.inBuffers);
 
-    for (const deferredCall of this.deferredCalls) {
-      deferredCall(buffer);
+    if (this.deferredCalls.length) {
+      const buffersLength = this.inBuffers.length;
+
+      for (const deferredCall of this.deferredCalls.reverse()) {
+        deferredCall(buffer);
+      }
+
+      if (buffersLength !== this.inBuffers.length) {
+        return Buffer.concat([buffer, ...this.inBuffers.slice(buffersLength)]);
+      }
     }
 
     return buffer;
