@@ -19,14 +19,14 @@ export declare class BufferBuilder {
     writeUnsignedInt16(value: Deferrable<number>): this;
     writeInt32(value: Deferrable<number>): this;
     writeUnsignedInt32(value: Deferrable<number>): this;
-    writeInt64(value: bigint): this;
-    writeUnsignedInt64(value: bigint): this;
+    writeInt64(value: Deferrable<bigint>): this;
+    writeUnsignedInt64(value: Deferrable<bigint>): this;
     writeString(value: Buffer | string | null | undefined): this;
     writeLengthPrefixedString(value: Buffer | string | null | undefined, bytes?: 1 | 2 | 4): this;
     writeMultibytePrefixedString(value: Buffer | string | null | undefined): this;
     writeNullTerminatedString(value: Buffer | string | null | undefined): this;
     writeFloat(value: Deferrable<number>): this;
     push(...buffers: Buffer[]): this;
-    private writeBigInt;
     private deferrableCall;
+    private deferrableCallBigInt;
 }

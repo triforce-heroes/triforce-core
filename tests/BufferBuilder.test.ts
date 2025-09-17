@@ -400,7 +400,7 @@ describe("class BufferBuilder", () => {
     ["writeUnsignedInt32", 123, Buffer.from([123, 0, 0, 0])],
     ["writeFloat", 123.456, Buffer.from([121, 233, 246, 66])],
   ] as const satisfies Array<
-    [method: keyof BufferBuilder, value: number, buffer: Buffer]
+    [method: keyof BufferBuilder, value: bigint | number, buffer: Buffer]
   >;
 
   it.each(deferredSamples)("deferred method .%s()", (method, value, buffer) => {
@@ -409,5 +409,15 @@ describe("class BufferBuilder", () => {
     bufferBuilder[method](() => value);
 
     expect(bufferBuilder.build()).toStrictEqual(buffer);
+  });
+
+  it("deferred method .writeUnsignedInt64()", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeUnsignedInt64(() => 123n);
+
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.from([123, 0, 0, 0, 0, 0, 0, 0]),
+    );
   });
 });

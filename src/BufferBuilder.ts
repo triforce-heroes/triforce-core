@@ -4,6 +4,12 @@ import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
 
 export type Deferrable<T> = T | (() => T);
 
+type DeferrableMethodBigInt =
+  | "writeBigInt64BE"
+  | "writeBigInt64LE"
+  | "writeBigUInt64BE"
+  | "writeBigUInt64LE";
+
 type DeferrableMethod =
   | "writeFloatBE"
   | "writeFloatLE"
@@ -195,14 +201,16 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeInt64(value: bigint) {
+  public writeInt64(value: Deferrable<bigint>) {
     const buffer = BufferPolyfill.allocUnsafe(8);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeBigInt64LE(value);
-    } else {
-      buffer.writeBigInt64BE(value);
-    }
+    this.deferrableCallBigInt(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? "writeBigInt64LE"
+        : "writeBigInt64BE",
+      value,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += 8;
@@ -210,14 +218,16 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeUnsignedInt64(value: bigint) {
+  public writeUnsignedInt64(value: Deferrable<bigint>) {
     const buffer = BufferPolyfill.allocUnsafe(8);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeBigUInt64LE(value);
-    } else {
-      buffer.writeBigUInt64BE(value);
-    }
+    this.deferrableCallBigInt(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? "writeBigUInt64LE"
+        : "writeBigUInt64BE",
+      value,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += 8;
@@ -349,6 +359,24 @@ export class BufferBuilder {
       });
 
       buffer[method](0);
+    }
+  }
+
+  private deferrableCallBigInt<T extends bigint>(
+    buffer: Buffer,
+    method: DeferrableMethodBigInt,
+    value: Deferrable<T>,
+  ) {
+    if (typeof value === "bigint") {
+      buffer[method](value);
+    } else {
+      const currentOffset = this.inLength;
+
+      this.deferredCalls.push(() => {
+        buffer[method](value(), currentOffset);
+      });
+
+      buffer[method](0n);
     }
   }
 }
