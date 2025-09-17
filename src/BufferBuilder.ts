@@ -1,5 +1,7 @@
 import { ByteOrder } from "@/types/ByteOrder.js";
 
+import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
+
 export type Deferrable<T> = T | (() => T);
 
 type DeferrableMethod =
@@ -194,11 +196,9 @@ export class BufferBuilder {
   }
 
   public writeInt64(value: bigint) {
-    const buffer = Buffer.allocUnsafe(8);
+    const buffer = BufferPolyfill.allocUnsafe(8);
 
-    if (!("writeBigInt64LE" in buffer)) {
-      this.writeBigInt(buffer, "setBigInt64", value);
-    } else if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
       buffer.writeBigInt64LE(value);
     } else {
       buffer.writeBigInt64BE(value);
@@ -211,11 +211,9 @@ export class BufferBuilder {
   }
 
   public writeUnsignedInt64(value: bigint) {
-    const buffer = Buffer.allocUnsafe(8);
+    const buffer = BufferPolyfill.allocUnsafe(8);
 
-    if (!("writeBigInt64LE" in buffer)) {
-      this.writeBigInt(buffer, "setBigUint64", value);
-    } else if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
+    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
       buffer.writeBigUInt64LE(value);
     } else {
       buffer.writeBigUInt64BE(value);
@@ -331,20 +329,6 @@ export class BufferBuilder {
     this.inLength += buffers.reduce(
       (bufferA, bufferB) => bufferA + bufferB.length,
       0,
-    );
-
-    return this;
-  }
-
-  private writeBigInt(
-    buffer: Buffer,
-    method: "setBigInt64" | "setBigUint64",
-    value: bigint,
-  ) {
-    new DataView(buffer.buffer, buffer.byteOffset)[method](
-      0,
-      value,
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN,
     );
 
     return this;
