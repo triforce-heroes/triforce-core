@@ -11,9 +11,12 @@ export declare class BufferBuilder {
     pad(length: number, kind?: string, forced?: boolean): this;
     write(count: number, word?: string): this;
     writeOffset(pBuffer: Buffer | BufferBuilder, pad?: number, offsetBytes?: 1 | 2 | 4, offsetWhenEmpty?: number): this;
+    writeOffset(pBuffer: Buffer | BufferBuilder, pad: number | undefined, offsetBytes: 8, offsetWhenEmpty?: bigint): this;
     writeByte(value: Deferrable<number>): this;
-    writeInt(value: Deferrable<number>, bytes?: 1 | 2 | 4): this;
-    writeUnsignedInt(value: Deferrable<number>, bytes?: 1 | 2 | 4): this;
+    writeInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
+    writeInt(value: Deferrable<bigint>, bytes: 8): this;
+    writeUnsignedInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
+    writeUnsignedInt(value: Deferrable<bigint>, bytes: 8): this;
     writeInt8(value: Deferrable<number>): this;
     writeUnsignedInt8(value: Deferrable<number>): this;
     writeInt16(value: Deferrable<number>): this;

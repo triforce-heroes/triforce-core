@@ -624,4 +624,31 @@ describe("class BufferBuilder", () => {
       expect(bufferBuilder.build()).toStrictEqual(expected);
     },
   );
+
+  it("method .writeOffset(Buffer [1, 2, 3, 4])", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
+    bufferBuilder.writeOffset(Buffer.from([1, 2, 3, 4]), undefined, 8);
+
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.from([16, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4]),
+    );
+  });
+
+  it("method .writeOffset(empty, undefined, 8, 0xffffffffffffffffn)", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
+    bufferBuilder.writeOffset(
+      Buffer.alloc(0),
+      undefined,
+      8,
+      0xffffffffffffffffn,
+    );
+
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.from([12, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255]),
+    );
+  });
 });

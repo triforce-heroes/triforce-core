@@ -100,23 +100,42 @@ export class BufferBuilder {
 
   public writeOffset(
     pBuffer: Buffer | BufferBuilder,
+    pad?: number,
+    offsetBytes?: 1 | 2 | 4,
+    offsetWhenEmpty?: number,
+  ): this;
+
+  public writeOffset(
+    pBuffer: Buffer | BufferBuilder,
+    pad: number | undefined,
+    offsetBytes: 8,
+    offsetWhenEmpty?: bigint,
+  ): this;
+
+  public writeOffset(
+    pBuffer: Buffer | BufferBuilder,
     pad = 1,
-    offsetBytes: 1 | 2 | 4 = 4,
-    offsetWhenEmpty = 0,
+    offsetBytes: 1 | 2 | 4 | 8 = 4,
+    offsetWhenEmpty?: bigint | number,
   ) {
-    return this.writeUnsignedInt(() => {
-      if (pBuffer.length === 0) {
-        return offsetWhenEmpty;
-      }
+    return this.writeUnsignedInt(
+      (() => {
+        if (pBuffer.length === 0) {
+          return offsetBytes === 8
+            ? offsetWhenEmpty ?? 0n
+            : offsetWhenEmpty ?? 0;
+        }
 
-      const offset = this.inLength;
-      const buffer =
-        pBuffer instanceof BufferBuilder ? pBuffer.build() : pBuffer;
+        const offset = this.inLength;
+        const buffer =
+          pBuffer instanceof BufferBuilder ? pBuffer.build() : pBuffer;
 
-      this.push(buffer).pad(pad);
+        this.push(buffer).pad(pad);
 
-      return offset;
-    }, offsetBytes);
+        return offsetBytes === 8 ? BigInt(offset) : offset;
+      }) as Deferrable<number>,
+      offsetBytes as 4,
+    );
   }
 
   public writeByte(value: Deferrable<number>) {
