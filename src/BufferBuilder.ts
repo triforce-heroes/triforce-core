@@ -4,7 +4,7 @@ import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
 
 export type Deferrable<T> = T | (() => T);
 
-type DeferrableMethodBigInt =
+type DeferredBigIntMethod =
   | "writeBigInt64BE"
   | "writeBigInt64LE"
   | "writeBigUInt64BE"
@@ -204,12 +204,13 @@ export class BufferBuilder {
   public writeInt64(value: Deferrable<bigint>) {
     const buffer = BufferPolyfill.allocUnsafe(8);
 
-    this.deferrableCallBigInt(
+    this.deferrableCall(
       buffer,
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN
         ? "writeBigInt64LE"
         : "writeBigInt64BE",
       value,
+      0n,
     );
 
     this.inBuffers.push(buffer);
@@ -221,12 +222,13 @@ export class BufferBuilder {
   public writeUnsignedInt64(value: Deferrable<bigint>) {
     const buffer = BufferPolyfill.allocUnsafe(8);
 
-    this.deferrableCallBigInt(
+    this.deferrableCall(
       buffer,
       this.pByteOrder === ByteOrder.LITTLE_ENDIAN
         ? "writeBigUInt64LE"
         : "writeBigUInt64BE",
       value,
+      0n,
     );
 
     this.inBuffers.push(buffer);
@@ -344,39 +346,25 @@ export class BufferBuilder {
     return this;
   }
 
-  private deferrableCall<T extends number>(
+  private deferrableCall<T extends bigint | number>(
     buffer: Buffer,
-    method: DeferrableMethod,
+    method: DeferrableMethod | DeferredBigIntMethod,
     value: Deferrable<T>,
+    placeholderValue: T = 0 as T,
   ) {
-    if (typeof value === "number") {
-      buffer[method](value);
+    type BufferMethod = (value: T, offset?: number) => number;
+    const bufferMethod = buffer[method].bind(buffer) as BufferMethod;
+
+    if (typeof value === "number" || typeof value === "bigint") {
+      bufferMethod(value);
     } else {
       const currentOffset = this.inLength;
 
       this.deferredCalls.push(() => {
-        buffer[method](value(), currentOffset);
+        bufferMethod(value(), currentOffset);
       });
 
-      buffer[method](0);
-    }
-  }
-
-  private deferrableCallBigInt<T extends bigint>(
-    buffer: Buffer,
-    method: DeferrableMethodBigInt,
-    value: Deferrable<T>,
-  ) {
-    if (typeof value === "bigint") {
-      buffer[method](value);
-    } else {
-      const currentOffset = this.inLength;
-
-      this.deferredCalls.push(() => {
-        buffer[method](value(), currentOffset);
-      });
-
-      buffer[method](0n);
+      bufferMethod(placeholderValue);
     }
   }
 }

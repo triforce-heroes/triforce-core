@@ -28,5 +28,4 @@ export declare class BufferBuilder {
     writeFloat(value: Deferrable<number>): this;
     push(...buffers: Buffer[]): this;
     private deferrableCall;
-    private deferrableCallBigInt;
 }
