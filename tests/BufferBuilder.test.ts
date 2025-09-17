@@ -468,4 +468,56 @@ describe("class BufferBuilder", () => {
       expect(bufferBuilder.build()).toStrictEqual(buffer);
     },
   );
+
+  type OffsetTest = [
+    buffer: Buffer,
+    pad: number | undefined,
+    offsetBytes: 1 | 2 | 4 | undefined,
+    offsetWhenEmpty: number | undefined,
+    expected: Buffer,
+  ];
+
+  const offsetTests: OffsetTest[] = [
+    [
+      Buffer.from([1, 2, 3, 4]),
+      undefined,
+      undefined,
+      undefined,
+      Buffer.from([12, 0, 0, 0, 8, 0, 0, 0, 1, 2, 3, 4]),
+    ],
+    [
+      Buffer.from([1, 2, 3, 4]),
+      8,
+      undefined,
+      undefined,
+      Buffer.from([16, 0, 0, 0, 8, 0, 0, 0, 1, 2, 3, 4, 0, 0, 0, 0]),
+    ],
+    [
+      Buffer.from([1, 2, 3, 4]),
+      undefined,
+      2,
+      0xffff,
+      Buffer.from([10, 0, 0, 0, 6, 0, 1, 2, 3, 4]),
+    ],
+    [
+      Buffer.from([]),
+      undefined,
+      2,
+      0xffff,
+      Buffer.from([6, 0, 0, 0, 0xff, 0xff]),
+    ],
+    [Buffer.from([]), 4, 2, 0xffff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
+  ];
+
+  it.each(offsetTests)(
+    "method .writeOffset(%j, %j, %j, %j)",
+    (buffer, pad, offsetBytes, offsetWhenEmpty, expected) => {
+      const bufferBuilder = new BufferBuilder();
+
+      bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
+      bufferBuilder.writeOffset(buffer, pad, offsetBytes, offsetWhenEmpty);
+
+      expect(bufferBuilder.build()).toStrictEqual(expected);
+    },
+  );
 });

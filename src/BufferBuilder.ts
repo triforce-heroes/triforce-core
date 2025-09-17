@@ -98,6 +98,25 @@ export class BufferBuilder {
     return this;
   }
 
+  public writeOffset(
+    buffer: Buffer,
+    pad = 1,
+    offsetBytes: 1 | 2 | 4 = 4,
+    offsetWhenEmpty = 0,
+  ) {
+    return this.writeUnsignedInt(() => {
+      if (buffer.length === 0) {
+        return offsetWhenEmpty;
+      }
+
+      const offset = this.inLength;
+
+      this.push(buffer).pad(pad);
+
+      return offset;
+    }, offsetBytes);
+  }
+
   public writeByte(value: Deferrable<number>) {
     return this.writeUnsignedInt8(value);
   }
