@@ -40,9 +40,13 @@ export class BufferBuilder {
 
   private readonly deferredCalls: DeferredCallback[] = [];
 
+  private readonly littleEndian;
+
   private inLength = 0;
 
-  public constructor(private readonly pByteOrder = ByteOrder.LITTLE_ENDIAN) {}
+  public constructor(byteOrder = ByteOrder.LITTLE_ENDIAN) {
+    this.littleEndian = byteOrder === ByteOrder.LITTLE_ENDIAN;
+  }
 
   public get length() {
     return this.inLength;
@@ -304,10 +308,7 @@ export class BufferBuilder {
     type Constructor = ConstructorType & Record<DeferrableMethod, Method>;
 
     const buffer = BufferConstructor.allocUnsafe(bytes) as Constructor;
-    const method =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? methodLE
-        : methodBE ?? methodLE;
+    const method = this.littleEndian ? methodLE : methodBE ?? methodLE;
 
     if (typeof value === "function") {
       const currentOffset = this.inLength;

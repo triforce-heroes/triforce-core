@@ -1,11 +1,11 @@
 import { ByteOrder } from "./types/ByteOrder.js";
 type Deferrable<T> = T | (() => T);
 export declare class BufferBuilder {
-    private readonly pByteOrder;
     private readonly inBuffers;
     private readonly deferredCalls;
+    private readonly littleEndian;
     private inLength;
-    constructor(pByteOrder?: ByteOrder);
+    constructor(byteOrder?: ByteOrder);
     get length(): number;
     build(): Buffer<ArrayBuffer>;
     pad(length: number, kind?: string, forced?: boolean): this;

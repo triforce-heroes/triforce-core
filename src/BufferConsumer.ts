@@ -1,11 +1,15 @@
 import { ByteOrder } from "@/types/ByteOrder.js";
 
 export class BufferConsumer {
+  private readonly littleEndian;
+
   public constructor(
     private readonly pBuffer: Buffer,
     private pByteOffset = 0,
     private readonly pByteOrder = ByteOrder.LITTLE_ENDIAN,
-  ) {}
+  ) {
+    this.littleEndian = pByteOrder === ByteOrder.LITTLE_ENDIAN;
+  }
 
   public get buffer() {
     return this.pBuffer;
@@ -67,10 +71,9 @@ export class BufferConsumer {
   }
 
   public readInt16(): number {
-    const value =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readInt16LE(this.pByteOffset)
-        : this.pBuffer.readInt16BE(this.pByteOffset);
+    const value = this.littleEndian
+      ? this.pBuffer.readInt16LE(this.pByteOffset)
+      : this.pBuffer.readInt16BE(this.pByteOffset);
 
     this.pByteOffset += 2;
 
@@ -78,10 +81,9 @@ export class BufferConsumer {
   }
 
   public readUnsignedInt16(): number {
-    const value =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readUInt16LE(this.pByteOffset)
-        : this.pBuffer.readUInt16BE(this.pByteOffset);
+    const value = this.littleEndian
+      ? this.pBuffer.readUInt16LE(this.pByteOffset)
+      : this.pBuffer.readUInt16BE(this.pByteOffset);
 
     this.pByteOffset += 2;
 
@@ -89,10 +91,9 @@ export class BufferConsumer {
   }
 
   public readInt32(): number {
-    const value =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readInt32LE(this.pByteOffset)
-        : this.pBuffer.readInt32BE(this.pByteOffset);
+    const value = this.littleEndian
+      ? this.pBuffer.readInt32LE(this.pByteOffset)
+      : this.pBuffer.readInt32BE(this.pByteOffset);
 
     this.pByteOffset += 4;
 
@@ -100,10 +101,9 @@ export class BufferConsumer {
   }
 
   public readUnsignedInt32(): number {
-    const value =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readUInt32LE(this.pByteOffset)
-        : this.pBuffer.readUInt32BE(this.pByteOffset);
+    const value = this.littleEndian
+      ? this.pBuffer.readUInt32LE(this.pByteOffset)
+      : this.pBuffer.readUInt32BE(this.pByteOffset);
 
     this.pByteOffset += 4;
 
@@ -115,10 +115,9 @@ export class BufferConsumer {
       return this.readBigInt("getBigInt64");
     }
 
-    const value =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readBigInt64LE(this.pByteOffset)
-        : this.pBuffer.readBigInt64BE(this.pByteOffset);
+    const value = this.littleEndian
+      ? this.pBuffer.readBigInt64LE(this.pByteOffset)
+      : this.pBuffer.readBigInt64BE(this.pByteOffset);
 
     this.pByteOffset += 8;
 
@@ -130,10 +129,9 @@ export class BufferConsumer {
       return this.readBigInt("getBigInt64");
     }
 
-    const value =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readBigUInt64LE(this.pByteOffset)
-        : this.pBuffer.readBigUInt64BE(this.pByteOffset);
+    const value = this.littleEndian
+      ? this.pBuffer.readBigUInt64LE(this.pByteOffset)
+      : this.pBuffer.readBigUInt64BE(this.pByteOffset);
 
     this.pByteOffset += 8;
 
@@ -141,10 +139,9 @@ export class BufferConsumer {
   }
 
   public readFloat(): number {
-    const value =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readFloatLE(this.pByteOffset)
-        : this.pBuffer.readFloatBE(this.pByteOffset);
+    const value = this.littleEndian
+      ? this.pBuffer.readFloatLE(this.pByteOffset)
+      : this.pBuffer.readFloatBE(this.pByteOffset);
 
     this.pByteOffset += 4;
 
@@ -165,10 +162,9 @@ export class BufferConsumer {
 
   public readLengthPrefixedString(bytes: 1 | 2 | 4 = 4): string {
     const offset = this.pByteOffset;
-    const length =
-      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
-        ? this.pBuffer.readUIntLE(this.pByteOffset, bytes)
-        : this.pBuffer.readUIntBE(this.pByteOffset, bytes);
+    const length = this.littleEndian
+      ? this.pBuffer.readUIntLE(this.pByteOffset, bytes)
+      : this.pBuffer.readUIntBE(this.pByteOffset, bytes);
 
     this.pByteOffset += length + bytes;
 
@@ -298,6 +294,6 @@ export class BufferConsumer {
 
     this.pByteOffset += 8;
 
-    return view[method](0, this.pByteOrder === ByteOrder.LITTLE_ENDIAN);
+    return view[method](0, this.littleEndian);
   }
 }

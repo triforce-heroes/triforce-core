@@ -3,6 +3,7 @@ export declare class BufferConsumer {
     private readonly pBuffer;
     private pByteOffset;
     private readonly pByteOrder;
+    private readonly littleEndian;
     constructor(pBuffer: Buffer, pByteOffset?: number, pByteOrder?: ByteOrder);
     get buffer(): Buffer<ArrayBufferLike>;
     get byteOffset(): number;
