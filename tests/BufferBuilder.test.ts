@@ -84,6 +84,26 @@ describe("class BufferBuilder", () => {
     },
   );
 
+  it("method writeInt(255n, 8)", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeInt(-255n, 8);
+
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.from([1, 255, 255, 255, 255, 255, 255, 255]),
+    );
+    expect(bufferBuilder).toHaveLength(8);
+
+    const bufferBuilderBE = new BufferBuilder(ByteOrder.BIG_ENDIAN);
+
+    bufferBuilderBE.writeInt(-255n, 8);
+
+    expect(bufferBuilderBE.build()).toStrictEqual(
+      Buffer.from([255, 255, 255, 255, 255, 255, 255, 1]),
+    );
+    expect(bufferBuilderBE).toHaveLength(8);
+  });
+
   const writeUnsignedIntTests = [
     [0, 1, Buffer.from([0])],
     [0, 2, Buffer.from([0, 0])],
@@ -104,6 +124,26 @@ describe("class BufferBuilder", () => {
       expect(bufferBuilder).toHaveLength(expected.length);
     },
   );
+
+  it("method writeUnsignedInt(255n, 8)", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeUnsignedInt(255n, 8);
+
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.from([255, 0, 0, 0, 0, 0, 0, 0]),
+    );
+    expect(bufferBuilder).toHaveLength(8);
+
+    const bufferBuilderBE = new BufferBuilder(ByteOrder.BIG_ENDIAN);
+
+    bufferBuilderBE.writeUnsignedInt(255n, 8);
+
+    expect(bufferBuilderBE.build()).toStrictEqual(
+      Buffer.from([0, 0, 0, 0, 0, 0, 0, 255]),
+    );
+    expect(bufferBuilderBE).toHaveLength(8);
+  });
 
   const writeIntLETests = [
     ["writeByte", TEST_INT8, TEST_INT8_BUFFER],

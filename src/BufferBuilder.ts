@@ -123,24 +123,40 @@ export class BufferBuilder {
     return this.writeUnsignedInt8(value);
   }
 
-  public writeInt(value: Deferrable<number>, bytes: 1 | 2 | 4 = 4) {
-    return this.writeDeferrableInt(
-      Buffer,
-      bytes,
-      "writeIntLE",
-      "writeIntBE",
-      value,
-    );
+  public writeInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
+  public writeInt(value: Deferrable<bigint>, bytes: 8): this;
+
+  public writeInt(
+    value: Deferrable<bigint | number>,
+    bytes: 1 | 2 | 4 | 8 = 4,
+  ) {
+    return bytes === 8
+      ? this.writeInt64(value as Deferrable<bigint>)
+      : this.writeDeferrableInt(
+          Buffer,
+          bytes,
+          "writeIntLE",
+          "writeIntBE",
+          value,
+        );
   }
 
-  public writeUnsignedInt(value: Deferrable<number>, bytes: 1 | 2 | 4 = 4) {
-    return this.writeDeferrableInt(
-      Buffer,
-      bytes,
-      "writeUIntLE",
-      "writeUIntBE",
-      value,
-    );
+  public writeUnsignedInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
+  public writeUnsignedInt(value: Deferrable<bigint>, bytes: 8): this;
+
+  public writeUnsignedInt(
+    value: Deferrable<bigint | number>,
+    bytes: 1 | 2 | 4 | 8 = 4,
+  ) {
+    return bytes === 8
+      ? this.writeUnsignedInt64(value as Deferrable<bigint>)
+      : this.writeDeferrableInt(
+          Buffer,
+          bytes,
+          "writeUIntLE",
+          "writeUIntBE",
+          value,
+        );
   }
 
   public writeInt8(value: Deferrable<number>) {
