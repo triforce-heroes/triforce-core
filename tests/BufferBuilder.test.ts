@@ -406,9 +406,12 @@ describe("class BufferBuilder", () => {
   it.each(deferredSamples)("deferred method .%s()", (method, value, buffer) => {
     const bufferBuilder = new BufferBuilder();
 
+    bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
     bufferBuilder[method](() => value);
 
-    expect(bufferBuilder.build()).toStrictEqual(buffer);
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.concat([Buffer.from([4 + buffer.length, 0, 0, 0]), buffer]),
+    );
   });
 
   it("deferred method .writeUnsignedInt64()", () => {

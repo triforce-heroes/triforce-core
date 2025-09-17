@@ -24,7 +24,7 @@ type DeferrableMethod =
   | "writeUInt32BE"
   | "writeUInt32LE";
 
-type DeferredCallback = () => void;
+type DeferredCallback = (buffer: Buffer) => void;
 
 export class BufferBuilder {
   private readonly inBuffers: Buffer[] = [];
@@ -40,11 +40,13 @@ export class BufferBuilder {
   }
 
   public build() {
+    const buffer = Buffer.concat(this.inBuffers);
+
     for (const deferredCall of this.deferredCalls) {
-      deferredCall();
+      deferredCall(buffer);
     }
 
-    return Buffer.concat(this.inBuffers);
+    return buffer;
   }
 
   public pad(length: number, kind = "\0", forced = false) {
@@ -353,18 +355,17 @@ export class BufferBuilder {
     placeholderValue: T = 0 as T,
   ) {
     type BufferMethod = (value: T, offset?: number) => number;
-    const bufferMethod = buffer[method].bind(buffer) as BufferMethod;
 
-    if (typeof value === "number" || typeof value === "bigint") {
-      bufferMethod(value);
-    } else {
+    if (typeof value === "function") {
       const currentOffset = this.inLength;
 
-      this.deferredCalls.push(() => {
-        bufferMethod(value(), currentOffset);
+      this.deferredCalls.push((inBuffer) => {
+        (inBuffer[method] as BufferMethod)(value(), currentOffset);
       });
 
-      bufferMethod(placeholderValue);
+      (buffer[method] as BufferMethod)(placeholderValue);
+    } else {
+      (buffer[method] as BufferMethod)(value);
     }
   }
 }
