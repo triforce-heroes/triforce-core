@@ -11,8 +11,8 @@ export declare class BufferBuilder {
     pad(length: number, kind?: string, forced?: boolean): this;
     write(count: number, word?: string): this;
     writeByte(value: Deferrable<number>): this;
-    writeInt(value: number, bytes?: 1 | 2 | 4): this;
-    writeUnsignedInt(value: number, bytes?: 1 | 2 | 4): this;
+    writeInt(value: Deferrable<number>, bytes?: 1 | 2 | 4): this;
+    writeUnsignedInt(value: Deferrable<number>, bytes?: 1 | 2 | 4): this;
     writeInt8(value: Deferrable<number>): this;
     writeUnsignedInt8(value: Deferrable<number>): this;
     writeInt16(value: Deferrable<number>): this;

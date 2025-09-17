@@ -440,4 +440,32 @@ describe("class BufferBuilder", () => {
       ]),
     );
   });
+
+  const deferredCustomSamples = [
+    ["writeInt", 1, 123, Buffer.from([5, 0, 0, 0, 123])],
+    ["writeInt", 2, -123, Buffer.from([6, 0, 0, 0, 133, 255])],
+    ["writeInt", 4, 123, Buffer.from([8, 0, 0, 0, 123, 0, 0, 0])],
+    ["writeUnsignedInt", 1, 123, Buffer.from([5, 0, 0, 0, 123])],
+    ["writeUnsignedInt", 2, 123, Buffer.from([6, 0, 0, 0, 123, 0])],
+    ["writeUnsignedInt", 4, 123, Buffer.from([8, 0, 0, 0, 123, 0, 0, 0])],
+  ] as const satisfies Array<
+    [
+      method: keyof BufferBuilder,
+      bytes: 1 | 2 | 4,
+      value: number,
+      buffer: Buffer,
+    ]
+  >;
+
+  it.each(deferredCustomSamples)(
+    "deferred method .%s()",
+    (method, bytes, value, buffer) => {
+      const bufferBuilder = new BufferBuilder();
+
+      bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
+      bufferBuilder[method](() => value, bytes);
+
+      expect(bufferBuilder.build()).toStrictEqual(buffer);
+    },
+  );
 });

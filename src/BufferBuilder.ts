@@ -4,6 +4,12 @@ import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
 
 export type Deferrable<T> = T | (() => T);
 
+type DeferredBytesMethod =
+  | "writeIntBE"
+  | "writeIntLE"
+  | "writeUIntBE"
+  | "writeUIntLE";
+
 type DeferredBigIntMethod =
   | "writeBigInt64BE"
   | "writeBigInt64LE"
@@ -91,14 +97,15 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeInt(value: number, bytes: 1 | 2 | 4 = 4) {
+  public writeInt(value: Deferrable<number>, bytes: 1 | 2 | 4 = 4) {
     const buffer = Buffer.allocUnsafe(bytes);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeIntLE(value, 0, bytes);
-    } else {
-      buffer.writeIntBE(value, 0, bytes);
-    }
+    this.deferrableCall(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN ? "writeIntLE" : "writeIntBE",
+      value,
+      bytes,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += bytes;
@@ -106,14 +113,17 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeUnsignedInt(value: number, bytes: 1 | 2 | 4 = 4) {
+  public writeUnsignedInt(value: Deferrable<number>, bytes: 1 | 2 | 4 = 4) {
     const buffer = Buffer.allocUnsafe(bytes);
 
-    if (this.pByteOrder === ByteOrder.LITTLE_ENDIAN) {
-      buffer.writeUIntLE(value, 0, bytes);
-    } else {
-      buffer.writeUIntBE(value, 0, bytes);
-    }
+    this.deferrableCall(
+      buffer,
+      this.pByteOrder === ByteOrder.LITTLE_ENDIAN
+        ? "writeUIntLE"
+        : "writeUIntBE",
+      value,
+      bytes,
+    );
 
     this.inBuffers.push(buffer);
     this.inLength += bytes;
@@ -220,6 +230,7 @@ export class BufferBuilder {
         ? "writeBigInt64LE"
         : "writeBigInt64BE",
       value,
+      undefined,
       0n,
     );
 
@@ -238,6 +249,7 @@ export class BufferBuilder {
         ? "writeBigUInt64LE"
         : "writeBigUInt64BE",
       value,
+      undefined,
       0n,
     );
 
@@ -358,22 +370,23 @@ export class BufferBuilder {
 
   private deferrableCall<T extends bigint | number>(
     buffer: Buffer,
-    method: DeferrableMethod | DeferredBigIntMethod,
+    method: DeferrableMethod | DeferredBigIntMethod | DeferredBytesMethod,
     value: Deferrable<T>,
+    bytes: 1 | 2 | 4 = 1,
     placeholderValue: T = 0 as T,
   ) {
-    type BufferMethod = (value: T, offset?: number) => number;
+    type BufferMethod = (value: T, offset: number, bytes: number) => number;
 
     if (typeof value === "function") {
       const currentOffset = this.inLength;
 
       this.deferredCalls.push((inBuffer) => {
-        (inBuffer[method] as BufferMethod)(value(), currentOffset);
+        (inBuffer[method] as BufferMethod)(value(), currentOffset, bytes);
       });
 
-      (buffer[method] as BufferMethod)(placeholderValue);
+      (buffer[method] as BufferMethod)(placeholderValue, 0, bytes);
     } else {
-      (buffer[method] as BufferMethod)(value);
+      (buffer[method] as BufferMethod)(value, 0, bytes);
     }
   }
 }
