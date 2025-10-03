@@ -35,6 +35,10 @@ type DeferrableMethod =
 
 type DeferredCallback = (buffer: Buffer) => void;
 
+interface BuildOptions {
+  reverseDeferredCalls?: boolean;
+}
+
 export class BufferBuilder {
   private readonly inBuffers: Buffer[] = [];
 
@@ -52,13 +56,18 @@ export class BufferBuilder {
     return this.inLength;
   }
 
-  public build() {
+  public build(options?: BuildOptions) {
     const buffer = Buffer.concat(this.inBuffers);
 
     if (this.deferredCalls.length) {
       const buffersLength = this.inBuffers.length;
 
-      for (const deferredCall of this.deferredCalls.reverse()) {
+      const deferredCalls =
+        options?.reverseDeferredCalls === true
+          ? this.deferredCalls.reverse()
+          : this.deferredCalls;
+
+      for (const deferredCall of deferredCalls) {
         deferredCall(buffer);
       }
 
@@ -103,6 +112,7 @@ export class BufferBuilder {
     pad?: number,
     offsetBytes?: 1 | 2 | 4,
     offsetWhenEmpty?: number,
+    pBufferBuildOptions?: BuildOptions,
   ): this;
 
   public writeOffset(
@@ -110,6 +120,7 @@ export class BufferBuilder {
     pad: number | undefined,
     offsetBytes: 8,
     offsetWhenEmpty?: bigint,
+    pBufferBuildOptions?: BuildOptions,
   ): this;
 
   public writeOffset(
@@ -117,6 +128,7 @@ export class BufferBuilder {
     pad = 1,
     offsetBytes: 1 | 2 | 4 | 8 = 4,
     offsetWhenEmpty?: bigint | number,
+    pBufferBuildOptions?: BuildOptions,
   ) {
     return this.writeUnsignedInt(
       (() => {
@@ -128,7 +140,9 @@ export class BufferBuilder {
 
         const offset = this.inLength;
         const buffer =
-          pBuffer instanceof BufferBuilder ? pBuffer.build() : pBuffer;
+          pBuffer instanceof BufferBuilder
+            ? pBuffer.build(pBufferBuildOptions)
+            : pBuffer;
 
         this.push(buffer).pad(pad);
 
