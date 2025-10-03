@@ -7,6 +7,7 @@ export declare class BufferConsumer {
     constructor(pBuffer: Buffer, pByteOffset?: number, pByteOrder?: ByteOrder);
     get buffer(): Buffer<ArrayBufferLike>;
     get byteOffset(): number;
+    static assert<T>(value: T, toBe: T, throwMessage: string): void;
     seek(byteOffset?: number): this;
     at(byteOffset?: number): number;
     atConsumable(value: number): boolean;

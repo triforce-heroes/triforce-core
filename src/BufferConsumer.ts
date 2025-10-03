@@ -19,6 +19,12 @@ export class BufferConsumer {
     return this.pByteOffset;
   }
 
+  public static assert<T>(value: T, toBe: T, throwMessage: string) {
+    if (value !== toBe) {
+      throw new Error(throwMessage);
+    }
+  }
+
   public seek(byteOffset = 0) {
     this.pByteOffset = byteOffset;
 

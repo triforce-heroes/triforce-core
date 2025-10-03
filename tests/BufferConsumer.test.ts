@@ -288,4 +288,22 @@ describe("class BufferConsumer", () => {
     expect(bufferConsumer.byteOffset).toBe(8);
     expect(bufferConsumer.isConsumed()).toBeTruthy();
   });
+
+  it("method assert()", () => {
+    const bufferConsumer = new BufferConsumer(Buffer.from("TestMagic"));
+
+    BufferConsumer.assert(
+      bufferConsumer.readString(4),
+      "Test",
+      "Expected Test",
+    );
+
+    expect(() => {
+      BufferConsumer.assert(
+        bufferConsumer.readString(4),
+        "Nope",
+        "Expected Nope",
+      );
+    }).toThrow("Expected Nope");
+  });
 });
