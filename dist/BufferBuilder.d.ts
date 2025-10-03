@@ -1,5 +1,8 @@
 import { ByteOrder } from "./types/ByteOrder.js";
 type Deferrable<T> = T | (() => T);
+interface BuildOptions {
+    reverseDeferredCalls?: boolean;
+}
 export declare class BufferBuilder {
     private readonly inBuffers;
     private readonly deferredCalls;
@@ -7,11 +10,11 @@ export declare class BufferBuilder {
     private inLength;
     constructor(byteOrder?: ByteOrder);
     get length(): number;
-    build(): Buffer<ArrayBuffer>;
+    build(options?: BuildOptions): Buffer<ArrayBuffer>;
     pad(length: number, kind?: string, forced?: boolean): this;
     write(count: number, word?: string): this;
-    writeOffset(pBuffer: Buffer | BufferBuilder, pad?: number, offsetBytes?: 1 | 2 | 4, offsetWhenEmpty?: number): this;
-    writeOffset(pBuffer: Buffer | BufferBuilder, pad: number | undefined, offsetBytes: 8, offsetWhenEmpty?: bigint): this;
+    writeOffset(pBuffer: Buffer | BufferBuilder, pad?: number, offsetBytes?: 1 | 2 | 4, offsetWhenEmpty?: number, pBufferBuildOptions?: BuildOptions): this;
+    writeOffset(pBuffer: Buffer | BufferBuilder, pad: number | undefined, offsetBytes: 8, offsetWhenEmpty?: bigint, pBufferBuildOptions?: BuildOptions): this;
     writeByte(value: Deferrable<number>): this;
     writeInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
     writeInt(value: Deferrable<bigint>, bytes: 8): this;

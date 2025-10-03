@@ -471,7 +471,7 @@ describe("class BufferBuilder", () => {
     });
     bufferBuilder.writeUnsignedInt64(() => 123n);
 
-    expect(bufferBuilder.build()).toStrictEqual(
+    expect(bufferBuilder.build({ reverseDeferredCalls: true })).toStrictEqual(
       Buffer.concat([
         Buffer.from([4 + 4 + 8 + 4, 0, 0, 0]),
         Buffer.from([16, 0, 0, 0]),
@@ -619,9 +619,13 @@ describe("class BufferBuilder", () => {
       const bufferBuilder = new BufferBuilder();
 
       bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length); // (A1)
-      bufferBuilder.writeOffset(buffer, pad, offsetBytes, offsetWhenEmpty); // (A2)
+      bufferBuilder.writeOffset(buffer, pad, offsetBytes, offsetWhenEmpty, {
+        reverseDeferredCalls: true,
+      }); // (A2)
 
-      expect(bufferBuilder.build()).toStrictEqual(expected);
+      expect(bufferBuilder.build({ reverseDeferredCalls: true })).toStrictEqual(
+        expected,
+      );
     },
   );
 
@@ -631,7 +635,7 @@ describe("class BufferBuilder", () => {
     bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
     bufferBuilder.writeOffset(Buffer.from([1, 2, 3, 4]), undefined, 8);
 
-    expect(bufferBuilder.build()).toStrictEqual(
+    expect(bufferBuilder.build({ reverseDeferredCalls: true })).toStrictEqual(
       Buffer.from([16, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4]),
     );
   });

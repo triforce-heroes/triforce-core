@@ -56,12 +56,12 @@ function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
         ? "readFloatLE"
         : "readFloatBE"
       : littleEndian === true
-      ? unsigned === true
-        ? "readUIntLE"
-        : "readIntLE"
-      : unsigned === true
-      ? "readUIntBE"
-      : "readIntBE";
+        ? unsigned === true
+          ? "readUIntLE"
+          : "readIntLE"
+        : unsigned === true
+          ? "readUIntBE"
+          : "readIntBE";
 
   for (let j = 0; j <= buffer.length - bytes; j += bytes) {
     numbers += numberNormalize(buffer[bufferFunction](j, bytes)).padStart(
