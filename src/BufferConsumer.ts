@@ -154,6 +154,16 @@ export class BufferConsumer {
     return value;
   }
 
+  public readFloat16(): number {
+    const uint16Value = this.littleEndian
+      ? this.pBuffer.readUInt16LE(this.pByteOffset)
+      : this.pBuffer.readUInt16BE(this.pByteOffset);
+
+    this.pByteOffset += 2;
+
+    return new Float16Array(new Uint16Array([uint16Value]).buffer)[0]!;
+  }
+
   public readString(bytes: number) {
     const value = this.pBuffer.toString(
       "utf8",
