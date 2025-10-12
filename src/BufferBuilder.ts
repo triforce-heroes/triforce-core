@@ -56,6 +56,10 @@ export class BufferBuilder {
     return this.inLength;
   }
 
+  private static toFloat16(value: number): number {
+    return new Uint16Array(new Float16Array([value]).buffer)[0]!;
+  }
+
   public build(options?: BuildOptions) {
     const buffer = Buffer.concat(this.inBuffers);
 
@@ -269,6 +273,14 @@ export class BufferBuilder {
       "writeFloatLE",
       "writeFloatBE",
       value,
+    );
+  }
+
+  public writeFloat16(value: Deferrable<number>) {
+    return this.writeUnsignedInt16(
+      typeof value === "function"
+        ? () => BufferBuilder.toFloat16(value())
+        : BufferBuilder.toFloat16(value),
     );
   }
 
