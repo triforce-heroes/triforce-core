@@ -13,6 +13,9 @@ import {
   TEST_FLOAT16,
   TEST_FLOAT16_BUFFER_BE,
   TEST_FLOAT16_BUFFER_LE,
+  TEST_FLOAT64,
+  TEST_FLOAT64_BUFFER_BE,
+  TEST_FLOAT64_BUFFER_LE,
   TEST_INT16,
   TEST_INT16_BUFFER_BE,
   TEST_INT16_BUFFER_LE,
@@ -161,6 +164,7 @@ describe("class BufferBuilder", () => {
     ["writeUnsignedInt32", TEST_INT32, TEST_INT32_BUFFER_LE],
     ["writeFloat", TEST_FLOAT, TEST_FLOAT_BUFFER_LE],
     ["writeFloat16", TEST_FLOAT16, TEST_FLOAT16_BUFFER_LE],
+    ["writeFloat64", TEST_FLOAT64, TEST_FLOAT64_BUFFER_LE],
   ] as const;
 
   it.each(writeIntLETests)("method %s(%s) LE", (method, value, expected) => {
@@ -181,6 +185,7 @@ describe("class BufferBuilder", () => {
     ["writeUnsignedInt32", TEST_INT32, TEST_INT32_BUFFER_BE],
     ["writeFloat", TEST_FLOAT, TEST_FLOAT_BUFFER_BE],
     ["writeFloat16", TEST_FLOAT16, TEST_FLOAT16_BUFFER_BE],
+    ["writeFloat64", TEST_FLOAT64, TEST_FLOAT64_BUFFER_BE],
   ] as const;
 
   it.each(writeIntBETests)("method %s(%s) BE", (method, value, expected) => {
@@ -445,6 +450,11 @@ describe("class BufferBuilder", () => {
     ["writeUnsignedInt32", 123, Buffer.from([123, 0, 0, 0])],
     ["writeFloat", 123.456, Buffer.from([121, 233, 246, 66])],
     ["writeFloat16", 123.456, Buffer.from([183, 87])],
+    [
+      "writeFloat64",
+      123.456,
+      Buffer.from([119, 190, 159, 26, 47, 221, 94, 64]),
+    ],
   ] as const satisfies Array<
     [method: keyof BufferBuilder, value: bigint | number, buffer: Buffer]
   >;

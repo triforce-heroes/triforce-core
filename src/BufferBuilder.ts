@@ -60,6 +60,10 @@ export class BufferBuilder {
     return new Uint16Array(new Float16Array([value]).buffer)[0]!;
   }
 
+  private static toFloat64(value: number): bigint {
+    return new BigUint64Array(new Float64Array([value]).buffer)[0]!;
+  }
+
   public build(options?: BuildOptions) {
     const buffer = Buffer.concat(this.inBuffers);
 
@@ -281,6 +285,14 @@ export class BufferBuilder {
       typeof value === "function"
         ? () => BufferBuilder.toFloat16(value())
         : BufferBuilder.toFloat16(value),
+    );
+  }
+
+  public writeFloat64(value: Deferrable<number>) {
+    return this.writeUnsignedInt64(
+      typeof value === "function"
+        ? () => BufferBuilder.toFloat64(value())
+        : BufferBuilder.toFloat64(value),
     );
   }
 

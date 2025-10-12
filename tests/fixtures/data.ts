@@ -30,6 +30,14 @@ export const TEST_FLOAT16 = 123.4375;
 export const TEST_FLOAT16_BUFFER_LE = Buffer.from([183, 87]);
 export const TEST_FLOAT16_BUFFER_BE = Buffer.from([87, 183]);
 
+export const TEST_FLOAT64 = 123.456_001_281_738_28;
+export const TEST_FLOAT64_BUFFER_LE = Buffer.from([
+  0, 0, 0, 32, 47, 221, 94, 64,
+]);
+export const TEST_FLOAT64_BUFFER_BE = Buffer.from([
+  64, 94, 221, 47, 32, 0, 0, 0,
+]);
+
 export const TEST_UTF8_BUFFER = "Ação";
 export const TEST_UTF8_BUFFER_LENGTH_LE = Buffer.from(
   "\u0006\0\0\0A\u00C3\u00A7\u00C3\u00A3o",
