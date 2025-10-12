@@ -155,13 +155,15 @@ export class BufferConsumer {
   }
 
   public readFloat16(): number {
-    const uint16Value = this.littleEndian
-      ? this.pBuffer.readUInt16LE(this.pByteOffset)
-      : this.pBuffer.readUInt16BE(this.pByteOffset);
+    return new Float16Array(
+      new Uint16Array([this.readUnsignedInt16()]).buffer,
+    )[0]!;
+  }
 
-    this.pByteOffset += 2;
-
-    return new Float16Array(new Uint16Array([uint16Value]).buffer)[0]!;
+  public readFloat64(): number {
+    return new Float64Array(
+      new BigUint64Array([this.readUnsignedInt64()]).buffer,
+    )[0]!;
   }
 
   public readString(bytes: number) {

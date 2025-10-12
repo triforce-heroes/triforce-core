@@ -8,6 +8,7 @@ import {
   TEST_BUFFER_SAMPLE_LE,
   TEST_FLOAT,
   TEST_FLOAT16,
+  TEST_FLOAT64,
   TEST_INT64,
   TEST_STRING_100000_BYTES,
   TEST_STRING_100000_BYTES_MULTIBYTE,
@@ -53,9 +54,10 @@ describe("class BufferConsumer", () => {
     ["readUnsignedInt32", 0, 67_305_985, 4],
     ["readFloat", 8, TEST_FLOAT, 12],
     ["readFloat16", 12, TEST_FLOAT16, 14],
-    ["readLengthPrefixedString", 14, "Test", 22],
-    ["readNullTerminatedString", 18, "Test", 23],
-    ["readNullTerminatedString", 23, "TestEnd", 30],
+    ["readFloat64", 14, TEST_FLOAT64, 22],
+    ["readLengthPrefixedString", 22, "Test", 30],
+    ["readNullTerminatedString", 26, "Test", 31],
+    ["readNullTerminatedString", 31, "TestEnd", 38],
   ] as const;
 
   it.each(readLETests)(
@@ -79,7 +81,8 @@ describe("class BufferConsumer", () => {
     ["readUnsignedInt32", 0, 67_305_985, 4],
     ["readFloat", 8, TEST_FLOAT, 12],
     ["readFloat16", 12, TEST_FLOAT16, 14],
-    ["readLengthPrefixedString", 14, "Test", 22],
+    ["readFloat64", 14, TEST_FLOAT64, 22],
+    ["readLengthPrefixedString", 22, "Test", 30],
   ] as const;
 
   it.each(readBETests)(
@@ -133,11 +136,11 @@ describe("class BufferConsumer", () => {
   it("method readString()", () => {
     const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
-    bufferConsumer.skip(18);
+    bufferConsumer.skip(26);
 
     expect(bufferConsumer.readString(4)).toBe("Test");
 
-    bufferConsumer.seek(18);
+    bufferConsumer.seek(26);
 
     expect(bufferConsumer.readString(4)).toBe("Test");
     expect(bufferConsumer.buffer).toStrictEqual(TEST_BUFFER_SAMPLE_LE);
@@ -146,7 +149,7 @@ describe("class BufferConsumer", () => {
   it("sequential reading", () => {
     const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
-    bufferConsumer.skip(18);
+    bufferConsumer.skip(26);
 
     expect(bufferConsumer.readNullTerminatedString()).toBe("Test");
     expect(bufferConsumer.isConsumed()).toBeFalsy();

@@ -22,6 +22,8 @@ export declare class BufferConsumer {
     readInt64(): bigint;
     readUnsignedInt64(): bigint;
     readFloat(): number;
+    readFloat16(): number;
+    readFloat64(): number;
     readString(bytes: number): string;
     readLengthPrefixedString(bytes?: 1 | 2 | 4): string;
     readMultibytePrefixedString(): string;

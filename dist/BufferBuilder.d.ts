@@ -11,6 +11,7 @@ export declare class BufferBuilder {
     constructor(byteOrder?: ByteOrder);
     get length(): number;
     private static toFloat16;
+    private static toFloat64;
     build(options?: BuildOptions): Buffer<ArrayBuffer>;
     pad(length: number, kind?: string, forced?: boolean): this;
     write(count: number, word?: string): this;
@@ -31,6 +32,7 @@ export declare class BufferBuilder {
     writeUnsignedInt64(value: Deferrable<bigint>): this;
     writeFloat(value: Deferrable<number>): this;
     writeFloat16(value: Deferrable<number>): this;
+    writeFloat64(value: Deferrable<number>): this;
     writeString(value: Buffer | string | null | undefined): this;
     writeLengthPrefixedString(value: Buffer | string | null | undefined, bytes?: 1 | 2 | 4): this;
     writeMultibytePrefixedString(value: Buffer | string | null | undefined): this;
