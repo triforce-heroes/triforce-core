@@ -142,8 +142,8 @@ export class BufferBuilder {
       (() => {
         if (pBuffer.length === 0) {
           return offsetBytes === 8
-            ? offsetWhenEmpty ?? 0n
-            : offsetWhenEmpty ?? 0;
+            ? (offsetWhenEmpty ?? 0n)
+            : (offsetWhenEmpty ?? 0);
         }
 
         const offset = this.inLength;
@@ -402,7 +402,7 @@ export class BufferBuilder {
     type Constructor = ConstructorType & Record<DeferrableMethod, Method>;
 
     const buffer = BufferConstructor.allocUnsafe(bytes) as Constructor;
-    const method = this.littleEndian ? methodLE : methodBE ?? methodLE;
+    const method = this.littleEndian ? methodLE : (methodBE ?? methodLE);
 
     if (typeof value === "function") {
       const currentOffset = this.inLength;
