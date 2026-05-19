@@ -51,8 +51,7 @@ export function debugBenchmark<T>(
       average = performance.now() - now;
     } else {
       const performanceNow =
-        (average / samples) * (samples - 1) +
-        (performance.now() - now) / samples;
+        (average / samples) * (samples - 1) + (performance.now() - now) / samples;
 
       average = Math.max(
         performanceNow * (1 - maxVariance),

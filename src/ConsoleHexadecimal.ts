@@ -15,10 +15,7 @@ type PrintHexadecimalPresetData = [
   isFloat?: boolean,
 ];
 
-const printHexadecimalPreset: Record<
-  PrintHexadecimalPreset,
-  PrintHexadecimalPresetData
-> = {
+const printHexadecimalPreset: Record<PrintHexadecimalPreset, PrintHexadecimalPresetData> = {
   [PrintHexadecimalPreset.SIMPLIFIED]: [2, 1],
   [PrintHexadecimalPreset.UINT8]: [4, 1, true],
   [PrintHexadecimalPreset.UINT16_LE]: [3, 2, true, true],
@@ -47,8 +44,7 @@ function numberNormalize(number: number) {
 function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
   let numbers = hexadecimalNumberPadding;
 
-  const [padding, bytes, unsigned, littleEndian, isFloat] =
-    printHexadecimalPreset[preset];
+  const [padding, bytes, unsigned, littleEndian, isFloat] = printHexadecimalPreset[preset];
 
   const bufferFunction =
     isFloat === true
@@ -64,10 +60,7 @@ function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
           : "readIntBE";
 
   for (let j = 0; j <= buffer.length - bytes; j += bytes) {
-    numbers += numberNormalize(buffer[bufferFunction](j, bytes)).padStart(
-      padding * bytes,
-      " ",
-    );
+    numbers += numberNormalize(buffer[bufferFunction](j, bytes)).padStart(padding * bytes, " ");
   }
 
   numbers += "\n";
@@ -75,17 +68,12 @@ function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
   return chalk.gray(numbers);
 }
 
-export function printHexadecimal(
-  buffer: Buffer,
-  preset = PrintHexadecimalPreset.SIMPLIFIED,
-) {
+export function printHexadecimal(buffer: Buffer, preset = PrintHexadecimalPreset.SIMPLIFIED) {
   const [padding] = printHexadecimalPreset[preset];
   let output = "";
 
   for (let i = 0; i < buffer.length; i += 16) {
-    let bufferOutput = chalk.gray(
-      `${i.toString(16).toUpperCase().padStart(8, "0")} `,
-    );
+    let bufferOutput = chalk.gray(`${i.toString(16).toUpperCase().padStart(8, "0")} `);
 
     let hexadecimals = "";
     let characters = "";
@@ -100,8 +88,7 @@ export function printHexadecimal(
         .padStart(padding, " ");
 
       characters +=
-        (bufferDigit > 31 && bufferDigit < 127) ||
-        (bufferDigit > 159 && bufferDigit <= 255)
+        (bufferDigit > 31 && bufferDigit < 127) || (bufferDigit > 159 && bufferDigit <= 255)
           ? String.fromCodePoint(bufferDigit)
           : hexadecimalDot;
     }

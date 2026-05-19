@@ -4,10 +4,7 @@ export class BufferPolyfill extends Buffer {
 
     return "writeBigInt64LE" in Buffer.prototype
       ? buffer
-      : (Object.setPrototypeOf(
-          buffer,
-          BufferPolyfill.prototype,
-        ) as BufferPolyfill);
+      : (Object.setPrototypeOf(buffer, BufferPolyfill.prototype) as BufferPolyfill);
   }
 
   public override writeBigInt64LE(value: bigint) {

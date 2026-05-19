@@ -155,23 +155,15 @@ export class BufferConsumer {
   }
 
   public readFloat16(): number {
-    return new Float16Array(
-      new Uint16Array([this.readUnsignedInt16()]).buffer,
-    )[0]!;
+    return new Float16Array(new Uint16Array([this.readUnsignedInt16()]).buffer)[0]!;
   }
 
   public readFloat64(): number {
-    return new Float64Array(
-      new BigUint64Array([this.readUnsignedInt64()]).buffer,
-    )[0]!;
+    return new Float64Array(new BigUint64Array([this.readUnsignedInt64()]).buffer)[0]!;
   }
 
   public readString(bytes: number) {
-    const value = this.pBuffer.toString(
-      "utf8",
-      this.pByteOffset,
-      this.pByteOffset + bytes,
-    );
+    const value = this.pBuffer.toString("utf8", this.pByteOffset, this.pByteOffset + bytes);
 
     this.pByteOffset += bytes;
 
@@ -210,26 +202,16 @@ export class BufferConsumer {
       return "";
     }
 
-    const bufferString = this.pBuffer.toString(
-      "utf8",
-      this.pByteOffset,
-      this.pByteOffset + length,
-    );
+    const bufferString = this.pBuffer.toString("utf8", this.pByteOffset, this.pByteOffset + length);
 
     this.pByteOffset += length;
 
     return bufferString;
   }
 
-  public readNullTerminatedString(
-    bufferEncoding: "latin1" | "utf8" | "utf16le" = "utf8",
-  ): string {
+  public readNullTerminatedString(bufferEncoding: "latin1" | "utf8" | "utf16le" = "utf8"): string {
     const offset = this.pByteOffset;
-    const nullOffset = this.pBuffer.indexOf(
-      "\0",
-      this.pByteOffset,
-      bufferEncoding,
-    );
+    const nullOffset = this.pBuffer.indexOf("\0", this.pByteOffset, bufferEncoding);
 
     if (nullOffset === -1) {
       this.pByteOffset = this.pBuffer.length;
@@ -263,10 +245,7 @@ export class BufferConsumer {
         this.pByteOffset + (padding - paddingDifference),
       );
     } else if (forced) {
-      this.pByteOffset = Math.min(
-        this.buffer.length,
-        this.pByteOffset + padding,
-      );
+      this.pByteOffset = Math.min(this.buffer.length, this.pByteOffset + padding);
     }
 
     return this;
@@ -304,11 +283,7 @@ export class BufferConsumer {
   }
 
   private readBigInt(method: "getBigInt64" | "getBigUint64") {
-    const view = new DataView(
-      this.pBuffer.buffer,
-      this.pBuffer.byteOffset + this.pByteOffset,
-      8,
-    );
+    const view = new DataView(this.pBuffer.buffer, this.pBuffer.byteOffset + this.pByteOffset, 8);
 
     this.pByteOffset += 8;
 

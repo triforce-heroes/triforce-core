@@ -10,11 +10,7 @@ export function encodeToString(buffer: Buffer) {
       continue;
     }
 
-    if (
-      bufferOffset + 1 < buffer.length &&
-      bufferChar1 >= 0xc2 &&
-      bufferChar1 <= 0xdf
-    ) {
+    if (bufferOffset + 1 < buffer.length && bufferChar1 >= 0xc2 && bufferChar1 <= 0xdf) {
       const bufferChar2 = buffer[bufferOffset + 1]!;
 
       if (bufferChar2 >= 0x80 && bufferChar2 <= 0xbf) {
@@ -30,7 +26,7 @@ export function encodeToString(buffer: Buffer) {
     }
 
     // eslint-disable-next-line no-bitwise
-    string += String.fromCodePoint(0xdc00 | bufferChar1);
+    string += String.fromCodePoint(0xdc_00 | bufferChar1);
   }
 
   return string;
@@ -45,7 +41,7 @@ export function encodeFromString(string: string) {
 
     if (stringCodePoint <= 0x7f) {
       buffer[bufferOffset++] = stringCodePoint;
-    } else if (stringCodePoint >= 0xdc00 && stringCodePoint <= 0xdcff) {
+    } else if (stringCodePoint >= 0xdc_00 && stringCodePoint <= 0xdc_ff) {
       // eslint-disable-next-line no-bitwise
       buffer[bufferOffset++] = stringCodePoint & 0xff;
     } else {

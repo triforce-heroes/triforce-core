@@ -5,26 +5,14 @@ import { diffString } from "json-diff";
 
 export function fatal(
   ...args:
-    | [
-        message: string,
-        expected: unknown,
-        received: unknown,
-        details?: Record<string, unknown>,
-      ]
     | [message: string, details?: unknown]
+    | [message: string, expected: unknown, received: unknown, details?: Record<string, unknown>]
 ): never {
-  const messages: string[] = [];
-
-  messages.push(
-    chalk.red(`\n\n${chalk.bgRed.black(" ERROR ")} ${args[0]}\n\n`),
-  );
+  const messages: string[] = [chalk.red(`\n\n${chalk.bgRed.black(" ERROR ")} ${args[0]}\n\n`)];
 
   if (args[1] !== undefined) {
     if (args[2] === undefined) {
-      messages.push(
-        chalk.bold("Details:\n\n"),
-        `${JSON.stringify(args[1], null, 2)}\n`,
-      );
+      messages.push(chalk.bold("Details:\n\n"), `${JSON.stringify(args[1], null, 2)}\n`);
     } else {
       if (!Buffer.isBuffer(args[1]) && !Buffer.isBuffer(args[2])) {
         messages.push(
@@ -38,17 +26,11 @@ export function fatal(
 
       if (args[3] !== undefined) {
         for (const [title, value] of Object.entries(args[3])) {
-          messages.push(
-            chalk.bold(`${title}:\n\n`),
-            `${JSON.stringify(value, null, 2)}\n`,
-          );
+          messages.push(chalk.bold(`${title}:\n\n`), `${JSON.stringify(value, null, 2)}\n`);
         }
       }
 
-      messages.push(
-        chalk.bold("Difference:\n\n"),
-        diffString(args[1], args[2]),
-      );
+      messages.push(chalk.bold("Difference:\n\n"), diffString(args[1], args[2]));
     }
   }
 

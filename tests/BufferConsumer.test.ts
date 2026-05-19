@@ -1,4 +1,3 @@
-/* eslint-disable vitest/max-expects */
 import { describe, expect, it } from "vitest";
 
 import { BufferConsumer } from "@/BufferConsumer.js";
@@ -60,17 +59,14 @@ describe("class BufferConsumer", () => {
     ["readNullTerminatedString", 31, "TestEnd", 38],
   ] as const;
 
-  it.each(readLETests)(
-    "method %s() (LE) at %s",
-    (method, skip, output, thenOffset) => {
-      const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
+  it.each(readLETests)("method %s() (LE) at %s", (method, skip, output, thenOffset) => {
+    const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
-      bufferConsumer.skip(skip);
+    bufferConsumer.skip(skip);
 
-      expect(bufferConsumer[method]()).toStrictEqual(output);
-      expect(bufferConsumer.byteOffset).toStrictEqual(thenOffset);
-    },
-  );
+    expect(bufferConsumer[method]()).toStrictEqual(output);
+    expect(bufferConsumer.byteOffset).toStrictEqual(thenOffset);
+  });
 
   const readBETests = [
     ["readInt16", 0, 1027, 2],
@@ -85,21 +81,18 @@ describe("class BufferConsumer", () => {
     ["readLengthPrefixedString", 22, "Test", 30],
   ] as const;
 
-  it.each(readBETests)(
-    "method %s() (BE) at %s",
-    (method, skip, output, thenOffset) => {
-      const bufferConsumer = new BufferConsumer(
-        TEST_BUFFER_SAMPLE_BE,
-        undefined,
-        ByteOrder.BIG_ENDIAN,
-      );
+  it.each(readBETests)("method %s() (BE) at %s", (method, skip, output, thenOffset) => {
+    const bufferConsumer = new BufferConsumer(
+      TEST_BUFFER_SAMPLE_BE,
+      undefined,
+      ByteOrder.BIG_ENDIAN,
+    );
 
-      bufferConsumer.skip(skip);
+    bufferConsumer.skip(skip);
 
-      expect(bufferConsumer[method]()).toStrictEqual(output);
-      expect(bufferConsumer.byteOffset).toStrictEqual(thenOffset);
-    },
-  );
+    expect(bufferConsumer[method]()).toStrictEqual(output);
+    expect(bufferConsumer.byteOffset).toStrictEqual(thenOffset);
+  });
 
   it("method readInt64() (LE)", () => {
     const bufferConsumer = new BufferConsumer(TEST_INT64);
@@ -114,21 +107,13 @@ describe("class BufferConsumer", () => {
   });
 
   it("method readInt64() (BE)", () => {
-    const bufferConsumer = new BufferConsumer(
-      TEST_INT64,
-      undefined,
-      ByteOrder.BIG_ENDIAN,
-    );
+    const bufferConsumer = new BufferConsumer(TEST_INT64, undefined, ByteOrder.BIG_ENDIAN);
 
     expect(bufferConsumer.readInt64()).toBe(283_686_952_306_183n);
   });
 
   it("method readUnsignedInt64() (BE)", () => {
-    const bufferConsumer = new BufferConsumer(
-      TEST_INT64,
-      undefined,
-      ByteOrder.BIG_ENDIAN,
-    );
+    const bufferConsumer = new BufferConsumer(TEST_INT64, undefined, ByteOrder.BIG_ENDIAN);
 
     expect(bufferConsumer.readUnsignedInt64()).toBe(283_686_952_306_183n);
   });
@@ -159,9 +144,7 @@ describe("class BufferConsumer", () => {
   });
 
   it("method skipPadding()", () => {
-    const bufferConsumer = new BufferConsumer(
-      Buffer.from("Hello\0\0\0\0\0\0\0\0\0\0\0World"),
-    );
+    const bufferConsumer = new BufferConsumer(Buffer.from("Hello\0\0\0\0\0\0\0\0\0\0\0World"));
 
     expect(bufferConsumer.readString(5)).toBe("Hello");
     expect(bufferConsumer.byteOffset).toBe(5);
@@ -203,12 +186,7 @@ describe("class BufferConsumer", () => {
 
   it.each(readNullTerminatedStringTests)(
     "method readNullTerminatedString(%j)",
-    (
-      input: string,
-      outputs: readonly string[],
-      encoding?: "latin1" | "utf8" | "utf16le",
-    ) => {
-      // eslint-disable-next-line vitest/prefer-expect-assertions
+    (input: string, outputs: readonly string[], encoding?: "latin1" | "utf8" | "utf16le") => {
       expect.assertions(outputs.length);
 
       const bufferConsumer = new BufferConsumer(Buffer.from(input));
@@ -228,11 +206,7 @@ describe("class BufferConsumer", () => {
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_MULTIBYTE],
     ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_MULTIBYTE],
     ["4000 bytes", TEST_STRING_4000_BYTES, TEST_STRING_4000_BYTES_MULTIBYTE],
-    [
-      "100_000 bytes",
-      TEST_STRING_100000_BYTES,
-      TEST_STRING_100000_BYTES_MULTIBYTE,
-    ],
+    ["100_000 bytes", TEST_STRING_100000_BYTES, TEST_STRING_100000_BYTES_MULTIBYTE],
   ] as const;
 
   it.each(readMultibyteTests)(
@@ -240,9 +214,7 @@ describe("class BufferConsumer", () => {
     (_, output, input) => {
       const bufferConsumer = new BufferConsumer(input);
 
-      expect(bufferConsumer.readMultibytePrefixedString()).toStrictEqual(
-        output,
-      );
+      expect(bufferConsumer.readMultibytePrefixedString()).toStrictEqual(output);
     },
   );
 
@@ -298,18 +270,10 @@ describe("class BufferConsumer", () => {
   it("method assert()", () => {
     const bufferConsumer = new BufferConsumer(Buffer.from("TestMagic"));
 
-    BufferConsumer.assert(
-      bufferConsumer.readString(4),
-      "Test",
-      "Expected Test",
-    );
+    BufferConsumer.assert(bufferConsumer.readString(4), "Test", "Expected Test");
 
     expect(() => {
-      BufferConsumer.assert(
-        bufferConsumer.readString(4),
-        "Nope",
-        "Expected Nope",
-      );
+      BufferConsumer.assert(bufferConsumer.readString(4), "Nope", "Expected Nope");
     }).toThrow("Expected Nope");
   });
 });

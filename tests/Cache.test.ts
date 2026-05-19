@@ -1,4 +1,3 @@
-/* eslint-disable vitest/max-expects */
 import { describe, expect, it } from "vitest";
 
 import { Cache } from "@/Cache.js";

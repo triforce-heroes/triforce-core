@@ -1,8 +1,4 @@
-export function nextMultiple(
-  value: number,
-  width: number,
-  nextIfMatches = false,
-): number {
+export function nextMultiple(value: number, width: number, nextIfMatches = false): number {
   const remainder = value % width;
 
   if (remainder === 0) {

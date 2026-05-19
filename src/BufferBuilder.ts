@@ -28,10 +28,7 @@ type DeferrableMethodBE =
   | "writeUInt32BE"
   | "writeUIntBE";
 
-type DeferrableMethod =
-  | DeferrableMethodBE
-  | DeferrableMethodLE
-  | DeferredSimpleMethod;
+type DeferrableMethod = DeferrableMethodBE | DeferrableMethodLE | DeferredSimpleMethod;
 
 type DeferredCallback = (buffer: Buffer) => void;
 
@@ -67,12 +64,12 @@ export class BufferBuilder {
   public build(options?: BuildOptions) {
     const buffer = Buffer.concat(this.inBuffers);
 
-    if (this.deferredCalls.length) {
+    if (this.deferredCalls.length > 0) {
       const buffersLength = this.inBuffers.length;
 
       const deferredCalls =
         options?.reverseDeferredCalls === true
-          ? this.deferredCalls.reverse()
+          ? this.deferredCalls.toReversed()
           : this.deferredCalls;
 
       for (const deferredCall of deferredCalls) {
@@ -92,11 +89,7 @@ export class BufferBuilder {
       return this;
     }
 
-    const buffer = Buffer.alloc(
-      length - (this.inLength % length),
-      kind,
-      "binary",
-    );
+    const buffer = Buffer.alloc(length - (this.inLength % length), kind, "binary");
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;
@@ -141,16 +134,12 @@ export class BufferBuilder {
     return this.writeUnsignedInt(
       (() => {
         if (pBuffer.length === 0) {
-          return offsetBytes === 8
-            ? (offsetWhenEmpty ?? 0n)
-            : (offsetWhenEmpty ?? 0);
+          return offsetBytes === 8 ? (offsetWhenEmpty ?? 0n) : (offsetWhenEmpty ?? 0);
         }
 
         const offset = this.inLength;
         const buffer =
-          pBuffer instanceof BufferBuilder
-            ? pBuffer.build(pBufferBuildOptions)
-            : pBuffer;
+          pBuffer instanceof BufferBuilder ? pBuffer.build(pBufferBuildOptions) : pBuffer;
 
         this.push(buffer).pad(pad);
 
@@ -167,37 +156,19 @@ export class BufferBuilder {
   public writeInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
   public writeInt(value: Deferrable<bigint>, bytes: 8): this;
 
-  public writeInt(
-    value: Deferrable<bigint | number>,
-    bytes: 1 | 2 | 4 | 8 = 4,
-  ) {
+  public writeInt(value: Deferrable<bigint | number>, bytes: 1 | 2 | 4 | 8 = 4) {
     return bytes === 8
       ? this.writeInt64(value as Deferrable<bigint>)
-      : this.writeDeferrableInt(
-          Buffer,
-          bytes,
-          "writeIntLE",
-          "writeIntBE",
-          value,
-        );
+      : this.writeDeferrableInt(Buffer, bytes, "writeIntLE", "writeIntBE", value);
   }
 
   public writeUnsignedInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
   public writeUnsignedInt(value: Deferrable<bigint>, bytes: 8): this;
 
-  public writeUnsignedInt(
-    value: Deferrable<bigint | number>,
-    bytes: 1 | 2 | 4 | 8 = 4,
-  ) {
+  public writeUnsignedInt(value: Deferrable<bigint | number>, bytes: 1 | 2 | 4 | 8 = 4) {
     return bytes === 8
       ? this.writeUnsignedInt64(value as Deferrable<bigint>)
-      : this.writeDeferrableInt(
-          Buffer,
-          bytes,
-          "writeUIntLE",
-          "writeUIntBE",
-          value,
-        );
+      : this.writeDeferrableInt(Buffer, bytes, "writeUIntLE", "writeUIntBE", value);
   }
 
   public writeInt8(value: Deferrable<number>) {
@@ -209,43 +180,19 @@ export class BufferBuilder {
   }
 
   public writeInt16(value: Deferrable<number>) {
-    return this.writeDeferrableInt(
-      Buffer,
-      2,
-      "writeInt16LE",
-      "writeInt16BE",
-      value,
-    );
+    return this.writeDeferrableInt(Buffer, 2, "writeInt16LE", "writeInt16BE", value);
   }
 
   public writeUnsignedInt16(value: Deferrable<number>) {
-    return this.writeDeferrableInt(
-      Buffer,
-      2,
-      "writeUInt16LE",
-      "writeUInt16BE",
-      value,
-    );
+    return this.writeDeferrableInt(Buffer, 2, "writeUInt16LE", "writeUInt16BE", value);
   }
 
   public writeInt32(value: Deferrable<number>) {
-    return this.writeDeferrableInt(
-      Buffer,
-      4,
-      "writeInt32LE",
-      "writeInt32BE",
-      value,
-    );
+    return this.writeDeferrableInt(Buffer, 4, "writeInt32LE", "writeInt32BE", value);
   }
 
   public writeUnsignedInt32(value: Deferrable<number>) {
-    return this.writeDeferrableInt(
-      Buffer,
-      4,
-      "writeUInt32LE",
-      "writeUInt32BE",
-      value,
-    );
+    return this.writeDeferrableInt(Buffer, 4, "writeUInt32LE", "writeUInt32BE", value);
   }
 
   public writeInt64(value: Deferrable<bigint>) {
@@ -271,13 +218,7 @@ export class BufferBuilder {
   }
 
   public writeFloat(value: Deferrable<number>) {
-    return this.writeDeferrableInt(
-      Buffer,
-      4,
-      "writeFloatLE",
-      "writeFloatBE",
-      value,
-    );
+    return this.writeDeferrableInt(Buffer, 4, "writeFloatLE", "writeFloatBE", value);
   }
 
   public writeFloat16(value: Deferrable<number>) {
@@ -327,9 +268,7 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeMultibytePrefixedString(
-    value: Buffer | string | null | undefined,
-  ) {
+  public writeMultibytePrefixedString(value: Buffer | string | null | undefined) {
     if (value === null || value === undefined || value.length === 0) {
       this.writeByte(0);
 
@@ -380,10 +319,7 @@ export class BufferBuilder {
 
   public push(...buffers: Buffer[]) {
     this.inBuffers.push(...buffers);
-    this.inLength += buffers.reduce(
-      (bufferA, bufferB) => bufferA + bufferB.length,
-      0,
-    );
+    this.inLength += buffers.reduce((bufferA, bufferB) => bufferA + bufferB.length, 0);
 
     return this;
   }

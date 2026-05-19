@@ -19,13 +19,8 @@ describe("console", () => {
     "function fatal(%j)",
     (
       ...args:
-        | [
-            message: string,
-            expected: unknown,
-            received: unknown,
-            details?: Record<string, unknown>,
-          ]
         | [message: string, details?: unknown]
+        | [message: string, expected: unknown, received: unknown, details?: Record<string, unknown>]
     ) => {
       let stderrMessage: Uint8Array | string | undefined = undefined;
       let exitCode: number | undefined = undefined;
@@ -36,13 +31,11 @@ describe("console", () => {
         return undefined as never;
       });
 
-      vitest
-        .spyOn(process.stderr, "write")
-        .mockImplementationOnce((str: Uint8Array | string) => {
-          stderrMessage = str;
+      vitest.spyOn(process.stderr, "write").mockImplementationOnce((str: Uint8Array | string) => {
+        stderrMessage = str;
 
-          return true;
-        });
+        return true;
+      });
 
       fatal(...args) as unknown;
 

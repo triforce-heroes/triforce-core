@@ -71,24 +71,21 @@ describe("class BufferBuilder", () => {
     [255, 4, Buffer.from([255, 0, 0, 0]), Buffer.from([0, 0, 0, 255])],
   ] as const;
 
-  it.each(writeIntTests)(
-    "method writeInt(%j, %j)",
-    (value, bytes, expected, expectedBE) => {
-      const bufferBuilder = new BufferBuilder();
+  it.each(writeIntTests)("method writeInt(%j, %j)", (value, bytes, expected, expectedBE) => {
+    const bufferBuilder = new BufferBuilder();
 
-      bufferBuilder.writeInt(value, bytes);
+    bufferBuilder.writeInt(value, bytes);
 
-      expect(bufferBuilder.build()).toStrictEqual(expected);
-      expect(bufferBuilder).toHaveLength(expected.length);
+    expect(bufferBuilder.build()).toStrictEqual(expected);
+    expect(bufferBuilder).toHaveLength(expected.length);
 
-      const bufferBuilderBE = new BufferBuilder(ByteOrder.BIG_ENDIAN);
+    const bufferBuilderBE = new BufferBuilder(ByteOrder.BIG_ENDIAN);
 
-      bufferBuilderBE.writeInt(value, bytes);
+    bufferBuilderBE.writeInt(value, bytes);
 
-      expect(bufferBuilderBE.build()).toStrictEqual(expectedBE);
-      expect(bufferBuilderBE).toHaveLength(expectedBE.length);
-    },
-  );
+    expect(bufferBuilderBE.build()).toStrictEqual(expectedBE);
+    expect(bufferBuilderBE).toHaveLength(expectedBE.length);
+  });
 
   it("method writeInt(255n, 8)", () => {
     const bufferBuilder = new BufferBuilder();
@@ -119,35 +116,28 @@ describe("class BufferBuilder", () => {
     [255, 4, Buffer.from([255, 0, 0, 0])],
   ] as const;
 
-  it.each(writeUnsignedIntTests)(
-    "method writeUnsignedInt(%j, %j)",
-    (value, bytes, expected) => {
-      const bufferBuilder = new BufferBuilder();
+  it.each(writeUnsignedIntTests)("method writeUnsignedInt(%j, %j)", (value, bytes, expected) => {
+    const bufferBuilder = new BufferBuilder();
 
-      bufferBuilder.writeUnsignedInt(value, bytes);
+    bufferBuilder.writeUnsignedInt(value, bytes);
 
-      expect(bufferBuilder.build()).toStrictEqual(expected);
-      expect(bufferBuilder).toHaveLength(expected.length);
-    },
-  );
+    expect(bufferBuilder.build()).toStrictEqual(expected);
+    expect(bufferBuilder).toHaveLength(expected.length);
+  });
 
   it("method writeUnsignedInt(255n, 8)", () => {
     const bufferBuilder = new BufferBuilder();
 
     bufferBuilder.writeUnsignedInt(255n, 8);
 
-    expect(bufferBuilder.build()).toStrictEqual(
-      Buffer.from([255, 0, 0, 0, 0, 0, 0, 0]),
-    );
+    expect(bufferBuilder.build()).toStrictEqual(Buffer.from([255, 0, 0, 0, 0, 0, 0, 0]));
     expect(bufferBuilder).toHaveLength(8);
 
     const bufferBuilderBE = new BufferBuilder(ByteOrder.BIG_ENDIAN);
 
     bufferBuilderBE.writeUnsignedInt(255n, 8);
 
-    expect(bufferBuilderBE.build()).toStrictEqual(
-      Buffer.from([0, 0, 0, 0, 0, 0, 0, 255]),
-    );
+    expect(bufferBuilderBE.build()).toStrictEqual(Buffer.from([0, 0, 0, 0, 0, 0, 0, 255]));
     expect(bufferBuilderBE).toHaveLength(8);
   });
 
@@ -241,9 +231,7 @@ describe("class BufferBuilder", () => {
     bufferBuilder.writeString(Buffer.from("ÿ", "binary"));
     bufferBuilder.writeString("Hello");
 
-    expect(bufferBuilder.build()).toStrictEqual(
-      Buffer.from("ÿHello", "binary"),
-    );
+    expect(bufferBuilder.build()).toStrictEqual(Buffer.from("ÿHello", "binary"));
     expect(bufferBuilder).toHaveLength(6);
   });
 
@@ -257,11 +245,7 @@ describe("class BufferBuilder", () => {
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_LENGTH],
     ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_LENGTH],
     ["4000 bytes", TEST_STRING_4000_BYTES, TEST_STRING_4000_BYTES_LENGTH],
-    [
-      "100_000 bytes",
-      TEST_STRING_100000_BYTES,
-      TEST_STRING_100000_BYTES_LENGTH,
-    ],
+    ["100_000 bytes", TEST_STRING_100000_BYTES, TEST_STRING_100000_BYTES_LENGTH],
   ] as const;
 
   it.each(writeLengthPrefixedLETests)(
@@ -285,11 +269,7 @@ describe("class BufferBuilder", () => {
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_LENGTH_BE],
     ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_LENGTH_BE],
     ["4000 bytes", TEST_STRING_4000_BYTES, TEST_STRING_4000_BYTES_LENGTH_BE],
-    [
-      "100_000 bytes",
-      TEST_STRING_100000_BYTES,
-      TEST_STRING_100000_BYTES_LENGTH_BE,
-    ],
+    ["100_000 bytes", TEST_STRING_100000_BYTES, TEST_STRING_100000_BYTES_LENGTH_BE],
   ] as const;
 
   it.each(writeLengthPrefixedBETests)(
@@ -313,11 +293,7 @@ describe("class BufferBuilder", () => {
     ["128 bytes", TEST_STRING_128_BYTES, TEST_STRING_128_BYTES_MULTIBYTE],
     ["256 bytes", TEST_STRING_256_BYTES, TEST_STRING_256_BYTES_MULTIBYTE],
     ["4000 bytes", TEST_STRING_4000_BYTES, TEST_STRING_4000_BYTES_MULTIBYTE],
-    [
-      "100_000 bytes",
-      TEST_STRING_100000_BYTES,
-      TEST_STRING_100000_BYTES_MULTIBYTE,
-    ],
+    ["100_000 bytes", TEST_STRING_100000_BYTES, TEST_STRING_100000_BYTES_MULTIBYTE],
   ] as const;
 
   it.each(writeMultibytePrefixedTests)(
@@ -340,9 +316,7 @@ describe("class BufferBuilder", () => {
     bufferBuilder.writeNullTerminatedString(Buffer.from("ÿ", "binary"));
     bufferBuilder.writeNullTerminatedString("Hello");
 
-    expect(bufferBuilder.build()).toStrictEqual(
-      Buffer.from("\0\0ÿ\0Hello\0", "binary"),
-    );
+    expect(bufferBuilder.build()).toStrictEqual(Buffer.from("\0\0ÿ\0Hello\0", "binary"));
     expect(bufferBuilder).toHaveLength(10);
   });
 
@@ -366,9 +340,7 @@ describe("class BufferBuilder", () => {
     bufferBuilder.write(3, "\u00FF");
     bufferBuilder.write(2, "\u00FF\u00FF");
 
-    const bufferHello = Buffer.from(
-      "Hello\u00FF\u00FF\u00FF\u00FF\u00FF\u00FF\u00FF",
-    );
+    const bufferHello = Buffer.from("Hello\u00FF\u00FF\u00FF\u00FF\u00FF\u00FF\u00FF");
 
     expect(bufferBuilder.build()).toStrictEqual(bufferHello);
     expect(bufferBuilder).toHaveLength(bufferHello.length);
@@ -422,21 +394,13 @@ describe("class BufferBuilder", () => {
 
   it.each(padSamples)(
     "method pad()",
-    (
-      input: string,
-      output: string,
-      length: number,
-      kind?: string,
-      forced?: boolean,
-    ) => {
+    (input: string, output: string, length: number, kind?: string, forced?: boolean) => {
       const bufferBuilder = new BufferBuilder();
 
       bufferBuilder.writeString(input);
       bufferBuilder.pad(length, kind, forced);
 
-      expect(bufferBuilder.build()).toStrictEqual(
-        Buffer.from(output, "binary"),
-      );
+      expect(bufferBuilder.build()).toStrictEqual(Buffer.from(output, "binary"));
     },
   );
 
@@ -450,14 +414,8 @@ describe("class BufferBuilder", () => {
     ["writeUnsignedInt32", 123, Buffer.from([123, 0, 0, 0])],
     ["writeFloat", 123.456, Buffer.from([121, 233, 246, 66])],
     ["writeFloat16", 123.456, Buffer.from([183, 87])],
-    [
-      "writeFloat64",
-      123.456,
-      Buffer.from([119, 190, 159, 26, 47, 221, 94, 64]),
-    ],
-  ] as const satisfies Array<
-    [method: keyof BufferBuilder, value: bigint | number, buffer: Buffer]
-  >;
+    ["writeFloat64", 123.456, Buffer.from([119, 190, 159, 26, 47, 221, 94, 64])],
+  ] as const satisfies Array<[method: keyof BufferBuilder, value: bigint | number, buffer: Buffer]>;
 
   it.each(deferredSamples)("deferred method .%s()", (method, value, buffer) => {
     const bufferBuilder = new BufferBuilder();
@@ -505,25 +463,17 @@ describe("class BufferBuilder", () => {
     ["writeUnsignedInt", 2, 123, Buffer.from([6, 0, 0, 0, 123, 0])],
     ["writeUnsignedInt", 4, 123, Buffer.from([8, 0, 0, 0, 123, 0, 0, 0])],
   ] as const satisfies Array<
-    [
-      method: keyof BufferBuilder,
-      bytes: 1 | 2 | 4,
-      value: number,
-      buffer: Buffer,
-    ]
+    [method: keyof BufferBuilder, bytes: 1 | 2 | 4, value: number, buffer: Buffer]
   >;
 
-  it.each(deferredCustomSamples)(
-    "deferred method .%s()",
-    (method, bytes, value, buffer) => {
-      const bufferBuilder = new BufferBuilder();
+  it.each(deferredCustomSamples)("deferred method .%s()", (method, bytes, value, buffer) => {
+    const bufferBuilder = new BufferBuilder();
 
-      bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
-      bufferBuilder[method](() => value, bytes);
+    bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
+    bufferBuilder[method](() => value, bytes);
 
-      expect(bufferBuilder.build()).toStrictEqual(buffer);
-    },
-  );
+    expect(bufferBuilder.build()).toStrictEqual(buffer);
+  });
 
   type OffsetTest = [
     buffer: Buffer | BufferBuilder,
@@ -552,17 +502,11 @@ describe("class BufferBuilder", () => {
       Buffer.from([1, 2, 3, 4]),
       undefined,
       2,
-      0xffff,
+      0xff_ff,
       Buffer.from([10, 0, 0, 0, 6, 0, 1, 2, 3, 4]),
     ],
-    [
-      Buffer.from([]),
-      undefined,
-      2,
-      0xffff,
-      Buffer.from([6, 0, 0, 0, 0xff, 0xff]),
-    ],
-    [Buffer.from([]), 4, 2, 0xffff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
+    [Buffer.from([]), undefined, 2, 0xff_ff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
+    [Buffer.from([]), 4, 2, 0xff_ff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
     [
       new BufferBuilder().writeUnsignedInt32(123),
       undefined,
@@ -581,17 +525,11 @@ describe("class BufferBuilder", () => {
       new BufferBuilder().writeUnsignedInt32(123),
       undefined,
       2,
-      0xffff,
+      0xff_ff,
       Buffer.from([10, 0, 0, 0, 6, 0, 123, 0, 0, 0]),
     ],
-    [
-      new BufferBuilder(),
-      undefined,
-      2,
-      0xffff,
-      Buffer.from([6, 0, 0, 0, 0xff, 0xff]),
-    ],
-    [new BufferBuilder(), 4, 2, 0xffff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
+    [new BufferBuilder(), undefined, 2, 0xff_ff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
+    [new BufferBuilder(), 4, 2, 0xff_ff, Buffer.from([6, 0, 0, 0, 0xff, 0xff])],
     [
       (() => {
         const bufferBuilder = new BufferBuilder();
@@ -601,7 +539,7 @@ describe("class BufferBuilder", () => {
           new BufferBuilder().writeUnsignedInt32(123), // (C1)
           16, // (C2)
         ); // (B2)
-        bufferBuilder.pad(16, "\xff"); // (B3)
+        bufferBuilder.pad(16, "\u00FF"); // (B3)
 
         return bufferBuilder;
       })(),
@@ -610,21 +548,21 @@ describe("class BufferBuilder", () => {
       undefined,
       Buffer.from([
         // (A1) Buffer total length (48 pad-sized)
-        ...[48, 0, 0, 0],
+        48, 0, 0, 0,
         // (A2) Offset to secondary buffer.
-        ...[8, 0, 0, 0],
+        8, 0, 0, 0,
         // (B1) Secondary buffer length (32 pad-sized)
-        ...[32, 0, 0, 0],
+        32, 0, 0, 0,
         // (B2) Offset to tertiary buffer (after padding).
-        ...[16, 0, 0, 0],
+        16, 0, 0, 0,
         // (B3) Secondary buffer padding to 16 bytes.
-        ...[255, 255, 255, 255, 255, 255, 255, 255],
+        255, 255, 255, 255, 255, 255, 255, 255,
         // (C1) Secondary buffer tertiary buffer.
-        ...[123, 0, 0, 0],
+        123, 0, 0, 0,
         // (C2) Tertiary padding.
-        ...[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         // (A1) Primary buffer padding.
-        ...[0, 0, 0, 0, 0, 0, 0, 0],
+        0, 0, 0, 0, 0, 0, 0, 0,
       ]),
     ],
   ];
@@ -639,9 +577,7 @@ describe("class BufferBuilder", () => {
         reverseDeferredCalls: true,
       }); // (A2)
 
-      expect(bufferBuilder.build({ reverseDeferredCalls: true })).toStrictEqual(
-        expected,
-      );
+      expect(bufferBuilder.build({ reverseDeferredCalls: true })).toStrictEqual(expected);
     },
   );
 
@@ -660,12 +596,7 @@ describe("class BufferBuilder", () => {
     const bufferBuilder = new BufferBuilder();
 
     bufferBuilder.writeUnsignedInt32(() => bufferBuilder.length);
-    bufferBuilder.writeOffset(
-      Buffer.alloc(0),
-      undefined,
-      8,
-      0xffffffffffffffffn,
-    );
+    bufferBuilder.writeOffset(Buffer.alloc(0), undefined, 8, 0xff_ff_ff_ff_ff_ff_ff_ffn);
 
     expect(bufferBuilder.build()).toStrictEqual(
       Buffer.from([12, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255]),

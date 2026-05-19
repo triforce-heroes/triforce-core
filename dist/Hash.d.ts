@@ -1,1 +1,1 @@
-export declare function secureHash(input: Buffer): Promise<number>;
+export declare function secureHash(input: Buffer<ArrayBuffer>): Promise<number>;
