@@ -65,6 +65,10 @@ export class BufferBuilder {
   public build(options?: BuildOptions) {
     const buffer = Buffer.concat(this.inBuffers);
 
+    if (!("writeBigInt64LE" in Buffer.prototype)) {
+      Object.setPrototypeOf(buffer, BufferPolyfill.prototype);
+    }
+
     if (this.deferredCalls.length > 0) {
       const buffersLength = this.inBuffers.length;
 
