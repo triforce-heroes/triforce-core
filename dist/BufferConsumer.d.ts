@@ -26,6 +26,7 @@ export declare class BufferConsumer {
     readFloat64(): number;
     readString(bytes: number): string;
     readLengthPrefixedString(bytes?: 1 | 2 | 4): string;
+    readLengthSerializedString(): string;
     readMultibytePrefixedString(): string;
     readNullTerminatedString(bufferEncoding?: "latin1" | "utf8" | "utf16le"): string;
     back(bytes?: number): this;
@@ -36,4 +37,5 @@ export declare class BufferConsumer {
     isConsumed(): boolean;
     private safeIncrease;
     private readBigInt;
+    private readLengthSerializedStringSlice;
 }

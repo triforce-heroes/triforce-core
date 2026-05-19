@@ -181,6 +181,18 @@ export class BufferConsumer {
     return this.pBuffer.toString("utf8", offset + bytes, this.pByteOffset);
   }
 
+  public readLengthSerializedString(): string {
+    const length = this.readInt32();
+
+    if (length === 0) {
+      return "";
+    }
+
+    return length > 0
+      ? this.readLengthSerializedStringSlice(length, 1, "latin1")
+      : this.readLengthSerializedStringSlice(-length, 2, "utf16le");
+  }
+
   public readMultibytePrefixedString(): string {
     let length = 0;
     let shift = 0;
@@ -288,5 +300,17 @@ export class BufferConsumer {
     this.pByteOffset += 8;
 
     return view[method](0, this.littleEndian);
+  }
+
+  private readLengthSerializedStringSlice(
+    length: number,
+    bytesLength: number,
+    encoding: BufferEncoding,
+  ) {
+    const value = this.read((length - 1) * bytesLength);
+
+    this.skip(bytesLength);
+
+    return value.toString(encoding);
   }
 }

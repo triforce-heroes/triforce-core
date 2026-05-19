@@ -218,6 +218,49 @@ describe("class BufferConsumer", () => {
     },
   );
 
+  it.each([
+    ["empty", Buffer.from([0, 0, 0, 0]), ""],
+    // eslint-disable-next-line unicorn/text-encoding-identifier-case
+    ["ASCII", Buffer.from([5, 0, 0, 0, 84, 101, 115, 116, 0]), "Test"],
+    ["non-ASCII", Buffer.from([251, 255, 255, 255, 79, 0, 108, 0, 225, 0, 33, 0, 0, 0]), "Olá!"],
+  ])("method readLengthSerializedString(%s string) LE", (_, buffer, expected) => {
+    const bufferConsumer = new BufferConsumer(buffer);
+
+    expect(bufferConsumer.readLengthSerializedString()).toBe(expected);
+    expect(bufferConsumer.isConsumed()).toBeTruthy();
+  });
+
+  it.each([
+    // eslint-disable-next-line unicorn/text-encoding-identifier-case
+    ["ASCII", Buffer.from([0, 0, 0, 5, 84, 101, 115, 116, 0]), "Test"],
+    ["non-ASCII", Buffer.from([255, 255, 255, 251, 79, 0, 108, 0, 225, 0, 33, 0, 0, 0]), "Olá!"],
+  ])("method readLengthSerializedString(%s string) BE", (_, buffer, expected) => {
+    const bufferConsumer = new BufferConsumer(buffer, undefined, ByteOrder.BIG_ENDIAN);
+
+    expect(bufferConsumer.readLengthSerializedString()).toBe(expected);
+    expect(bufferConsumer.isConsumed()).toBeTruthy();
+  });
+
+  it("method readLengthSerializedString() non-ASCII includes offset", () => {
+    const bufferConsumer = new BufferConsumer(
+      Buffer.from([2, 0, 0, 0, 65, 0, 251, 255, 255, 255, 79, 0, 108, 0, 225, 0, 33, 0, 0, 0]),
+    );
+
+    expect(bufferConsumer.readLengthSerializedString()).toBe("A");
+    expect(bufferConsumer.readLengthSerializedString()).toBe("Olá!");
+    expect(bufferConsumer.isConsumed()).toBeTruthy();
+  });
+
+  it("method readLengthSerializedString() needs latin1 for ANSI path", () => {
+    const buffer = Buffer.concat([Buffer.from([2, 0, 0, 0]), Buffer.from([0xe9, 0x00])]);
+
+    const consumer = new BufferConsumer(buffer);
+
+    expect(consumer.readLengthSerializedString()).toBe("é");
+
+    expect(Buffer.from([0xe9]).toString("utf8")).toBe("\uFFFD");
+  });
+
   it("method atConsumable()", () => {
     const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
