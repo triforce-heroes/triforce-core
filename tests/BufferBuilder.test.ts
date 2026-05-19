@@ -382,6 +382,65 @@ describe("class BufferBuilder", () => {
     expect(bufferBuilder).toHaveLength(6);
   });
 
+  it.each([
+    ["null", null],
+    ["undefined", undefined],
+    ["empty", ""],
+  ])("method writeLengthSerializedString(%s string) LE", (_, value) => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeLengthSerializedString(value);
+
+    expect(bufferBuilder.build()).toStrictEqual(Buffer.from([0, 0, 0, 0]));
+    expect(bufferBuilder).toHaveLength(4);
+  });
+
+  it.each([
+    ["A", "A", Buffer.from([2, 0, 0, 0, 65, 0])],
+    ["Test", "Test", Buffer.from([5, 0, 0, 0, 84, 101, 115, 116, 0])],
+  ])("method writeLengthSerializedString(%s string) LE", (_, value, expected) => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeLengthSerializedString(value);
+
+    expect(bufferBuilder.build()).toStrictEqual(expected);
+    expect(bufferBuilder).toHaveLength(expected.length);
+  });
+
+  it.each([
+    ["A", "A", Buffer.from([0, 0, 0, 2, 65, 0])],
+    ["Test", "Test", Buffer.from([0, 0, 0, 5, 84, 101, 115, 116, 0])],
+  ])("method writeLengthSerializedString(%s string) BE", (_, value, expected) => {
+    const bufferBuilder = new BufferBuilder(ByteOrder.BIG_ENDIAN);
+
+    bufferBuilder.writeLengthSerializedString(value);
+
+    expect(bufferBuilder.build()).toStrictEqual(expected);
+    expect(bufferBuilder).toHaveLength(expected.length);
+  });
+
+  it("method writeLengthSerializedString() non-ASCII string LE", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeLengthSerializedString("Olá!");
+
+    const expected = Buffer.from([251, 255, 255, 255, 79, 0, 108, 0, 225, 0, 33, 0, 0, 0]);
+
+    expect(bufferBuilder.build()).toStrictEqual(expected);
+    expect(bufferBuilder).toHaveLength(expected.length);
+  });
+
+  it("method writeLengthSerializedString() non-ASCII string BE", () => {
+    const bufferBuilder = new BufferBuilder(ByteOrder.BIG_ENDIAN);
+
+    bufferBuilder.writeLengthSerializedString("Olá!");
+
+    const expected = Buffer.from([255, 255, 255, 251, 79, 0, 108, 0, 225, 0, 33, 0, 0, 0]);
+
+    expect(bufferBuilder.build()).toStrictEqual(expected);
+    expect(bufferBuilder).toHaveLength(expected.length);
+  });
+
   const padSamples = [
     ["Hello", "Hello\0\0\0", 8],
     ["Hello", "Hello\u0001\u0001\u0001", 8, "\u0001"],

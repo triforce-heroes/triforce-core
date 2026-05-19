@@ -1,5 +1,6 @@
 import { ByteOrder } from "@/types/ByteOrder.js";
 
+import { isAscii } from "@/Buffer";
 import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
 
 type Deferrable<T> = T | (() => T);
@@ -268,6 +269,22 @@ export class BufferBuilder {
     return this;
   }
 
+  public writeLengthSerializedString(value: string | null | undefined) {
+    if (value === null || value === undefined || value.length === 0) {
+      this.writeUnsignedInt32(0);
+    } else {
+      const buffer = Buffer.from(value);
+
+      if (isAscii(buffer)) {
+        this.writeLengthSerializedStringBody(value.length + 1, buffer, 1);
+      } else {
+        this.writeLengthSerializedStringBody(-(value.length + 1), Buffer.from(value, "utf16le"), 2);
+      }
+    }
+
+    return this;
+  }
+
   public writeMultibytePrefixedString(value: Buffer | string | null | undefined) {
     if (value === null || value === undefined || value.length === 0) {
       this.writeByte(0);
@@ -356,5 +373,11 @@ export class BufferBuilder {
     this.inLength += bytes;
 
     return this;
+  }
+
+  private writeLengthSerializedStringBody(length: number, buffer: Buffer, bytesLength: 1 | 2) {
+    this.writeInt32(length);
+    this.push(buffer);
+    this.writeInt(0, bytesLength);
   }
 }

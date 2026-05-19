@@ -35,9 +35,11 @@ export declare class BufferBuilder {
     writeFloat64(value: Deferrable<number>): this;
     writeString(value: Buffer | string | null | undefined): this;
     writeLengthPrefixedString(value: Buffer | string | null | undefined, bytes?: 1 | 2 | 4): this;
+    writeLengthSerializedString(value: string | null | undefined): this;
     writeMultibytePrefixedString(value: Buffer | string | null | undefined): this;
     writeNullTerminatedString(value: Buffer | string | null | undefined): this;
     push(...buffers: Buffer[]): this;
     private writeDeferrableInt;
+    private writeLengthSerializedStringBody;
 }
 export {};
