@@ -8,6 +8,7 @@
   "types": "dist/index.d.ts",
   "exports": {
     "./Array": "./dist/Array.js",
+    "./Buffer": "./dist/Buffer.js",
     "./BufferBuilder": "./dist/BufferBuilder.js",
     "./BufferConsumer": "./dist/BufferConsumer.js",
     "./Cache": "./dist/Cache.js",
