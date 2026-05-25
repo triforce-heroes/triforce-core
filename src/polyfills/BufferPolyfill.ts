@@ -1,8 +1,10 @@
+const BUFFER_HAS_64BIT = "writeBigInt64LE" in Buffer.prototype;
+
 export class BufferPolyfill extends Buffer {
   public static override allocUnsafe(size: number) {
     const buffer = Buffer.allocUnsafe(size);
 
-    return "writeBigInt64LE" in Buffer.prototype
+    return BUFFER_HAS_64BIT
       ? buffer
       : (Object.setPrototypeOf(buffer, BufferPolyfill.prototype) as BufferPolyfill);
   }
