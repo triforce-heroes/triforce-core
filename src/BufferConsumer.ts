@@ -1,5 +1,7 @@
 import { ByteOrder } from "@/types/ByteOrder.js";
 
+const NEEDS_BIGINT_FALLBACK = !("readBigUInt64LE" in Buffer.prototype);
+
 export class BufferConsumer {
   private readonly littleEndian;
 
@@ -117,7 +119,7 @@ export class BufferConsumer {
   }
 
   public readInt64(): bigint {
-    if (!("readBigUInt64LE" in this.pBuffer)) {
+    if (NEEDS_BIGINT_FALLBACK) {
       return this.readBigInt("getBigInt64");
     }
 
@@ -131,7 +133,7 @@ export class BufferConsumer {
   }
 
   public readUnsignedInt64(): bigint {
-    if (!("readBigUInt64LE" in this.pBuffer)) {
+    if (NEEDS_BIGINT_FALLBACK) {
       return this.readBigInt("getBigInt64");
     }
 

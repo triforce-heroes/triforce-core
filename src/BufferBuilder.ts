@@ -1,7 +1,8 @@
 import { ByteOrder } from "@/types/ByteOrder.js";
 
-import { isAscii } from "@/Buffer";
 import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
+
+const NEEDS_BUFFER_POLYFILL = !("writeBigInt64LE" in Buffer.prototype);
 
 type Deferrable<T> = T | (() => T);
 
@@ -65,7 +66,7 @@ export class BufferBuilder {
   public build(options?: BuildOptions) {
     const buffer = Buffer.concat(this.inBuffers);
 
-    if (!("writeBigInt64LE" in Buffer.prototype)) {
+    if (NEEDS_BUFFER_POLYFILL) {
       Object.setPrototypeOf(buffer, BufferPolyfill.prototype);
     }
 
@@ -244,7 +245,7 @@ export class BufferBuilder {
 
   public writeString(value: Buffer | string | null | undefined) {
     if (value !== null && value !== undefined && value.length > 0) {
-      const buffer = Buffer.from(value as Buffer);
+      const buffer = Buffer.isBuffer(value) ? value : Buffer.from(value);
 
       this.inBuffers.push(buffer);
       this.inLength += buffer.length;
@@ -263,7 +264,7 @@ export class BufferBuilder {
       return this;
     }
 
-    const buffer = Buffer.from(value as Buffer);
+    const buffer = Buffer.isBuffer(value) ? value : Buffer.from(value);
 
     this.writeUnsignedInt(buffer.length, bytes);
 
@@ -276,14 +277,10 @@ export class BufferBuilder {
   public writeLengthSerializedString(value: string | null | undefined) {
     if (value === null || value === undefined || value.length === 0) {
       this.writeUnsignedInt32(0);
+    } else if (Buffer.byteLength(value) === value.length) {
+      this.writeLengthSerializedStringBody(value.length + 1, Buffer.from(value), 1);
     } else {
-      const buffer = Buffer.from(value);
-
-      if (isAscii(buffer)) {
-        this.writeLengthSerializedStringBody(value.length + 1, buffer, 1);
-      } else {
-        this.writeLengthSerializedStringBody(-(value.length + 1), Buffer.from(value, "utf16le"), 2);
-      }
+      this.writeLengthSerializedStringBody(-(value.length + 1), Buffer.from(value, "utf16le"), 2);
     }
 
     return this;
@@ -296,7 +293,7 @@ export class BufferBuilder {
       return this;
     }
 
-    const buffer = Buffer.from(value as Buffer);
+    const buffer = Buffer.isBuffer(value) ? value : Buffer.from(value);
     let { length } = buffer;
 
     this.inLength += length;
@@ -328,7 +325,7 @@ export class BufferBuilder {
       return this;
     }
 
-    const buffer = Buffer.from(value as Buffer);
+    const buffer = Buffer.isBuffer(value) ? value : Buffer.from(value);
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;

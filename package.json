@@ -23,7 +23,8 @@
     "./types/PrintHexadecimalPreset": "./dist/types/PrintHexadecimalPreset.js"
   },
   "scripts": {
-    "build": "npm run oxfmt:fix && npm run eslint:fix && rimraf ./dist && tspc -p ./tsconfig.build.json && swc ./dist -d .",
+    "build": "npm run eslint:fix && npm build:faster",
+    "build:faster": "npm run oxfmt:fix && rimraf ./dist && tspc -p ./tsconfig.build.json && swc ./dist -d .",
     "typecheck": "tsc --noEmit",
     "oxfmt": "oxfmt --check ./src ./tests",
     "oxfmt:fix": "oxfmt --write ./src ./tests",
@@ -39,10 +40,10 @@
   "devDependencies": {
     "@rheactor/eslint-config-rheactor": "github:rheactor/eslint-config-rheactor",
     "@swc/cli": "^0.8.1",
-    "@swc/core": "^1.15.33",
+    "@swc/core": "^1.15.40",
     "@types/json-diff": "^1.0.3",
     "@types/node": "^25.9.1",
-    "@vitest/coverage-v8": "^4.1.6",
+    "@vitest/coverage-v8": "^4.1.7",
     "commander": "^14.0.3",
     "eslint": "^10.4.0",
     "oxfmt": "^0.51.0",
@@ -52,6 +53,6 @@
     "typescript": "^6.0.3",
     "typescript-transform-paths": "^4.0.0",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.7"
   }
 }
