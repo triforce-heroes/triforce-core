@@ -15,15 +15,13 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "types":["node"],
+    "types": ["node"],
 
     "paths": {
       "@/*": ["./src/*"],
       "@Tests/*": ["./tests/*"]
     },
-    "plugins": [
-      { "transform": "typescript-transform-paths", "afterDeclarations": true }
-    ]
+    "plugins": [{ "transform": "typescript-transform-paths", "afterDeclarations": true }]
   },
 
   "include": ["**/.env.d.ts", "src/**/*.ts", "tests/**/*.ts", "vite.config.ts"],
