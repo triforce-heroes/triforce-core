@@ -13,7 +13,7 @@ export declare class BufferBuilder {
     private static toFloat16;
     private static toFloat64;
     build(options?: BuildOptions): Buffer<ArrayBuffer>;
-    pad(length: number, kind?: string, forced?: boolean): this;
+    pad(length: number, kind?: string, shouldForce?: boolean): this;
     write(count: number, word?: string): this;
     writeOffset(pBuffer: Buffer | BufferBuilder, pad?: number, offsetBytes?: 1 | 2 | 4, offsetWhenEmpty?: number, pBufferBuildOptions?: BuildOptions): this;
     writeOffset(pBuffer: Buffer | BufferBuilder, pad: number | undefined, offsetBytes: 8, offsetWhenEmpty?: bigint, pBufferBuildOptions?: BuildOptions): this;

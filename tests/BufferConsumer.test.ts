@@ -258,7 +258,7 @@ describe("class BufferConsumer", () => {
 
     expect(consumer.readLengthSerializedString()).toBe("é");
 
-    expect(Buffer.from([0xe9]).toString("utf8")).toBe("\uFFFD");
+    expect(Buffer.from([0xe9]).toString("utf8")).toBe("\u{FFFD}");
   });
 
   it("method atConsumable()", () => {

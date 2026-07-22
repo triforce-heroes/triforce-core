@@ -34,8 +34,8 @@ describe("function isAscii", () => {
   it("returns true for all bytes 0x00-0x7f", () => {
     const buffer = Buffer.alloc(128);
 
-    for (let i = 0; i < 128; i++) {
-      buffer[i] = i;
+    for (let index = 0; index < 128; index++) {
+      buffer[index] = index;
     }
 
     expect(isAscii(buffer)).toBe(true);
@@ -44,8 +44,8 @@ describe("function isAscii", () => {
   it("returns false when one byte exceeds 0x7f", () => {
     const buffer = Buffer.alloc(128);
 
-    for (let i = 0; i < 128; i++) {
-      buffer[i] = i;
+    for (let index = 0; index < 128; index++) {
+      buffer[index] = index;
     }
 
     buffer[100] = 0x80;

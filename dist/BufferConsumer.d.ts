@@ -31,7 +31,7 @@ export declare class BufferConsumer {
     readNullTerminatedString(bufferEncoding?: "latin1" | "utf8" | "utf16le"): string;
     back(bytes?: number): this;
     skip(bytes?: number): this;
-    skipPadding(padding: number, forced?: boolean): this;
+    skipPadding(padding: number, shouldForce?: boolean): this;
     rest(): Buffer;
     consumer(bytes?: number): BufferConsumer;
     isConsumed(): boolean;

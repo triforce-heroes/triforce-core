@@ -59,8 +59,8 @@ function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
           ? "readUIntBE"
           : "readIntBE";
 
-  for (let j = 0; j <= buffer.length - bytes; j += bytes) {
-    numbers += numberNormalize(buffer[bufferFunction](j, bytes)).padStart(padding * bytes, " ");
+  for (let index = 0; index <= buffer.length - bytes; index += bytes) {
+    numbers += numberNormalize(buffer[bufferFunction](index, bytes)).padStart(padding * bytes, " ");
   }
 
   numbers += "\n";
@@ -68,17 +68,18 @@ function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
   return chalk.gray(numbers);
 }
 
+// eslint-disable-next-line unicorn/no-exports-in-scripts
 export function printHexadecimal(buffer: Buffer, preset = PrintHexadecimalPreset.SIMPLIFIED) {
   const [padding] = printHexadecimalPreset[preset];
   let output = "";
 
-  for (let i = 0; i < buffer.length; i += 16) {
-    let bufferOutput = chalk.gray(`${i.toString(16).toUpperCase().padStart(8, "0")} `);
+  for (let index = 0; index < buffer.length; index += 16) {
+    let bufferOutput = chalk.gray(`${index.toString(16).toUpperCase().padStart(8, "0")} `);
 
     let hexadecimals = "";
     let characters = "";
 
-    const bufferDigits = buffer.subarray(i, i + 16);
+    const bufferDigits = buffer.subarray(index, index + 16);
 
     for (const bufferDigit of bufferDigits) {
       hexadecimals += bufferDigit

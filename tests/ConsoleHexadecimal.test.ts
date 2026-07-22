@@ -47,8 +47,8 @@ describe("console", () => {
   it.each(samples)("function printHexadecimal(): %s", (_, buffer, preset) => {
     let stdoutMessage: Uint8Array | string | undefined = undefined;
 
-    vitest.spyOn(process.stdout, "write").mockImplementationOnce((str: Uint8Array | string) => {
-      stdoutMessage = str;
+    vitest.spyOn(process.stdout, "write").mockImplementationOnce((string_: Uint8Array | string) => {
+      stdoutMessage = string_;
 
       return true;
     });

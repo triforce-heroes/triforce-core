@@ -18,7 +18,7 @@ describe("console", () => {
   it.each(samples)(
     "function fatal(%j)",
     (
-      ...args:
+      ...arguments_:
         | [message: string, details?: unknown]
         | [message: string, expected: unknown, received: unknown, details?: Record<string, unknown>]
     ) => {
@@ -31,13 +31,15 @@ describe("console", () => {
         return undefined as never;
       });
 
-      vitest.spyOn(process.stderr, "write").mockImplementationOnce((str: Uint8Array | string) => {
-        stderrMessage = str;
+      vitest
+        .spyOn(process.stderr, "write")
+        .mockImplementationOnce((string_: Uint8Array | string) => {
+          stderrMessage = string_;
 
-        return true;
-      });
+          return true;
+        });
 
-      fatal(...args) as unknown;
+      fatal(...arguments_) as unknown;
 
       expect(exitCode).toBe(-1);
       expect(stderrMessage).toBeTypeOf("string");

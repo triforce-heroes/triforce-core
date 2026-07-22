@@ -1,6 +1,6 @@
 import { ByteOrder } from "@/types/ByteOrder.js";
 
-const NEEDS_BIGINT_FALLBACK = !("readBigUInt64LE" in Buffer.prototype);
+const IS_NEEDS_BIGINT_FALLBACK = !("readBigUInt64LE" in Buffer.prototype);
 
 export class BufferConsumer {
   private readonly littleEndian;
@@ -119,7 +119,7 @@ export class BufferConsumer {
   }
 
   public readInt64(): bigint {
-    if (NEEDS_BIGINT_FALLBACK) {
+    if (IS_NEEDS_BIGINT_FALLBACK) {
       return this.readBigInt("getBigInt64");
     }
 
@@ -133,7 +133,7 @@ export class BufferConsumer {
   }
 
   public readUnsignedInt64(): bigint {
-    if (NEEDS_BIGINT_FALLBACK) {
+    if (IS_NEEDS_BIGINT_FALLBACK) {
       return this.readBigInt("getBigInt64");
     }
 
@@ -157,11 +157,15 @@ export class BufferConsumer {
   }
 
   public readFloat16(): number {
-    return new Float16Array(new Uint16Array([this.readUnsignedInt16()]).buffer)[0]!;
+    const uint16 = new Uint16Array([this.readUnsignedInt16()]);
+
+    return new Float16Array(uint16.buffer, uint16.byteOffset, uint16.length)[0]!;
   }
 
   public readFloat64(): number {
-    return new Float64Array(new BigUint64Array([this.readUnsignedInt64()]).buffer)[0]!;
+    const uint64 = new BigUint64Array([this.readUnsignedInt64()]);
+
+    return new Float64Array(uint64.buffer, uint64.byteOffset, uint64.length)[0]!;
   }
 
   public readString(bytes: number) {
@@ -250,7 +254,7 @@ export class BufferConsumer {
     return this;
   }
 
-  public skipPadding(padding: number, forced = false) {
+  public skipPadding(padding: number, shouldForce = false) {
     const paddingDifference = this.pByteOffset % padding;
 
     if (paddingDifference !== 0) {
@@ -258,7 +262,7 @@ export class BufferConsumer {
         this.buffer.length,
         this.pByteOffset + (padding - paddingDifference),
       );
-    } else if (forced) {
+    } else if (shouldForce) {
       this.pByteOffset = Math.min(this.buffer.length, this.pByteOffset + padding);
     }
 

@@ -337,10 +337,10 @@ describe("class BufferBuilder", () => {
 
     bufferBuilder.writeString("Hello");
     bufferBuilder.write(0);
-    bufferBuilder.write(3, "\u00FF");
-    bufferBuilder.write(2, "\u00FF\u00FF");
+    bufferBuilder.write(3, "\u{FF}");
+    bufferBuilder.write(2, "\u{FF}\u{FF}");
 
-    const bufferHello = Buffer.from("Hello\u00FF\u00FF\u00FF\u00FF\u00FF\u00FF\u00FF");
+    const bufferHello = Buffer.from("Hello\u{FF}\u{FF}\u{FF}\u{FF}\u{FF}\u{FF}\u{FF}");
 
     expect(bufferBuilder.build()).toStrictEqual(bufferHello);
     expect(bufferBuilder).toHaveLength(bufferHello.length);
@@ -443,8 +443,8 @@ describe("class BufferBuilder", () => {
 
   const padSamples = [
     ["Hello", "Hello\0\0\0", 8],
-    ["Hello", "Hello\u0001\u0001\u0001", 8, "\u0001"],
-    ["Hello", "Hello\u00AB\u00AB\u00AB", 8, "\u00AB"],
+    ["Hello", "Hello\u{1}\u{1}\u{1}", 8, "\u{1}"],
+    ["Hello", "Hello\u{AB}\u{AB}\u{AB}", 8, "\u{AB}"],
     ["Hello", "HelloPAD", 8, "PADDING"],
     ["Hello", "Hello", 5, "WORLD"],
     ["Hello", "HelloWORLD", 5, "WORLD", true],
@@ -453,11 +453,11 @@ describe("class BufferBuilder", () => {
 
   it.each(padSamples)(
     "method pad()",
-    (input: string, output: string, length: number, kind?: string, forced?: boolean) => {
+    (input: string, output: string, length: number, kind?: string, shouldForce?: boolean) => {
       const bufferBuilder = new BufferBuilder();
 
       bufferBuilder.writeString(input);
-      bufferBuilder.pad(length, kind, forced);
+      bufferBuilder.pad(length, kind, shouldForce);
 
       expect(bufferBuilder.build()).toStrictEqual(Buffer.from(output, "binary"));
     },
@@ -598,7 +598,7 @@ describe("class BufferBuilder", () => {
           new BufferBuilder().writeUnsignedInt32(123), // (C1)
           16, // (C2)
         ); // (B2)
-        bufferBuilder.pad(16, "\u00FF"); // (B3)
+        bufferBuilder.pad(16, "\u{FF}"); // (B3)
 
         return bufferBuilder;
       })(),

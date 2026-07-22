@@ -2,7 +2,7 @@ import { ByteOrder } from "@/types/ByteOrder.js";
 
 import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
 
-const NEEDS_BUFFER_POLYFILL = !("writeBigInt64LE" in Buffer.prototype);
+const IS_NEEDS_BUFFER_POLYFILL = !("writeBigInt64LE" in Buffer.prototype);
 
 type Deferrable<T> = T | (() => T);
 
@@ -56,17 +56,21 @@ export class BufferBuilder {
   }
 
   private static toFloat16(value: number): number {
-    return new Uint16Array(new Float16Array([value]).buffer)[0]!;
+    const float16 = new Float16Array([value]);
+
+    return new Uint16Array(float16.buffer, float16.byteOffset, float16.length)[0]!;
   }
 
   private static toFloat64(value: number): bigint {
-    return new BigUint64Array(new Float64Array([value]).buffer)[0]!;
+    const float64 = new Float64Array([value]);
+
+    return new BigUint64Array(float64.buffer, float64.byteOffset, float64.length)[0]!;
   }
 
   public build(options?: BuildOptions) {
     const buffer = Buffer.concat(this.inBuffers);
 
-    if (NEEDS_BUFFER_POLYFILL) {
+    if (IS_NEEDS_BUFFER_POLYFILL) {
       Object.setPrototypeOf(buffer, BufferPolyfill.prototype);
     }
 
@@ -90,8 +94,8 @@ export class BufferBuilder {
     return buffer;
   }
 
-  public pad(length: number, kind = "\0", forced = false) {
-    if (!forced && this.inLength % length === 0) {
+  public pad(length: number, kind = "\0", shouldForce = false) {
+    if (!shouldForce && this.inLength % length === 0) {
       return this;
     }
 

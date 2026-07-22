@@ -1,12 +1,12 @@
-const BUFFER_HAS_64BIT = "writeBigInt64LE" in Buffer.prototype;
+const IS_BUFFER_HAS_64BIT = "writeBigInt64LE" in Buffer.prototype;
 
 export class BufferPolyfill extends Buffer {
   public static override allocUnsafe(size: number) {
-    const buffer = Buffer.allocUnsafe(size);
+    const buffer = super.allocUnsafe(size);
 
-    return BUFFER_HAS_64BIT
+    return IS_BUFFER_HAS_64BIT
       ? buffer
-      : (Object.setPrototypeOf(buffer, BufferPolyfill.prototype) as BufferPolyfill);
+      : (Object.setPrototypeOf(buffer, this.prototype) as BufferPolyfill);
   }
 
   public override writeBigInt64LE(value: bigint, offset?: number) {
@@ -28,12 +28,12 @@ export class BufferPolyfill extends Buffer {
   private writePolyfill(
     value: bigint,
     method: "setBigInt64" | "setBigUint64",
-    littleEndian: boolean,
+    isLittleEndian: boolean,
     offset = 0,
   ) {
     const view = new DataView(this.buffer, this.byteOffset + offset, 8);
 
-    view[method](0, value, littleEndian);
+    view[method](0, value, isLittleEndian);
 
     return this.byteOffset + offset + 8;
   }

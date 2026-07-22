@@ -30,18 +30,20 @@ export class Cache<T> {
   }
 
   public values() {
-    return [...this.inItems.values()];
+    return this.inItems.values().toArray();
   }
 
   public entries() {
-    return new Map(this.inItems.entries());
+    return new Map(this.inItems);
   }
 
   public forget(key: string) {
-    if (this.has(key)) {
-      this.inItems.delete(key);
-      this.inKeys.delete(key);
+    if (!this.has(key)) {
+      return;
     }
+
+    this.inItems.delete(key);
+    this.inKeys.delete(key);
   }
 
   public flush() {
@@ -81,7 +83,7 @@ export class Cache<T> {
 
     const forgetLength = Math.max(0, this.inKeys.size - this.inCapacity);
 
-    for (let i = 0; i < forgetLength; i++) {
+    for (let index = 0; index < forgetLength; index++) {
       const [forgetKey] = this.inKeys;
 
       this.forget(forgetKey!);

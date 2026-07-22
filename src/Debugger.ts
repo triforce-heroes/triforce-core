@@ -20,7 +20,7 @@ export function debugBenchmark<T>(
   callback: () => T,
   printerIn?: ({ average, minimum, result }: DebugBenchmarkData<T>) => void,
   samplesIn = 1000,
-  loopsIn = Number.POSITIVE_INFINITY,
+  loopsIn = Infinity,
   maxVariance = 0.01,
 ) {
   const printer =
@@ -39,7 +39,7 @@ export function debugBenchmark<T>(
 
   let loops = 0;
   let average: number | undefined = undefined;
-  let minimum = Number.POSITIVE_INFINITY;
+  let minimum = Infinity;
 
   while (loops++ < loopsIn) {
     const samples = Math.min(samplesIn, loops);
