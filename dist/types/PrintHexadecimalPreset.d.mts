@@ -1,5 +1,5 @@
-// oxlint-disable id-match
-export enum PrintHexadecimalPreset {
+//#region src/types/PrintHexadecimalPreset.d.ts
+export declare enum PrintHexadecimalPreset {
   SIMPLIFIED = 0,
   UINT8 = 1,
   UINT16_LE = 2,
@@ -12,5 +12,6 @@ export enum PrintHexadecimalPreset {
   INT32_LE = 9,
   INT32_BE = 10,
   FLOAT_LE = 11,
-  FLOAT_BE = 12,
+  FLOAT_BE = 12
 }
+//#endregion

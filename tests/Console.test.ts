@@ -1,8 +1,9 @@
+// oxlint-disable id-match
 import chalk from "chalk";
 import strip from "strip-ansi";
-import { describe, expect, it, vitest } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { fatal } from "@/Console.js";
+import { fatal } from "#/Console.js";
 
 describe("console", () => {
   chalk.level = 2;
@@ -25,19 +26,17 @@ describe("console", () => {
       let stderrMessage: Uint8Array | string | undefined = undefined;
       let exitCode: number | undefined = undefined;
 
-      vitest.spyOn(process, "exit").mockImplementationOnce((code) => {
+      vi.spyOn(process, "exit").mockImplementationOnce((code) => {
         exitCode = Number(code);
 
         return undefined as never;
       });
 
-      vitest
-        .spyOn(process.stderr, "write")
-        .mockImplementationOnce((string_: Uint8Array | string) => {
-          stderrMessage = string_;
+      vi.spyOn(process.stderr, "write").mockImplementationOnce((string_: Uint8Array | string) => {
+        stderrMessage = string_;
 
-          return true;
-        });
+        return true;
+      });
 
       fatal(...arguments_) as unknown;
 

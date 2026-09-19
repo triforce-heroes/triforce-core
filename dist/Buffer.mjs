@@ -1,0 +1,1 @@
+function e(e){return e.every(e=>e<128)}export{e as isAscii};

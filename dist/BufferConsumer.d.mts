@@ -1,0 +1,43 @@
+import { ByteOrder } from "./types/ByteOrder.mjs";
+//#region src/BufferConsumer.d.ts
+export declare class BufferConsumer {
+  private readonly pBuffer;
+  private pByteOffset;
+  private readonly pByteOrder;
+  private readonly littleEndian;
+  constructor(pBuffer: Buffer, pByteOffset?: number, pByteOrder?: ByteOrder);
+  get buffer(): Buffer<ArrayBufferLike>;
+  get byteOffset(): number;
+  static assert<T>(value: T, toBe: T, throwMessage: string): void;
+  seek(byteOffset?: number): this;
+  at(byteOffset?: number): number;
+  atConsumable(value: number): boolean;
+  read(bytes?: number): Buffer;
+  readByte(): number;
+  readInt8(): number;
+  readUnsignedInt8(): number;
+  readInt16(): number;
+  readUnsignedInt16(): number;
+  readInt32(): number;
+  readUnsignedInt32(): number;
+  readInt64(): bigint;
+  readUnsignedInt64(): bigint;
+  readFloat(): number;
+  readFloat16(): number;
+  readFloat64(): number;
+  readString(bytes: number): string;
+  readLengthPrefixedString(bytes?: 1 | 2 | 4): string;
+  readLengthSerializedString(): string;
+  readMultibytePrefixedString(): string;
+  readNullTerminatedString(bufferEncoding?: "latin1" | "utf-8" | "utf16le"): string;
+  back(bytes?: number): this;
+  skip(bytes?: number): this;
+  skipPadding(padding: number, shouldForce?: boolean): this;
+  rest(): Buffer;
+  consumer(bytes?: number): BufferConsumer;
+  isConsumed(): boolean;
+  private safeIncrease;
+  private readBigInt;
+  private readLengthSerializedStringSlice;
+}
+//#endregion

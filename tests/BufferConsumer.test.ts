@@ -1,7 +1,8 @@
+// oxlint-disable id-match
 import { describe, expect, it } from "vitest";
 
-import { BufferConsumer } from "@/BufferConsumer.js";
-import { ByteOrder } from "@/types/ByteOrder.js";
+import { BufferConsumer } from "#/BufferConsumer.js";
+import { ByteOrder } from "#/types/ByteOrder.js";
 import {
   TEST_BUFFER_SAMPLE_BE,
   TEST_BUFFER_SAMPLE_LE,
@@ -21,7 +22,7 @@ import {
   TEST_STRING_4000_BYTES_MULTIBYTE,
   TEST_STRING_EMPTY,
   TEST_STRING_MULTIBYTE,
-} from "@Tests/fixtures/data.js";
+} from "#tests/fixtures/data.js";
 
 describe("class BufferConsumer", () => {
   it("method read()", () => {
@@ -31,9 +32,9 @@ describe("class BufferConsumer", () => {
     expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from("ll"));
     expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from("o"));
     expect(bufferConsumer.read(2)).toStrictEqual(Buffer.from([]));
-    expect(bufferConsumer.isConsumed()).toBeTruthy();
+    expect(bufferConsumer.isConsumed()).toBe(true);
     expect(bufferConsumer.read()).toStrictEqual(Buffer.from([]));
-    expect(bufferConsumer.isConsumed()).toBeTruthy();
+    expect(bufferConsumer.isConsumed()).toBe(true);
   });
 
   it("method readInt8()", () => {
@@ -137,10 +138,10 @@ describe("class BufferConsumer", () => {
     bufferConsumer.skip(26);
 
     expect(bufferConsumer.readNullTerminatedString()).toBe("Test");
-    expect(bufferConsumer.isConsumed()).toBeFalsy();
+    expect(bufferConsumer.isConsumed()).toBe(false);
     expect(bufferConsumer.rest()).toStrictEqual(Buffer.from("TestEnd"));
     expect(bufferConsumer.readNullTerminatedString()).toBe("TestEnd");
-    expect(bufferConsumer.isConsumed()).toBeTruthy();
+    expect(bufferConsumer.isConsumed()).toBe(true);
   });
 
   it("method skipPadding()", () => {
@@ -186,7 +187,7 @@ describe("class BufferConsumer", () => {
 
   it.each(readNullTerminatedStringTests)(
     "method readNullTerminatedString(%j)",
-    (input: string, outputs: readonly string[], encoding?: "latin1" | "utf8" | "utf16le") => {
+    (input: string, outputs: readonly string[], encoding?: "latin1" | "utf-8" | "utf16le") => {
       expect.assertions(outputs.length);
 
       const bufferConsumer = new BufferConsumer(Buffer.from(input));
@@ -227,7 +228,7 @@ describe("class BufferConsumer", () => {
     const bufferConsumer = new BufferConsumer(buffer);
 
     expect(bufferConsumer.readLengthSerializedString()).toBe(expected);
-    expect(bufferConsumer.isConsumed()).toBeTruthy();
+    expect(bufferConsumer.isConsumed()).toBe(true);
   });
 
   it.each([
@@ -238,7 +239,7 @@ describe("class BufferConsumer", () => {
     const bufferConsumer = new BufferConsumer(buffer, undefined, ByteOrder.BIG_ENDIAN);
 
     expect(bufferConsumer.readLengthSerializedString()).toBe(expected);
-    expect(bufferConsumer.isConsumed()).toBeTruthy();
+    expect(bufferConsumer.isConsumed()).toBe(true);
   });
 
   it("method readLengthSerializedString() non-ASCII includes offset", () => {
@@ -248,7 +249,7 @@ describe("class BufferConsumer", () => {
 
     expect(bufferConsumer.readLengthSerializedString()).toBe("A");
     expect(bufferConsumer.readLengthSerializedString()).toBe("Olá!");
-    expect(bufferConsumer.isConsumed()).toBeTruthy();
+    expect(bufferConsumer.isConsumed()).toBe(true);
   });
 
   it("method readLengthSerializedString() needs latin1 for ANSI path", () => {
@@ -258,16 +259,16 @@ describe("class BufferConsumer", () => {
 
     expect(consumer.readLengthSerializedString()).toBe("é");
 
-    expect(Buffer.from([0xe9]).toString("utf8")).toBe("\u{FFFD}");
+    expect(Buffer.from([0xe9]).toString("utf-8")).toBe("\u{FFFD}");
   });
 
   it("method atConsumable()", () => {
     const bufferConsumer = new BufferConsumer(TEST_BUFFER_SAMPLE_LE);
 
-    expect(bufferConsumer.atConsumable(0)).toBeFalsy();
+    expect(bufferConsumer.atConsumable(0)).toBe(false);
     expect(bufferConsumer.byteOffset).toBe(0);
 
-    expect(bufferConsumer.atConsumable(1)).toBeTruthy();
+    expect(bufferConsumer.atConsumable(1)).toBe(true);
     expect(bufferConsumer.byteOffset).toBe(1);
 
     expect(bufferConsumer.at(0)).toBe(2);
@@ -288,26 +289,26 @@ describe("class BufferConsumer", () => {
 
     expect(bufferConsumer.byteOffset).toBe(0);
     expect(bufferConsumer.readUnsignedInt16()).toBe(0x01_02);
-    expect(bufferConsumer.isConsumed()).toBeFalsy();
+    expect(bufferConsumer.isConsumed()).toBe(false);
 
     const subConsumerA = bufferConsumer.consumer(2);
 
     expect(subConsumerA.byteOffset).toBe(0);
     expect(subConsumerA.readUnsignedInt16()).toBe(0x03_04);
-    expect(subConsumerA.isConsumed()).toBeTruthy();
+    expect(subConsumerA.isConsumed()).toBe(true);
 
     expect(bufferConsumer.byteOffset).toBe(4);
     expect(bufferConsumer.readUnsignedInt16()).toBe(0x05_06);
-    expect(bufferConsumer.isConsumed()).toBeFalsy();
+    expect(bufferConsumer.isConsumed()).toBe(false);
 
     const subConsumerB = bufferConsumer.consumer();
 
     expect(subConsumerB.byteOffset).toBe(0);
     expect(subConsumerB.readUnsignedInt16()).toBe(0x07_08);
-    expect(subConsumerB.isConsumed()).toBeTruthy();
+    expect(subConsumerB.isConsumed()).toBe(true);
 
     expect(bufferConsumer.byteOffset).toBe(8);
-    expect(bufferConsumer.isConsumed()).toBeTruthy();
+    expect(bufferConsumer.isConsumed()).toBe(true);
   });
 
   it("method assert()", () => {

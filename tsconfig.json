@@ -11,19 +11,16 @@
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
-    "outDir": "dist",
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
     "types": ["node"],
-
     "paths": {
-      "@/*": ["./src/*"],
-      "@Tests/*": ["./tests/*"]
-    },
-    "plugins": [{ "transform": "typescript-transform-paths", "afterDeclarations": true }]
+      "#/*": ["./src/*"],
+      "#tests/*": ["./tests/*"]
+    }
   },
 
-  "include": ["**/.env.d.ts", "src/**/*.ts", "tests/**/*.ts", "vite.config.ts"],
-  "exclude": ["dist/*.ts", "node_modules/"]
+  "include": ["**/*.ts", "tests/**/*.ts", "vitest.config.ts"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -1,7 +1,8 @@
+// oxlint-disable id-match
 import { describe, it, expect } from "vitest";
 
-import { BufferBuilder } from "@/BufferBuilder.js";
-import { ByteOrder } from "@/types/ByteOrder.js";
+import { BufferBuilder } from "#/BufferBuilder.js";
+import { ByteOrder } from "#/types/ByteOrder.js";
 import {
   TEST_BINARY_BUFFER,
   TEST_BINARY_BUFFER_LENGTH_BE,
@@ -58,7 +59,7 @@ import {
   TEST_STRING_MULTIBYTE,
   TEST_UTF8_BUFFER,
   TEST_UTF8_BUFFER_LENGTH_LE,
-} from "@Tests/fixtures/data.js";
+} from "#tests/fixtures/data.js";
 
 describe("class BufferBuilder", () => {
   const writeIntTests = [

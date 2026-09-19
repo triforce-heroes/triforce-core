@@ -1,3 +1,4 @@
+// oxlint-disable id-match
 const IS_BUFFER_HAS_64BIT = "writeBigInt64LE" in Buffer.prototype;
 
 export class BufferPolyfill extends Buffer {

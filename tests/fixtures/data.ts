@@ -1,3 +1,4 @@
+// oxlint-disable id-match
 export const TEST_INT8 = 123;
 
 export const TEST_INT8_BUFFER = Buffer.from([123]);

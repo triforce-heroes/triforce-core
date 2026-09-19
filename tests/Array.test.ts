@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { unique } from "@/Array.js";
+import { unique } from "#/Array.js";
 
 describe("array", () => {
   it("function unique()", () => {

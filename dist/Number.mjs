@@ -1,0 +1,1 @@
+function e(e,t,n=!1){let r=e%t;return r===0?n?e+t:e:e+(t-r)}export{e as nextMultiple};

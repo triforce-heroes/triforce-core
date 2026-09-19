@@ -1,0 +1,1 @@
+import{normalize as e}from"node:path";function t(t){return e(t).replaceAll(`\\`,`/`)}export{t as normalize};

@@ -1,3 +1,4 @@
+// oxlint-disable id-match
 export function encodeToString(buffer: Buffer) {
   let string = "";
 
@@ -11,7 +12,7 @@ export function encodeToString(buffer: Buffer) {
     }
 
     if (bufferOffset + 1 < buffer.length && bufferChar1 >= 0xc2 && bufferChar1 <= 0xdf) {
-      const bufferChar2 = buffer[bufferOffset + 1]!;
+      const bufferChar2 = buffer.at(bufferOffset + 1)!;
 
       if (bufferChar2 >= 0x80 && bufferChar2 <= 0xbf) {
         const bufferCodePoint =

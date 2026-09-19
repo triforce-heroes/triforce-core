@@ -1,6 +1,6 @@
-import { ByteOrder } from "@/types/ByteOrder.js";
-
-import { BufferPolyfill } from "@/polyfills/BufferPolyfill";
+// oxlint-disable id-match
+import { BufferPolyfill } from "#/polyfills/BufferPolyfill";
+import { ByteOrder } from "#/types/ByteOrder.js";
 
 const IS_NEEDS_BUFFER_POLYFILL = !("writeBigInt64LE" in Buffer.prototype);
 
@@ -58,13 +58,13 @@ export class BufferBuilder {
   private static toFloat16(value: number): number {
     const float16 = new Float16Array([value]);
 
-    return new Uint16Array(float16.buffer, float16.byteOffset, float16.length)[0]!;
+    return new Uint16Array(float16.buffer, float16.byteOffset, float16.length).at(0)!;
   }
 
   private static toFloat64(value: number): bigint {
     const float64 = new Float64Array([value]);
 
-    return new BigUint64Array(float64.buffer, float64.byteOffset, float64.length)[0]!;
+    return new BigUint64Array(float64.buffer, float64.byteOffset, float64.length).at(0)!;
   }
 
   public build(options?: BuildOptions) {

@@ -1,0 +1,1 @@
+let e=/* @__PURE__ */ function(e){return e[e.LITTLE_ENDIAN=0]=`LITTLE_ENDIAN`,e[e.BIG_ENDIAN=1]=`BIG_ENDIAN`,e}({});export{e as ByteOrder};

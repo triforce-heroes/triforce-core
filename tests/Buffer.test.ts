@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { isAscii } from "@/Buffer.js";
+import { isAscii } from "#/Buffer.js";
 
 describe("function isAscii", () => {
   it("returns true for empty buffer", () => {

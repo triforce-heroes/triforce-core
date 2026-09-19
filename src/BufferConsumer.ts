@@ -1,4 +1,5 @@
-import { ByteOrder } from "@/types/ByteOrder.js";
+// oxlint-disable id-match
+import { ByteOrder } from "#/types/ByteOrder.js";
 
 const IS_NEEDS_BIGINT_FALLBACK = !("readBigUInt64LE" in Buffer.prototype);
 
@@ -159,17 +160,17 @@ export class BufferConsumer {
   public readFloat16(): number {
     const uint16 = new Uint16Array([this.readUnsignedInt16()]);
 
-    return new Float16Array(uint16.buffer, uint16.byteOffset, uint16.length)[0]!;
+    return new Float16Array(uint16.buffer, uint16.byteOffset, uint16.length).at(0)!;
   }
 
   public readFloat64(): number {
     const uint64 = new BigUint64Array([this.readUnsignedInt64()]);
 
-    return new Float64Array(uint64.buffer, uint64.byteOffset, uint64.length)[0]!;
+    return new Float64Array(uint64.buffer, uint64.byteOffset, uint64.length).at(0)!;
   }
 
   public readString(bytes: number) {
-    const value = this.pBuffer.toString("utf8", this.pByteOffset, this.pByteOffset + bytes);
+    const value = this.pBuffer.toString("utf-8", this.pByteOffset, this.pByteOffset + bytes);
 
     this.pByteOffset += bytes;
 
@@ -184,7 +185,7 @@ export class BufferConsumer {
 
     this.pByteOffset += length + bytes;
 
-    return this.pBuffer.toString("utf8", offset + bytes, this.pByteOffset);
+    return this.pBuffer.toString("utf-8", offset + bytes, this.pByteOffset);
   }
 
   public readLengthSerializedString(): string {
@@ -220,14 +221,20 @@ export class BufferConsumer {
       return "";
     }
 
-    const bufferString = this.pBuffer.toString("utf8", this.pByteOffset, this.pByteOffset + length);
+    const bufferString = this.pBuffer.toString(
+      "utf-8",
+      this.pByteOffset,
+      this.pByteOffset + length,
+    );
 
     this.pByteOffset += length;
 
     return bufferString;
   }
 
-  public readNullTerminatedString(bufferEncoding: "latin1" | "utf8" | "utf16le" = "utf8"): string {
+  public readNullTerminatedString(
+    bufferEncoding: "latin1" | "utf-8" | "utf16le" = "utf-8",
+  ): string {
     const offset = this.pByteOffset;
     const nullOffset = this.pBuffer.indexOf("\0", this.pByteOffset, bufferEncoding);
 

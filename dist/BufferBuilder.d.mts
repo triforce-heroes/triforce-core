@@ -1,0 +1,46 @@
+import { ByteOrder } from "./types/ByteOrder.mjs";
+//#region src/BufferBuilder.d.ts
+type Deferrable<T> = T | (() => T);
+interface BuildOptions {
+  reverseDeferredCalls?: boolean;
+}
+export declare class BufferBuilder {
+  private readonly inBuffers;
+  private readonly deferredCalls;
+  private readonly littleEndian;
+  private inLength;
+  constructor(byteOrder?: ByteOrder);
+  get length(): number;
+  private static toFloat16;
+  private static toFloat64;
+  build(options?: BuildOptions): Buffer<ArrayBuffer>;
+  pad(length: number, kind?: string, shouldForce?: boolean): this;
+  write(count: number, word?: string): this;
+  writeOffset(pBuffer: Buffer | BufferBuilder, pad?: number, offsetBytes?: 1 | 2 | 4, offsetWhenEmpty?: number, pBufferBuildOptions?: BuildOptions): this;
+  writeOffset(pBuffer: Buffer | BufferBuilder, pad: number | undefined, offsetBytes: 8, offsetWhenEmpty?: bigint, pBufferBuildOptions?: BuildOptions): this;
+  writeByte(value: Deferrable<number>): this;
+  writeInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
+  writeInt(value: Deferrable<bigint>, bytes: 8): this;
+  writeUnsignedInt(value: Deferrable<number>, bytes: 1 | 2 | 4): this;
+  writeUnsignedInt(value: Deferrable<bigint>, bytes: 8): this;
+  writeInt8(value: Deferrable<number>): this;
+  writeUnsignedInt8(value: Deferrable<number>): this;
+  writeInt16(value: Deferrable<number>): this;
+  writeUnsignedInt16(value: Deferrable<number>): this;
+  writeInt32(value: Deferrable<number>): this;
+  writeUnsignedInt32(value: Deferrable<number>): this;
+  writeInt64(value: Deferrable<bigint>): this;
+  writeUnsignedInt64(value: Deferrable<bigint>): this;
+  writeFloat(value: Deferrable<number>): this;
+  writeFloat16(value: Deferrable<number>): this;
+  writeFloat64(value: Deferrable<number>): this;
+  writeString(value: Buffer | string | null | undefined): this;
+  writeLengthPrefixedString(value: Buffer | string | null | undefined, bytes?: 1 | 2 | 4): this;
+  writeLengthSerializedString(value: string | null | undefined): this;
+  writeMultibytePrefixedString(value: Buffer | string | null | undefined): this;
+  writeNullTerminatedString(value: Buffer | string | null | undefined): this;
+  push(...buffers: Buffer[]): this;
+  private writeDeferrableInt;
+  private writeLengthSerializedStringBody;
+}
+//#endregion

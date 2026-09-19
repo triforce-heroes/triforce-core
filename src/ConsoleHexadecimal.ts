@@ -2,7 +2,7 @@
 
 import chalk from "chalk";
 
-import { PrintHexadecimalPreset } from "@/types/PrintHexadecimalPreset.js";
+import { PrintHexadecimalPreset } from "#/types/PrintHexadecimalPreset.js";
 
 const hexadecimalDot = chalk.ansi256(240)(".");
 const hexadecimalNumberPadding = " ".repeat(9);
@@ -68,7 +68,6 @@ function generateNumbers(buffer: Buffer, preset: PrintHexadecimalPreset) {
   return chalk.gray(numbers);
 }
 
-// eslint-disable-next-line unicorn/no-exports-in-scripts
 export function printHexadecimal(buffer: Buffer, preset = PrintHexadecimalPreset.SIMPLIFIED) {
   const [padding] = printHexadecimalPreset[preset];
   let output = "";

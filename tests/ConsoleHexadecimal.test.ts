@@ -1,9 +1,10 @@
+// oxlint-disable id-match
 import chalk from "chalk";
 import strip from "strip-ansi";
-import { describe, expect, it, vitest } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { printHexadecimal } from "@/ConsoleHexadecimal.js";
-import { PrintHexadecimalPreset } from "@/types/PrintHexadecimalPreset.js";
+import { printHexadecimal } from "#/ConsoleHexadecimal.js";
+import { PrintHexadecimalPreset } from "#/types/PrintHexadecimalPreset.js";
 
 describe("console", () => {
   chalk.level = 2;
@@ -47,7 +48,7 @@ describe("console", () => {
   it.each(samples)("function printHexadecimal(): %s", (_, buffer, preset) => {
     let stdoutMessage: Uint8Array | string | undefined = undefined;
 
-    vitest.spyOn(process.stdout, "write").mockImplementationOnce((string_: Uint8Array | string) => {
+    vi.spyOn(process.stdout, "write").mockImplementationOnce((string_: Uint8Array | string) => {
       stdoutMessage = string_;
 
       return true;

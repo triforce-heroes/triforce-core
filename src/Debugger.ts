@@ -3,8 +3,12 @@ import type { Command } from "commander";
 export function debugCommander(program: Command, argv: string[]) {
   program.exitOverride();
   program.configureOutput({
-    writeOut: Function,
-    writeErr: Function,
+    writeOut: () => {
+      /* Swallow commander output during debug runs. */
+    },
+    writeErr: () => {
+      /* Swallow commander output during debug runs. */
+    },
   });
 
   program.parse(["node", "dummy.js", ...argv]);
@@ -23,23 +27,23 @@ export function debugBenchmark<T>(
   loopsIn = Infinity,
   maxVariance = 0.01,
 ) {
+  let loops = 0;
+  let average: number | undefined = undefined;
+  let minimum = Infinity;
+
   const printer =
     printerIn ??
-    (({ average, minimum, result }) => {
+    (({ average: averageValue, minimum: minimumValue, result }) => {
       // eslint-disable-next-line no-console
       console.log(
         {
           loops,
-          minimum,
-          average,
+          minimum: minimumValue,
+          average: averageValue,
         },
         result,
       );
     });
-
-  let loops = 0;
-  let average: number | undefined = undefined;
-  let minimum = Infinity;
 
   while (loops++ < loopsIn) {
     const samples = Math.min(samplesIn, loops);

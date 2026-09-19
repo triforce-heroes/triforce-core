@@ -1,1 +1,0 @@
-var r;export var ByteOrder;(r=ByteOrder||(ByteOrder={}))[r.LITTLE_ENDIAN=0]="LITTLE_ENDIAN",r[r.BIG_ENDIAN=1]="BIG_ENDIAN";

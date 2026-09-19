@@ -1,1 +1,0 @@
-export function isAscii(e){return e.every(e=>e<128)}

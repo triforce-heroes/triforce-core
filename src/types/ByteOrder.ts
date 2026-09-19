@@ -1,4 +1,4 @@
-export const enum ByteOrder {
-  LITTLE_ENDIAN,
-  BIG_ENDIAN,
+export enum ByteOrder {
+  LITTLE_ENDIAN = 0,
+  BIG_ENDIAN = 1,
 }
