@@ -1,2 +1,2 @@
-import { a as encodeFromString, c as getNullTerminator, i as decodeBuffer, l as getNullTerminatorByteLength, n as NativeEncoding, o as encodeString, r as TextEncoding, s as encodeToString, t as ExtraEncoding } from "./Encoding-DsQh2u2T.mjs";
+import { a as encodeFromString, c as getNullTerminator, i as decodeBuffer, l as getNullTerminatorByteLength, n as NativeEncoding, o as encodeString, r as TextEncoding, s as encodeToString, t as ExtraEncoding } from "./Encoding-BIHzjDiK.mjs";
 export { ExtraEncoding, NativeEncoding, TextEncoding, decodeBuffer, encodeFromString, encodeString, encodeToString, getNullTerminator, getNullTerminatorByteLength };

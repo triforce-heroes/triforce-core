@@ -70,6 +70,14 @@ describe("encoding", () => {
     expect(decodeBuffer(Buffer.from("Olá!", "utf16le"), "utf16-le")).toBe("Olá!");
   });
 
+  it("function decodeBuffer/encodeString(cp1252) roundtrip with Windows-1252 bytes", () => {
+    const text = "Olá — €";
+    const buffer = Buffer.from([0x4f, 0x6c, 0xe1, 0x20, 0x97, 0x20, 0x80]);
+
+    expect(encodeString(text, "cp1252")).toStrictEqual(buffer);
+    expect(decodeBuffer(buffer, "cp1252")).toBe(text);
+  });
+
   const terminatorCases: Array<[encoding: TextEncoding, length: number]> = [
     ["latin1", 1],
     ["utf-8", 1],
@@ -78,6 +86,7 @@ describe("encoding", () => {
     ["big5", 1],
     ["gbk", 1],
     ["euc-kr", 1],
+    ["cp1252", 1],
   ];
 
   it.each(terminatorCases)("function getNullTerminatorByteLength(%s) = %i", (encoding, length) => {

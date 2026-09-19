@@ -3,7 +3,7 @@ import { decode, encode } from "iconv-lite";
 
 export type NativeEncoding = "latin1" | "utf-8" | "utf16-le";
 
-export type ExtraEncoding = "shift-jis" | "big5" | "gbk" | "euc-kr";
+export type ExtraEncoding = "shift-jis" | "big5" | "gbk" | "euc-kr" | "cp1252";
 
 export type TextEncoding = NativeEncoding | ExtraEncoding;
 

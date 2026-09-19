@@ -1,4 +1,4 @@
-import { r as TextEncoding } from "./Encoding-DsQh2u2T.mjs";
+import { r as TextEncoding } from "./Encoding-BIHzjDiK.mjs";
 import { ByteOrder } from "./types/ByteOrder.mjs";
 //#region src/BufferConsumer.d.ts
 export declare class BufferConsumer {

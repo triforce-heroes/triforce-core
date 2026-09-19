@@ -328,6 +328,7 @@ describe("class BufferConsumer", () => {
     ["big5", "繁體中文"],
     ["gbk", "简体中文"],
     ["euc-kr", "한국어"],
+    ["cp1252", "Olá — €"],
   ];
 
   it.each(extraStringCases)("method readString() with %s", (encoding, text) => {

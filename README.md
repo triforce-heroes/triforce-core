@@ -1215,11 +1215,11 @@ encodeToString(Buffer.from("hello")); // "hello"
 ### ExtraEncoding
 
 ```ts
-type ExtraEncoding = "shift-jis" | "big5" | "gbk" | "euc-kr";
+type ExtraEncoding = "shift-jis" | "big5" | "gbk" | "euc-kr" | "cp1252";
 ```
 
-Legacy East Asian encodings decoded via `iconv-lite`. Use for Shift-JIS, Big5, GBK and EUC-KR text;
-combine with `NativeEncoding` as `TextEncoding`.
+Extra encodings decoded via `iconv-lite`. Use for Shift-JIS, Big5, GBK, EUC-KR and Windows-1252
+text; combine with `NativeEncoding` as `TextEncoding`.
 
 ```ts
 import type { ExtraEncoding } from "@triforce-heroes/triforce-core/Encoding";
