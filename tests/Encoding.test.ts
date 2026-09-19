@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { encodeFromString, encodeToString } from "#/Encoding";
+import {
+  decodeBuffer,
+  encodeFromString,
+  encodeString,
+  encodeToString,
+  getNullTerminatorByteLength,
+  type TextEncoding,
+} from "#/Encoding";
 
 type Test = [buffer: Buffer, string: string];
 
@@ -42,5 +49,38 @@ describe("encoding", () => {
   it.each(byteCases)("function encodeToString(%j)", (string, buffer) => {
     expect(encodeFromString(string)).toStrictEqual(buffer);
     expect(encodeToString(buffer)).toBe(string);
+  });
+
+  const extraCases: Array<[encoding: TextEncoding, text: string]> = [
+    ["shift-jis", "こんにちは"],
+    ["big5", "繁體中文"],
+    ["gbk", "简体中文"],
+    ["euc-kr", "한국어"],
+  ];
+
+  it.each(extraCases)("function decodeBuffer/encodeString(%s) roundtrip", (encoding, text) => {
+    const buffer = encodeString(text, encoding);
+
+    expect(buffer.length).toBeGreaterThan(text.length);
+    expect(decodeBuffer(buffer, encoding)).toBe(text);
+  });
+
+  it("function decodeBuffer/encodeString(utf16-le) matches Buffer utf16le bytes", () => {
+    expect(encodeString("Olá!", "utf16-le")).toStrictEqual(Buffer.from("Olá!", "utf16le"));
+    expect(decodeBuffer(Buffer.from("Olá!", "utf16le"), "utf16-le")).toBe("Olá!");
+  });
+
+  const terminatorCases: Array<[encoding: TextEncoding, length: number]> = [
+    ["latin1", 1],
+    ["utf-8", 1],
+    ["utf16-le", 2],
+    ["shift-jis", 1],
+    ["big5", 1],
+    ["gbk", 1],
+    ["euc-kr", 1],
+  ];
+
+  it.each(terminatorCases)("function getNullTerminatorByteLength(%s) = %i", (encoding, length) => {
+    expect(getNullTerminatorByteLength(encoding)).toBe(length);
   });
 });

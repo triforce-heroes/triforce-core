@@ -1,4 +1,5 @@
 // oxlint-disable id-match
+import { decodeBuffer, getNullTerminatorByteLength, type TextEncoding } from "#/Encoding.js";
 import { ByteOrder } from "#/types/ByteOrder.js";
 
 const IS_NEEDS_BIGINT_FALLBACK = !("readBigUInt64LE" in Buffer.prototype);
@@ -169,15 +170,18 @@ export class BufferConsumer {
     return new Float64Array(uint64.buffer, uint64.byteOffset, uint64.length).at(0)!;
   }
 
-  public readString(bytes: number) {
-    const value = this.pBuffer.toString("utf-8", this.pByteOffset, this.pByteOffset + bytes);
+  public readString(bytes: number, encoding: TextEncoding = "utf-8") {
+    const value = decodeBuffer(
+      this.pBuffer.subarray(this.pByteOffset, this.pByteOffset + bytes),
+      encoding,
+    );
 
     this.pByteOffset += bytes;
 
     return value;
   }
 
-  public readLengthPrefixedString(bytes: 1 | 2 | 4 = 4): string {
+  public readLengthPrefixedString(bytes: 1 | 2 | 4 = 4, encoding: TextEncoding = "utf-8"): string {
     const offset = this.pByteOffset;
     const length = this.littleEndian
       ? this.pBuffer.readUIntLE(this.pByteOffset, bytes)
@@ -185,7 +189,7 @@ export class BufferConsumer {
 
     this.pByteOffset += length + bytes;
 
-    return this.pBuffer.toString("utf-8", offset + bytes, this.pByteOffset);
+    return decodeBuffer(this.pBuffer.subarray(offset + bytes, this.pByteOffset), encoding);
   }
 
   public readLengthSerializedString(): string {
@@ -200,7 +204,7 @@ export class BufferConsumer {
       : this.readLengthSerializedStringSlice(-length, 2, "utf16le");
   }
 
-  public readMultibytePrefixedString(): string {
+  public readMultibytePrefixedString(encoding: TextEncoding = "utf-8"): string {
     let length = 0;
     let shift = 0;
 
@@ -221,10 +225,9 @@ export class BufferConsumer {
       return "";
     }
 
-    const bufferString = this.pBuffer.toString(
-      "utf-8",
-      this.pByteOffset,
-      this.pByteOffset + length,
+    const bufferString = decodeBuffer(
+      this.pBuffer.subarray(this.pByteOffset, this.pByteOffset + length),
+      encoding,
     );
 
     this.pByteOffset += length;
@@ -232,21 +235,34 @@ export class BufferConsumer {
     return bufferString;
   }
 
-  public readNullTerminatedString(
-    bufferEncoding: "latin1" | "utf-8" | "utf16le" = "utf-8",
-  ): string {
+  public readNullTerminatedString(encoding: TextEncoding = "utf-8"): string {
     const offset = this.pByteOffset;
-    const nullOffset = this.pBuffer.indexOf("\0", this.pByteOffset, bufferEncoding);
+
+    if (getNullTerminatorByteLength(encoding) === 2) {
+      const nullOffset = this.pBuffer.indexOf("\0", this.pByteOffset, "utf16le");
+
+      if (nullOffset === -1) {
+        this.pByteOffset = this.pBuffer.length;
+
+        return decodeBuffer(this.pBuffer.subarray(offset), encoding);
+      }
+
+      this.pByteOffset = nullOffset + 2;
+
+      return decodeBuffer(this.pBuffer.subarray(offset, nullOffset), encoding);
+    }
+
+    const nullOffset = this.pBuffer.indexOf(0, this.pByteOffset);
 
     if (nullOffset === -1) {
       this.pByteOffset = this.pBuffer.length;
 
-      return this.pBuffer.subarray(offset).toString(bufferEncoding);
+      return decodeBuffer(this.pBuffer.subarray(offset), encoding);
     }
 
-    this.pByteOffset = nullOffset + (bufferEncoding === "utf16le" ? 2 : 1);
+    this.pByteOffset = nullOffset + 1;
 
-    return this.pBuffer.subarray(offset, nullOffset).toString(bufferEncoding);
+    return decodeBuffer(this.pBuffer.subarray(offset, nullOffset), encoding);
   }
 
   public back(bytes = 1) {

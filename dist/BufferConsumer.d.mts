@@ -1,3 +1,4 @@
+import { r as TextEncoding } from "./Encoding-DsQh2u2T.mjs";
 import { ByteOrder } from "./types/ByteOrder.mjs";
 //#region src/BufferConsumer.d.ts
 export declare class BufferConsumer {
@@ -25,11 +26,11 @@ export declare class BufferConsumer {
   readFloat(): number;
   readFloat16(): number;
   readFloat64(): number;
-  readString(bytes: number): string;
-  readLengthPrefixedString(bytes?: 1 | 2 | 4): string;
+  readString(bytes: number, encoding?: TextEncoding): string;
+  readLengthPrefixedString(bytes?: 1 | 2 | 4, encoding?: TextEncoding): string;
   readLengthSerializedString(): string;
-  readMultibytePrefixedString(): string;
-  readNullTerminatedString(bufferEncoding?: "latin1" | "utf-8" | "utf16le"): string;
+  readMultibytePrefixedString(encoding?: TextEncoding): string;
+  readNullTerminatedString(encoding?: TextEncoding): string;
   back(bytes?: number): this;
   skip(bytes?: number): this;
   skipPadding(padding: number, shouldForce?: boolean): this;

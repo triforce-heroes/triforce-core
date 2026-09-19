@@ -1,7 +1,9 @@
 // oxlint-disable id-match
 import { describe, expect, it } from "vitest";
 
+import { BufferBuilder } from "#/BufferBuilder.js";
 import { BufferConsumer } from "#/BufferConsumer.js";
+import { encodeString, type TextEncoding } from "#/Encoding.js";
 import { ByteOrder } from "#/types/ByteOrder.js";
 import {
   TEST_BUFFER_SAMPLE_BE,
@@ -174,20 +176,20 @@ describe("class BufferConsumer", () => {
     ["\0", [""]],
     [".\0..\0example", [".", "..", "example"]],
     [".\0..\0example", [".", "..", "example"], "latin1"],
-    ["", [], "utf16le"],
-    ["\0", [""], "utf16le"],
-    ["\0\0", [""], "utf16le"],
-    ["\0\0H\0e\0l\0l\0o\0", ["", "Hello"], "utf16le"],
-    ["\0\0H\0e\0l\0l\0o\0\0", ["", "Hello"], "utf16le"],
-    ["\0\0H\0e\0l\0l\0o\0\0\0", ["", "Hello"], "utf16le"],
-    ["H\0e\0l\0l\0o\0", ["Hello"], "utf16le"],
-    ["H\0e\0l\0l\0o\0\0\0", ["Hello"], "utf16le"],
-    ["H\0e\0l\0l\0o\0\0\0W\0o\0r\0l\0d\0\0\0", ["Hello", "World"], "utf16le"],
+    ["", [], "utf16-le"],
+    ["\0", [""], "utf16-le"],
+    ["\0\0", [""], "utf16-le"],
+    ["\0\0H\0e\0l\0l\0o\0", ["", "Hello"], "utf16-le"],
+    ["\0\0H\0e\0l\0l\0o\0\0", ["", "Hello"], "utf16-le"],
+    ["\0\0H\0e\0l\0l\0o\0\0\0", ["", "Hello"], "utf16-le"],
+    ["H\0e\0l\0l\0o\0", ["Hello"], "utf16-le"],
+    ["H\0e\0l\0l\0o\0\0\0", ["Hello"], "utf16-le"],
+    ["H\0e\0l\0l\0o\0\0\0W\0o\0r\0l\0d\0\0\0", ["Hello", "World"], "utf16-le"],
   ] as const;
 
   it.each(readNullTerminatedStringTests)(
     "method readNullTerminatedString(%j)",
-    (input: string, outputs: readonly string[], encoding?: "latin1" | "utf-8" | "utf16le") => {
+    (input: string, outputs: readonly string[], encoding?: TextEncoding) => {
       expect.assertions(outputs.length);
 
       const bufferConsumer = new BufferConsumer(Buffer.from(input));
@@ -319,5 +321,55 @@ describe("class BufferConsumer", () => {
     expect(() => {
       BufferConsumer.assert(bufferConsumer.readString(4), "Nope", "Expected Nope");
     }).toThrow("Expected Nope");
+  });
+
+  const extraStringCases: Array<[encoding: TextEncoding, text: string]> = [
+    ["shift-jis", "こんにちは"],
+    ["big5", "繁體中文"],
+    ["gbk", "简体中文"],
+    ["euc-kr", "한국어"],
+  ];
+
+  it.each(extraStringCases)("method readString() with %s", (encoding, text) => {
+    const buffer = encodeString(text, encoding);
+    const bufferConsumer = new BufferConsumer(buffer);
+
+    expect(bufferConsumer.readString(buffer.length, encoding)).toBe(text);
+    expect(bufferConsumer.isConsumed()).toBe(true);
+  });
+
+  it.each(extraStringCases)("method readLengthPrefixedString() with %s", (encoding, text) => {
+    const builder = new BufferBuilder();
+
+    builder.writeLengthPrefixedString(text, 4, encoding);
+
+    const bufferConsumer = new BufferConsumer(builder.build());
+
+    expect(bufferConsumer.readLengthPrefixedString(4, encoding)).toBe(text);
+    expect(bufferConsumer.isConsumed()).toBe(true);
+  });
+
+  it.each(extraStringCases)("method readMultibytePrefixedString() with %s", (encoding, text) => {
+    const builder = new BufferBuilder();
+
+    builder.writeMultibytePrefixedString(text, encoding);
+
+    const bufferConsumer = new BufferConsumer(builder.build());
+
+    expect(bufferConsumer.readMultibytePrefixedString(encoding)).toBe(text);
+    expect(bufferConsumer.isConsumed()).toBe(true);
+  });
+
+  it.each(extraStringCases)("method readNullTerminatedString() with %s", (encoding, text) => {
+    const builder = new BufferBuilder();
+
+    builder.writeNullTerminatedString(text, encoding);
+    builder.writeNullTerminatedString(text, encoding);
+
+    const bufferConsumer = new BufferConsumer(builder.build());
+
+    expect(bufferConsumer.readNullTerminatedString(encoding)).toBe(text);
+    expect(bufferConsumer.readNullTerminatedString(encoding)).toBe(text);
+    expect(bufferConsumer.isConsumed()).toBe(true);
   });
 });

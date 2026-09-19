@@ -2,6 +2,8 @@
 import { describe, it, expect } from "vitest";
 
 import { BufferBuilder } from "#/BufferBuilder.js";
+import { BufferConsumer } from "#/BufferConsumer.js";
+import { encodeString, type TextEncoding } from "#/Encoding.js";
 import { ByteOrder } from "#/types/ByteOrder.js";
 import {
   TEST_BINARY_BUFFER,
@@ -661,5 +663,53 @@ describe("class BufferBuilder", () => {
     expect(bufferBuilder.build()).toStrictEqual(
       Buffer.from([12, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255]),
     );
+  });
+
+  const extraWriteCases: Array<[encoding: TextEncoding, text: string]> = [
+    ["shift-jis", "こんにちは"],
+    ["big5", "繁體中文"],
+    ["gbk", "简体中文"],
+    ["euc-kr", "한국어"],
+  ];
+
+  it.each(extraWriteCases)("method writeString() with %s", (encoding, text) => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeString(text, encoding);
+
+    expect(bufferBuilder.build()).toStrictEqual(encodeString(text, encoding));
+  });
+
+  it.each(extraWriteCases)("sequential write/read roundtrip with %s", (encoding, text) => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeString(text, encoding);
+    bufferBuilder.writeLengthPrefixedString(text, 4, encoding);
+    bufferBuilder.writeMultibytePrefixedString(text, encoding);
+    bufferBuilder.writeNullTerminatedString(text, encoding);
+
+    const bufferConsumer = new BufferConsumer(bufferBuilder.build());
+    const encodedLength = encodeString(text, encoding).length;
+
+    expect(bufferConsumer.readString(encodedLength, encoding)).toBe(text);
+    expect(bufferConsumer.readLengthPrefixedString(4, encoding)).toBe(text);
+    expect(bufferConsumer.readMultibytePrefixedString(encoding)).toBe(text);
+    expect(bufferConsumer.readNullTerminatedString(encoding)).toBe(text);
+    expect(bufferConsumer.isConsumed()).toBe(true);
+  });
+
+  it("method writeNullTerminatedString() with utf16-le uses 2-byte terminator", () => {
+    const bufferBuilder = new BufferBuilder();
+
+    bufferBuilder.writeNullTerminatedString("Hi", "utf16-le");
+
+    expect(bufferBuilder.build()).toStrictEqual(
+      Buffer.concat([Buffer.from("Hi", "utf16le"), Buffer.from([0, 0])]),
+    );
+
+    const bufferConsumer = new BufferConsumer(bufferBuilder.build());
+
+    expect(bufferConsumer.readNullTerminatedString("utf16-le")).toBe("Hi");
+    expect(bufferConsumer.isConsumed()).toBe(true);
   });
 });

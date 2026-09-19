@@ -1,4 +1,2 @@
-//#region src/Encoding.d.ts
-export declare function encodeToString(buffer: Buffer): string;
-export declare function encodeFromString(string: string): Buffer<ArrayBuffer>;
-//#endregion
+import { a as encodeFromString, c as getNullTerminator, i as decodeBuffer, l as getNullTerminatorByteLength, n as NativeEncoding, o as encodeString, r as TextEncoding, s as encodeToString, t as ExtraEncoding } from "./Encoding-DsQh2u2T.mjs";
+export { ExtraEncoding, NativeEncoding, TextEncoding, decodeBuffer, encodeFromString, encodeString, encodeToString, getNullTerminator, getNullTerminatorByteLength };

@@ -2,7 +2,7 @@ import { defineConfig } from "tsdown";
 
 // oxlint-disable-next-line import/no-anonymous-default-export
 export default defineConfig({
-  deps: { neverBundle: ["commander"] },
+  deps: { neverBundle: ["commander", "iconv-lite"] },
   entry: [
     "./src/index.ts",
     "./src/Array.ts",

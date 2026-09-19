@@ -1,3 +1,4 @@
+import { r as TextEncoding } from "./Encoding-DsQh2u2T.mjs";
 import { ByteOrder } from "./types/ByteOrder.mjs";
 //#region src/BufferBuilder.d.ts
 type Deferrable<T> = T | (() => T);
@@ -34,11 +35,11 @@ export declare class BufferBuilder {
   writeFloat(value: Deferrable<number>): this;
   writeFloat16(value: Deferrable<number>): this;
   writeFloat64(value: Deferrable<number>): this;
-  writeString(value: Buffer | string | null | undefined): this;
-  writeLengthPrefixedString(value: Buffer | string | null | undefined, bytes?: 1 | 2 | 4): this;
+  writeString(value: Buffer | string | null | undefined, encoding?: TextEncoding): this;
+  writeLengthPrefixedString(value: Buffer | string | null | undefined, bytes?: 1 | 2 | 4, encoding?: TextEncoding): this;
   writeLengthSerializedString(value: string | null | undefined): this;
-  writeMultibytePrefixedString(value: Buffer | string | null | undefined): this;
-  writeNullTerminatedString(value: Buffer | string | null | undefined): this;
+  writeMultibytePrefixedString(value: Buffer | string | null | undefined, encoding?: TextEncoding): this;
+  writeNullTerminatedString(value: Buffer | string | null | undefined, encoding?: TextEncoding): this;
   push(...buffers: Buffer[]): this;
   private writeDeferrableInt;
   private writeLengthSerializedStringBody;

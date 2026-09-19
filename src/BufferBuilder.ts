@@ -1,4 +1,5 @@
 // oxlint-disable id-match
+import { encodeString, getNullTerminator, type TextEncoding } from "#/Encoding.js";
 import { BufferPolyfill } from "#/polyfills/BufferPolyfill";
 import { ByteOrder } from "#/types/ByteOrder.js";
 
@@ -247,9 +248,9 @@ export class BufferBuilder {
     );
   }
 
-  public writeString(value: Buffer | string | null | undefined) {
+  public writeString(value: Buffer | string | null | undefined, encoding: TextEncoding = "utf-8") {
     if (value !== null && value !== undefined && value.length > 0) {
-      const buffer = Buffer.isBuffer(value) ? value : Buffer.from(value);
+      const buffer = Buffer.isBuffer(value) ? value : encodeString(value, encoding);
 
       this.inBuffers.push(buffer);
       this.inLength += buffer.length;
@@ -261,6 +262,7 @@ export class BufferBuilder {
   public writeLengthPrefixedString(
     value: Buffer | string | null | undefined,
     bytes: 1 | 2 | 4 = 4,
+    encoding: TextEncoding = "utf-8",
   ) {
     if (value === null || value === undefined || value.length === 0) {
       this.writeUnsignedInt(0, bytes);
@@ -268,7 +270,7 @@ export class BufferBuilder {
       return this;
     }
 
-    const buffer = Buffer.isBuffer(value) ? value : Buffer.from(value);
+    const buffer = Buffer.isBuffer(value) ? value : encodeString(value, encoding);
 
     this.writeUnsignedInt(buffer.length, bytes);
 
@@ -290,14 +292,17 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeMultibytePrefixedString(value: Buffer | string | null | undefined) {
+  public writeMultibytePrefixedString(
+    value: Buffer | string | null | undefined,
+    encoding: TextEncoding = "utf-8",
+  ) {
     if (value === null || value === undefined || value.length === 0) {
       this.writeByte(0);
 
       return this;
     }
 
-    const buffer = Buffer.isBuffer(value) ? value : Buffer.from(value);
+    const buffer = Buffer.isBuffer(value) ? value : encodeString(value, encoding);
     let { length } = buffer;
 
     this.inLength += length;
@@ -322,19 +327,26 @@ export class BufferBuilder {
     return this;
   }
 
-  public writeNullTerminatedString(value: Buffer | string | null | undefined) {
+  public writeNullTerminatedString(
+    value: Buffer | string | null | undefined,
+    encoding: TextEncoding = "utf-8",
+  ) {
+    const terminator = getNullTerminator(encoding);
+
     if (value === null || value === undefined) {
-      this.writeByte(0);
+      this.inBuffers.push(terminator);
+      this.inLength += terminator.length;
 
       return this;
     }
 
-    const buffer = Buffer.isBuffer(value) ? value : Buffer.from(value);
+    const buffer = Buffer.isBuffer(value) ? value : encodeString(value, encoding);
 
     this.inBuffers.push(buffer);
     this.inLength += buffer.length;
 
-    this.writeByte(0);
+    this.inBuffers.push(terminator);
+    this.inLength += terminator.length;
 
     return this;
   }

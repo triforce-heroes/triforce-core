@@ -285,12 +285,16 @@ new BufferBuilder().writeInt64(123n).build(); // <Buffer 7b 00 00 00 00 00 00 00
 ### writeLengthPrefixedString
 
 ```ts
-writeLengthPrefixedString(value: Buffer | string | null | undefined, bytes?: 1 | 2 | 4)
+writeLengthPrefixedString(
+  value: Buffer | string | null | undefined,
+  bytes?: 1 | 2 | 4,
+  encoding?: TextEncoding,
+)
 ```
 
-Writes the byte length as an unsigned integer of `bytes` length (default 4), followed by the
-content. Use for length-prefixed fields; `null`, `undefined` and empty values write a zero length
-with no content.
+Writes the byte length as an unsigned integer of `bytes` length (default 4), followed by the content
+encoded as `encoding` (default `"utf-8"`). Use for length-prefixed fields; `null`, `undefined` and
+empty values write a zero length with no content. The length counts encoded bytes, not characters.
 
 ```ts
 new BufferBuilder().writeLengthPrefixedString("Hi").build(); // <Buffer 02 00 00 00 48 69>
@@ -313,11 +317,12 @@ new BufferBuilder().writeLengthSerializedString("A").build(); // <Buffer 02 00 0
 ### writeMultibytePrefixedString
 
 ```ts
-writeMultibytePrefixedString(value: Buffer | string | null | undefined)
+writeMultibytePrefixedString(value: Buffer | string | null | undefined, encoding?: TextEncoding)
 ```
 
-Writes the byte length as a 7-bit variable-length integer, followed by the content. Use for compact
-length prefixes; `null`, `undefined` and empty values write a single zero byte.
+Writes the byte length as a 7-bit variable-length integer, followed by the content encoded as
+`encoding` (default `"utf-8"`). Use for compact length prefixes; `null`, `undefined` and empty
+values write a single zero byte.
 
 ```ts
 new BufferBuilder().writeMultibytePrefixedString("Hi").build(); // <Buffer 02 48 69>
@@ -326,11 +331,12 @@ new BufferBuilder().writeMultibytePrefixedString("Hi").build(); // <Buffer 02 48
 ### writeNullTerminatedString
 
 ```ts
-writeNullTerminatedString(value: Buffer | string | null | undefined)
+writeNullTerminatedString(value: Buffer | string | null | undefined, encoding?: TextEncoding)
 ```
 
-Appends the content followed by a zero byte. Use for C-style strings; `null` and `undefined` write
-only the terminator.
+Appends the content encoded as `encoding` (default `"utf-8"`) followed by its null terminator (1
+byte, 2 bytes for `"utf16-le"`). Use for C-style strings; `null` and `undefined` write only the
+terminator.
 
 ```ts
 new BufferBuilder().writeNullTerminatedString("Hi").build(); // <Buffer 48 69 00>
@@ -370,11 +376,12 @@ builder.build({ reverseDeferredCalls: true }); // <Buffer 0a 00 00 00 08 00 00 0
 ### writeString
 
 ```ts
-writeString(value: Buffer | string | null | undefined)
+writeString(value: Buffer | string | null | undefined, encoding?: TextEncoding)
 ```
 
-Appends the raw bytes with no prefix or terminator. Use for inline content; `null`, `undefined` and
-empty values write nothing.
+Appends the raw bytes with no prefix or terminator, encoding strings as `encoding` (default
+`"utf-8"`). Use for inline content; `null`, `undefined` and empty values write nothing. `Buffer`
+inputs pass through untouched.
 
 ```ts
 new BufferBuilder().writeString("Hi").build(); // <Buffer 48 69>
@@ -680,11 +687,12 @@ new BufferConsumer(Buffer.from([0x7b, 0, 0, 0, 0, 0, 0, 0])).readInt64(); // 123
 ### readLengthPrefixedString
 
 ```ts
-readLengthPrefixedString(bytes?: 1 | 2 | 4): string
+readLengthPrefixedString(bytes?: 1 | 2 | 4, encoding?: TextEncoding): string
 ```
 
 Reads an unsigned length of `bytes` length (default 4) in the configured endianness, then that many
-UTF-8 bytes. Use for length-prefixed fields; zero lengths return an empty string.
+bytes decoded as `encoding` (default `"utf-8"`). Use for length-prefixed fields; zero lengths return
+an empty string.
 
 ```ts
 new BufferConsumer(Buffer.from([0x02, 0, 0, 0, 0x48, 0x69])).readLengthPrefixedString(); // "Hi"
@@ -706,11 +714,11 @@ new BufferConsumer(Buffer.from([2, 0, 0, 0, 65, 0])).readLengthSerializedString(
 ### readMultibytePrefixedString
 
 ```ts
-readMultibytePrefixedString(): string
+readMultibytePrefixedString(encoding?: TextEncoding): string
 ```
 
-Reads a 7-bit variable-length byte count, then that many UTF-8 bytes. Use for compact length
-prefixes.
+Reads a 7-bit variable-length byte count, then that many bytes decoded as `encoding` (default
+`"utf-8"`). Use for compact length prefixes.
 
 ```ts
 new BufferConsumer(Buffer.from([2, 0x48, 0x69])).readMultibytePrefixedString(); // "Hi"
@@ -719,11 +727,12 @@ new BufferConsumer(Buffer.from([2, 0x48, 0x69])).readMultibytePrefixedString(); 
 ### readNullTerminatedString
 
 ```ts
-readNullTerminatedString(bufferEncoding?: "latin1" | "utf-8" | "utf16le"): string
+readNullTerminatedString(encoding?: TextEncoding): string
 ```
 
-Reads up to the next null character in `bufferEncoding` (default `"utf-8"`) and advances past the
-terminator. Use for C-style strings; buffers without a terminator return the rest.
+Reads up to the next null terminator for `encoding` (default `"utf-8"`, 1 byte except 2 bytes for
+`"utf16-le"`) and advances past it. Use for C-style strings; buffers without a terminator return the
+rest.
 
 ```ts
 new BufferConsumer(Buffer.from("Hi\0")).readNullTerminatedString(); // "Hi"
@@ -732,11 +741,11 @@ new BufferConsumer(Buffer.from("Hi\0")).readNullTerminatedString(); // "Hi"
 ### readString
 
 ```ts
-readString(bytes: number)
+readString(bytes: number, encoding?: TextEncoding): string
 ```
 
-Reads `bytes` as UTF-8 text. Use for fixed-length fields; the byte count (not the character count)
-advances the cursor.
+Reads `bytes` decoded as `encoding` (default `"utf-8"`). Use for fixed-length fields; the byte count
+(not the character count) advances the cursor.
 
 ```ts
 new BufferConsumer(Buffer.from("Hi")).readString(2); // "Hi"
@@ -1142,6 +1151,21 @@ debugCommander(program, ["test", "123"]); // logs "123"
 Lossless conversion between binary buffers and strings. Subpath-only (not re-exported from the
 root).
 
+### decodeBuffer
+
+```ts
+decodeBuffer(buffer: Buffer | Uint8Array, encoding?: TextEncoding)
+```
+
+Decodes `buffer` as `encoding` (default `"utf-8"`). Use to read text in any supported encoding;
+native encodings use `Buffer` directly while extra encodings use `iconv-lite`.
+
+```ts
+import { decodeBuffer } from "@triforce-heroes/triforce-core/Encoding";
+
+decodeBuffer(Buffer.from([0x82, 0xb1]), "shift-jis"); // "こ"
+```
+
 ### encodeFromString
 
 ```ts
@@ -1155,6 +1179,21 @@ through strings; plain ASCII round-trips byte-for-byte.
 import { encodeFromString } from "@triforce-heroes/triforce-core/Encoding";
 
 encodeFromString("hello"); // <Buffer 68 65 6c 6c 6f>
+```
+
+### encodeString
+
+```ts
+encodeString(value: string, encoding?: TextEncoding)
+```
+
+Encodes `value` as `encoding` (default `"utf-8"`). Use to write text in any supported encoding;
+native encodings use `Buffer` directly while extra encodings use `iconv-lite`.
+
+```ts
+import { encodeString } from "@triforce-heroes/triforce-core/Encoding";
+
+encodeString("こ", "shift-jis"); // <Buffer 82 b1>
 ```
 
 ### encodeToString
@@ -1171,6 +1210,81 @@ decodes normally.
 import { encodeToString } from "@triforce-heroes/triforce-core/Encoding";
 
 encodeToString(Buffer.from("hello")); // "hello"
+```
+
+### ExtraEncoding
+
+```ts
+type ExtraEncoding = "shift-jis" | "big5" | "gbk" | "euc-kr";
+```
+
+Legacy East Asian encodings decoded via `iconv-lite`. Use for Shift-JIS, Big5, GBK and EUC-KR text;
+combine with `NativeEncoding` as `TextEncoding`.
+
+```ts
+import type { ExtraEncoding } from "@triforce-heroes/triforce-core/Encoding";
+
+const encoding: ExtraEncoding = "shift-jis"; // "shift-jis"
+```
+
+### getNullTerminator
+
+```ts
+getNullTerminator(encoding?: TextEncoding)
+```
+
+Returns the encoded null terminator for `encoding` (default `"utf-8"`). Use to write or compare
+terminators; it is 1 byte except 2 bytes for `"utf16-le"`.
+
+```ts
+import { getNullTerminator } from "@triforce-heroes/triforce-core/Encoding";
+
+getNullTerminator("utf16-le"); // <Buffer 00 00>
+```
+
+### getNullTerminatorByteLength
+
+```ts
+getNullTerminatorByteLength(encoding?: TextEncoding)
+```
+
+Returns the byte length of the encoded null terminator for `encoding` (default `"utf-8"`). Use to
+advance past terminators; it is 1 except 2 for `"utf16-le"`.
+
+```ts
+import { getNullTerminatorByteLength } from "@triforce-heroes/triforce-core/Encoding";
+
+getNullTerminatorByteLength("shift-jis"); // 1
+```
+
+### NativeEncoding
+
+```ts
+type NativeEncoding = "latin1" | "utf-8" | "utf16-le";
+```
+
+Encodings handled directly by `Buffer`. Use for Western text and UTF-16LE; `"utf16-le"` is
+normalized to `"utf16le"` for `Buffer` calls.
+
+```ts
+import type { NativeEncoding } from "@triforce-heroes/triforce-core/Encoding";
+
+const encoding: NativeEncoding = "utf-8"; // "utf-8"
+```
+
+### TextEncoding
+
+```ts
+type TextEncoding = NativeEncoding | ExtraEncoding;
+```
+
+Any supported text encoding. Use for the `encoding` parameter of buffer string methods; native
+members use `Buffer` directly while extra members use `iconv-lite`.
+
+```ts
+import type { TextEncoding } from "@triforce-heroes/triforce-core/Encoding";
+
+const encoding: TextEncoding = "big5"; // "big5"
 ```
 
 ## Hash functions
